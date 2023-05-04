@@ -1,9 +1,11 @@
+import 'package:eaty_tourist/pages/login/loginpage.dart';
 import 'package:eaty_tourist/pages/profile.dart';
 import 'package:eaty_tourist/pages/statistics.dart';
 import 'package:eaty_tourist/pages/map.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -40,11 +42,17 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xA969F0AF),
+              ),
               child: Text('eaty tourist',
                 textAlign: TextAlign.center,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.greenAccent,
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 43,
+                  height: 3.5,
+                  color: Color(0xFF607D8B),
+                ),
               ),
             ),
             ListTile(
@@ -66,13 +74,21 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: Icon(MdiIcons.logout),
               title: Text('Logout'),
-              onTap: () {},
+              onTap: () => _toLoginPage(context),
             ),
           ],
         ),
       ),
       appBar: AppBar(
-        title: Text('eaty tourist'),
+        iconTheme: const IconThemeData(color: Color(0xFF607D8B),),
+        backgroundColor: const Color(0xA969F0AF),
+        title: Text('eaty tourist',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.montserrat(
+            color: Color(0xFF607D8B),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           Padding(
               padding: const EdgeInsets.symmetric(
@@ -95,6 +111,14 @@ class _HomePageState extends State<HomePage> {
       ),
       body:selectPage(_selIdx),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color(0xA9B7F4D6),
+        selectedItemColor: Color(0xA31DA7DD),
+        selectedLabelStyle: GoogleFonts.montserrat(
+          color: Color(0xFF607D8B),
+        ),
+        unselectedLabelStyle: GoogleFonts.montserrat(
+          color: Color(0xFF607D8B),
+        ),
         currentIndex: _selIdx,
         onTap: (value) {
           changePage(value);
@@ -113,4 +137,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _toLoginPage(BuildContext context) async{
+    
+    final sp = await SharedPreferences.getInstance();
+    sp.remove('username');
+
+    //Pop the drawer first 
+    Navigator.pop(context);
+    //Then pop the HomePage
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:eaty_tourist/pages/homepage.dart';
+import 'package:eaty_tourist/pages/splash.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,11 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'eaty tourist',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const Splash(),
     );
   }
 }
