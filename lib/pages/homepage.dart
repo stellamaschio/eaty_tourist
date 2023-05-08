@@ -125,8 +125,8 @@ class _HomePageState extends State<HomePage> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(MdiIcons.map),
-            label: 'Map',
+            icon: Icon(MdiIcons.home),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(MdiIcons.chartBar),

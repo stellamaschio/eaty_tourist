@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Profile extends StatelessWidget {
-  Profile({super.key});
+enum Gender { male, female }
+
+class Profile extends StatefulWidget {
+  const Profile({super.key});
+
+  @override
+  State<Profile> createState() => _Profile();
+}
+
+class _Profile extends State<Profile> {
 
   TextEditingController ageController = TextEditingController();
   TextEditingController heightController = TextEditingController();
   TextEditingController weightController = TextEditingController();
+
+  Gender? _gender = Gender.male;
 
   @override
   Widget build(BuildContext context){
@@ -37,10 +47,15 @@ class Profile extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 40),
-                Radio(value: 0, groupValue: 0, onChanged: (int? value) {
-                  print('$value');
-                  
-                }),
+                Radio<Gender>(
+                  value: Gender.male, 
+                  groupValue: _gender,
+                  onChanged: (Gender? value) {
+                    setState((){
+                      _gender = value;
+                    });
+                  }
+                ),
                 Text('Male',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
@@ -48,9 +63,15 @@ class Profile extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 10),
-                Radio(value: 0, groupValue: 1, onChanged: (int? value) {
-                  print('$value');
-                }),
+                Radio<Gender>(
+                  value: Gender.female, 
+                  groupValue: _gender,
+                  onChanged: (Gender? value) {
+                    setState((){
+                      _gender = value;
+                    });
+                  }
+                ),
                 Text('Female',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
