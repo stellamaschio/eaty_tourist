@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'eaty tourist',
+      title: 'eaty tourist2',
       theme: ThemeData(
         primaryColor: Colors.greenAccent,
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey),
