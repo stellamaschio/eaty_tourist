@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'eaty tourist',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.greenAccent,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey),
       ),
       home: const Splash(),
     );

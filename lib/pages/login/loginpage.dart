@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
     return FlutterLogin(
       title: 'eaty tourist',
        theme: LoginTheme(
-        primaryColor: Color(0xA969F0AF),
+        primaryColor: Colors.greenAccent,
         accentColor: Color(0xFF607D8B),
         errorColor: Color(0xFFF44336),
         titleStyle: GoogleFonts.montserrat(
