@@ -1,18 +1,51 @@
+import 'package:eaty_tourist/pages/homepage.dart';
+import 'package:eaty_tourist/pages/login/login_ob.dart';
+import 'package:eaty_tourist/services/impact.dart';
+import 'package:eaty_tourist/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'login/loginpage.dart';
 
 class Splash extends StatelessWidget{
   const Splash({super.key});
 
   void _toLoginPage(BuildContext context){
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+  }
+
+  void _toHomePage(BuildContext context) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: ((context) => HomePage())));
+  } 
+
+  void _checkAuth(BuildContext context) async {
+    var prefs = Provider.of<Preferences>(context, listen: false);
+    String? username = prefs.username;
+    String? password = prefs.password;
+
+    // no user logged in the app
+    if (username == null || password == null) {
+      Future.delayed(const Duration(seconds: 1), () => _toLoginPage(context));
+    } 
+    else {
+      ImpactService service = Provider.of<ImpactService>(context, listen: false);
+      bool responseAccessToken = await service.checkSavedToken();
+      bool refreshAccessToken = await service.checkSavedToken(refresh: true);
+
+      // if we have a valid token for impact, proceed
+      if (responseAccessToken || refreshAccessToken) {
+        Future.delayed(const Duration(seconds: 1), () => _toHomePage(context));
+      } 
+      else {
+        Future.delayed(const Duration(seconds: 1), () => _toLoginPage(context));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context){
     
-    Future.delayed(Duration(seconds: 3), () => _toLoginPage(context));
+    Future.delayed(Duration(seconds: 3), () => _checkAuth(context));
 
     return Material(
       child: Container(

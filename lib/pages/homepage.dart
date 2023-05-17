@@ -1,10 +1,13 @@
+import 'package:eaty_tourist/pages/login/login_ob.dart';
 import 'package:eaty_tourist/pages/login/loginpage.dart';
 import 'package:eaty_tourist/pages/profile.dart';
 import 'package:eaty_tourist/pages/statistics.dart';
 import 'package:eaty_tourist/pages/map.dart';
+import 'package:eaty_tourist/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -139,12 +142,12 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _toLoginPage(BuildContext context) async{
     
-    final sp = await SharedPreferences.getInstance();
-    sp.remove('username');
+    final pref = await Provider.of<Preferences>(context, listen: false);
+    pref.resetSettings();
 
     //Pop the drawer first 
     Navigator.pop(context);
     //Then pop the HomePage
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
   }
 }

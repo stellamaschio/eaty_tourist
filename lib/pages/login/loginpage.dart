@@ -17,19 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    //Check if the user is already logged in before rendering the login page
-    _checkLogin();
   }//initState
-
-  void _checkLogin() async {
-    //Get the SharedPreference instance and check if the value of the 'username' filed is set or not
-    final sp = await SharedPreferences.getInstance();
-    if(sp.getString('username') != null){
-      //If 'username is set, push the HomePage
-      _toHomePage(context);
-    }//if
-  }//_checkLogin
-
 
   Future<String> _loginUser(LoginData data) async {
     if(data.name == 'bug@expert.com' && data.password == '123456'){
@@ -124,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
 
       onLogin: _loginUser,
-      onSignup: _signUpUser,
+      //onSignup: _signUpUser,
       onRecoverPassword: _recoverPassword,
       onSubmitAnimationCompleted: () async{
         _toHomePage(context);
