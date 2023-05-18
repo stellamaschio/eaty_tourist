@@ -1,5 +1,4 @@
 import 'package:eaty_tourist/pages/login/login_ob.dart';
-import 'package:eaty_tourist/pages/login/loginpage.dart';
 import 'package:eaty_tourist/pages/profile.dart';
 import 'package:eaty_tourist/pages/statistics.dart';
 import 'package:eaty_tourist/pages/map.dart';
@@ -60,23 +59,36 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: Icon(MdiIcons.hamburger),
-              title: Text('Food and Restaurants'),
+              title: Text('Food and Restaurants',
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade600,
+                  fontSize: 15,
+                ),
+              ),
               onTap: () {},
             ),
             ListTile(
               leading: Icon(MdiIcons.bankOutline),
-              title: Text('Places and Museum'),
+              title: Text('Places and Museum',
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade600,
+                  fontSize: 15,
+                ),
+              ),
               onTap: () {},
             ),
-            SizedBox(height: 50,),
-            ListTile(
-              leading: Icon(MdiIcons.key),
-              title: Text('Password'),
-              onTap: () {},
-            ),
+            SizedBox(height: 30,),
             ListTile(
               leading: Icon(MdiIcons.logout),
-              title: Text('Logout'),
+              title: Text('Logout',
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade600,
+                  fontSize: 15,
+                ),
+              ),
               onTap: () => _toLoginPage(context),
             ),
           ],
@@ -90,6 +102,7 @@ class _HomePageState extends State<HomePage> {
           style: GoogleFonts.montserrat(
             color: Color(0xFF607D8B),
             fontWeight: FontWeight.bold,
+            fontSize: 28,
           ),
         ),
         actions: [
@@ -116,11 +129,16 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color(0xA9B7F4D6),
         selectedItemColor: Color(0xA31DA7DD),
+        unselectedItemColor: Color(0xFF607D8B),
         selectedLabelStyle: GoogleFonts.montserrat(
           color: Color(0xFF607D8B),
+          fontWeight: FontWeight.w600,
+          fontSize: 18,
         ),
         unselectedLabelStyle: GoogleFonts.montserrat(
           color: Color(0xFF607D8B),
+          fontWeight: FontWeight.w600,
+          fontSize: 18,
         ),
         currentIndex: _selIdx,
         onTap: (value) {

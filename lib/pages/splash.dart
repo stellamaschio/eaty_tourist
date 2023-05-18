@@ -5,7 +5,6 @@ import 'package:eaty_tourist/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'login/loginpage.dart';
 
 class Splash extends StatelessWidget{
   const Splash({super.key});
