@@ -25,9 +25,17 @@ class _LoginState extends State<Login> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool isLoading = false;
+
   void _showPassword() {
     setState(() {
       _passwordVisible = !_passwordVisible;
+    });
+  }
+
+  void _buttonState(){
+    setState(() {
+      isLoading = !isLoading;
     });
   }
 
@@ -105,6 +113,7 @@ class _LoginState extends State<Login> {
                         style: GoogleFonts.montserrat(),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
+                            _buttonState();
                             return 'Username is required';
                           } 
                           return null;
@@ -158,6 +167,7 @@ class _LoginState extends State<Login> {
                         style: GoogleFonts.montserrat(),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
+                            _buttonState();
                             return 'Password is required';
                           } 
                           return null;
@@ -206,6 +216,8 @@ class _LoginState extends State<Login> {
                             padding: const EdgeInsets.all(12.0),
                             child: ElevatedButton(
                               onPressed: () async{
+                                _buttonState();
+
                                 if (_formKey.currentState!.validate()) {
                                   var prefs = Provider.of<Preferences>(context, listen: false);
                                   prefs.username = userController.text;
@@ -214,31 +226,55 @@ class _LoginState extends State<Login> {
                                   bool? validation = await _loginImpact(userController.text, passwordController.text, context);
                                   
                                   if (!validation) {
-                                    // if not correct show message
-                                    ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                        backgroundColor: Colors.red,
-                                        behavior: SnackBarBehavior.floating,
-                                        margin: EdgeInsets.all(8),
-                                        content: Text('Wrong Credentials'),
-                                        duration: Duration(seconds: 2),
-                                      )
+                                    Future.delayed(
+                                      const Duration(milliseconds: 1500), () => {
+                                        _buttonState(),
+                                        // if not correct show message
+                                        ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                            backgroundColor: Colors.red,
+                                            behavior: SnackBarBehavior.floating,
+                                            margin: EdgeInsets.all(8),
+                                            content: Row(
+                                              children: [
+                                                Icon(MdiIcons.alertOctagonOutline,
+                                                  color: Colors.white,
+                                                ),
+                                              SizedBox(width: 10,),
+                                              Text('Wrong Credentials'),
+                                              ],
+                                            ),
+                                            duration: Duration(seconds: 2),
+                                          )
+                                        )
+                                      }
                                     );
                                   }
                                   else{
                                     ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                        backgroundColor: Colors.red,
+                                      .showSnackBar(SnackBar(
+                                        backgroundColor: Colors.blueAccent,
                                         behavior: SnackBarBehavior.floating,
                                         margin: EdgeInsets.all(8),
-                                        content: Text('You are also logging to Impact'),
-                                        duration: Duration(seconds: 2),
+                                        content: Row(
+                                          children: [
+                                            Icon(MdiIcons.informationOutline,
+                                              color: Colors.white,
+                                            ),
+                                            SizedBox(width: 10,),
+                                            Text('You are also logging to Impact'),
+                                          ],
+                                        ),
+                                        duration: Duration(seconds: 4),
                                       )
                                     );
                                     Future.delayed(
-                                        const Duration(milliseconds: 2500),
-                                        () => Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                      const Duration(seconds: 3), () => {
+                                        _buttonState(),
+                                    
+                                        Navigator.of(context).pushReplacement(MaterialPageRoute(
                                                 builder: (context) => HomePage()))
+                                      }
                                     );
                                   }
                                 }
@@ -260,11 +296,13 @@ class _LoginState extends State<Login> {
                                   const Color(0xFF607D8B)
                                 )
                               ),
-                              child: Text('LOGIN',
-                                style: GoogleFonts.montserrat(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              child: (isLoading)
+                                ? CircularProgressIndicator(color: Colors.white,)
+                                : Text('LOGIN',
+                                    style: GoogleFonts.montserrat(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                             ),
                           ),
                           SizedBox(height: 10),
@@ -275,9 +313,11 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
+            
           ),
         ],
       ),
     );
   }
 }
+

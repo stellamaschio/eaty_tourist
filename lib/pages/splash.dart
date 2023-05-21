@@ -61,7 +61,7 @@ class Splash extends StatelessWidget{
               ),
             ),
             CircularProgressIndicator(
-              strokeWidth: 4,
+              strokeWidth: 5,
               valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF607D8B)),
             ),
           ],

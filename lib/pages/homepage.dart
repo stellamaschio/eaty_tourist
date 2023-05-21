@@ -1,5 +1,7 @@
 import 'package:eaty_tourist/pages/login/login_ob.dart';
 import 'package:eaty_tourist/pages/profile.dart';
+import 'package:eaty_tourist/pages/splash.dart';
+import 'package:eaty_tourist/pages/splash_out.dart';
 import 'package:eaty_tourist/pages/statistics.dart';
 import 'package:eaty_tourist/pages/map.dart';
 import 'package:eaty_tourist/utils/shared_preferences.dart';
@@ -127,16 +129,16 @@ class _HomePageState extends State<HomePage> {
       ),
       body:selectPage(_selIdx),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color(0xA9B7F4D6),
-        selectedItemColor: Color(0xA31DA7DD),
-        unselectedItemColor: Color(0xFF607D8B),
+        backgroundColor: Color(0xFF607D8B),
+        selectedItemColor: Color(0xA969F0AF),
+        unselectedItemColor: Colors.white,
         selectedLabelStyle: GoogleFonts.montserrat(
-          color: Color(0xFF607D8B),
+          color: Colors.white,
           fontWeight: FontWeight.w600,
           fontSize: 18,
         ),
         unselectedLabelStyle: GoogleFonts.montserrat(
-          color: Color(0xFF607D8B),
+          color: Colors.white,
           fontWeight: FontWeight.w600,
           fontSize: 18,
         ),
@@ -166,6 +168,6 @@ class _HomePageState extends State<HomePage> {
     //Pop the drawer first 
     Navigator.pop(context);
     //Then pop the HomePage
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SplashOut()));
   }
 }
