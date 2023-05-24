@@ -1,4 +1,3 @@
-import 'package:eaty_tourist/pages/homepage.dart';
 import 'package:eaty_tourist/pages/splash.dart';
 import 'package:eaty_tourist/services/impact.dart';
 import 'package:eaty_tourist/utils/shared_preferences.dart';

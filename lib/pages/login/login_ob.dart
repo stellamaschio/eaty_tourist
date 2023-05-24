@@ -251,6 +251,7 @@ class _LoginState extends State<Login> {
                                     );
                                   }
                                   else{
+                                    await Provider.of<ImpactService>(context, listen: false).getPatient();
                                     ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
                                         backgroundColor: Colors.blueAccent,

@@ -61,6 +61,6 @@ class Preferences {
   String? get password => _getFromDisk('password');
   set password(String? newpassword) => _saveToDisk("password", newpassword);
 
-  //String? get purpleAirXApiKey => _getFromDisk('purpleAirXApiKey');
-  //set purpleAirXApiKey(String? newpurpleAirXApiKey) => _saveToDisk("purpleAirXApiKey", newpurpleAirXApiKey);
+  String? get impactUsername => _getFromDisk('impactUsername');
+  set impactUsername(String? newImpactUsername) => _saveToDisk("impactUsername", newImpactUsername);
 }

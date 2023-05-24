@@ -1,11 +1,17 @@
+import 'package:eaty_tourist/models/db.dart';
 import 'package:eaty_tourist/services/server_strings.dart';
+import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:dio/dio.dart';
 import 'package:eaty_tourist/services/server_strings.dart';
 import 'package:eaty_tourist/utils/shared_preferences.dart';
 
 class ImpactService {
-  ImpactService(this.prefs);
+  
+  ImpactService(this.prefs) {
+    updateBearer();   //(attributo di dio) permette di salvare il token
+  }
+  
   Preferences prefs;
 
   final Dio _dio = Dio(BaseOptions(baseUrl: ServerStrings.backendBaseUrl));
@@ -95,5 +101,99 @@ class ImpactService {
       print(e);
       return false;
     }
+  }
+
+  Future<bool> refreshTokens() async {
+    String? refToken = await retrieveSavedToken(true);
+    try {
+      Response response = await _dio.post(
+          '${ServerStrings.authServerUrl}refresh/',
+          data: {'refresh': refToken},
+          options: Options(
+              contentType: 'application/json',
+              followRedirects: false,
+              validateStatus: (status) => true,
+              headers: {"Accept": "application/json"}));
+
+      if (ImpactService.checkToken(response.data['access']) &&
+          ImpactService.checkToken(response.data['refresh'])) {
+        prefs.impactRefreshToken = response.data['refresh'];
+        prefs.impactAccessToken = response.data['access'];
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<void> updateBearer() async {
+    if (!await checkSavedToken()) {
+      await refreshTokens();
+    }
+    String? token = await prefs.impactAccessToken;
+    if (token != null) {
+      _dio.options.headers = {'Authorization': 'Bearer $token'};
+    }
+  }
+
+  Future<void> getPatient() async {
+    await updateBearer();
+    Response r = await _dio.get('study/v1/patients/active');
+    prefs.impactUsername = r.data['data'][0]['username'];
+    return r.data['data'][0]['username'];
+  }
+
+  Future<List<HR>> getDataHRFromDay(DateTime startTime) async {
+    await updateBearer();
+    Response r = await _dio.get(
+        'data/v1/heart_rate/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
+    List<dynamic> data = r.data['data'];
+    List<HR> hr = [];
+    for (var daydata in data) {
+      String day = daydata['date'];
+      for (var dataday in daydata['data']) {
+        String hour = dataday['time'];
+        String datetime = '${day}T$hour';
+        DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
+        HR hrnew = HR(timestamp: timestamp, value: dataday['value']);
+        if (!hr.any((e) => e.timestamp.isAtSameMomentAs(hrnew.timestamp))) {
+          hr.add(hrnew);
+        }
+      }
+    }
+    var hrlist = hr.toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    return hrlist;
+  }
+
+  Future<List<Calories>> getDataCaloriesFromDay(DateTime startTime) async {
+    await updateBearer();
+    Response r = await _dio.get(
+        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
+    List<dynamic> data = r.data['data'];
+    List<Calories> cal = [];
+    for (var daydata in data) {
+      String day = daydata['date'];
+      for (var dataday in daydata['data']) {
+        String hour = dataday['time'];
+        String datetime = '${day}T$hour';
+        DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
+        Calories calnew = Calories(timestamp: timestamp, value: dataday['value']);
+        if (!cal.any((e) => e.timestamp.isAtSameMomentAs(calnew.timestamp))) {
+          cal.add(calnew);
+        }
+      }
+    }
+    var callist = cal.toList()
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    return callist;
+  }
+
+  DateTime _truncateSeconds(DateTime input) {
+    return DateTime(
+        input.year, input.month, input.day, input.hour, input.minute);
   }
 }
