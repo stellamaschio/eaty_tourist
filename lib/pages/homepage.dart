@@ -32,11 +32,11 @@ class _HomePageState extends State<HomePage> {
   Widget selectPage(int index){
     switch(index){
       case 0:
-        return Map();
+        return ProcessTimelinePage();
       case 1: 
         return Statistics();
       default: 
-        return Map();
+        return ProcessTimelinePage();
     }
   }
 

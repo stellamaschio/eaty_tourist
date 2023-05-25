@@ -45,6 +45,9 @@ dependencies:
   dio: ^5.0.0
   jwt_decoder: ^2.0.1
 
+  # Timelines
+  timelines: ^0.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
