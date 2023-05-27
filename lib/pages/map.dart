@@ -28,10 +28,12 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Timeline.tileBuilder(
+    return Column(
+      children: [
+        SizedBox(
+          height: 100,
+          child: Timeline.tileBuilder(
+            shrinkWrap: true,
             theme: TimelineThemeData(
               direction: Axis.horizontal,
               connectorTheme: ConnectorThemeData(
@@ -87,7 +89,7 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
                 } else {
                   color = todoColor;
                 }
-
+        
                 if (index <= _processIndex) {
                   return Stack(
                     children: [
@@ -160,17 +162,17 @@ class _ProcessTimelinePageState extends State<ProcessTimelinePage> {
               itemCount: _processes.length,
             ),
           ),
-          FloatingActionButton(
-            child: Icon(Icons.abc_outlined),
-            onPressed: () {
-              setState(() {
-                _processIndex = (_processIndex + 1) % _processes.length;
-              });
-            },
-            backgroundColor: inProgressColor,
-          ),
-        ],
-      ),
+        ),
+        FloatingActionButton(
+          child: Icon(Icons.abc),
+          onPressed: () {
+            setState(() {
+              _processIndex = (_processIndex + 1) % _processes.length;
+            });
+          },
+          backgroundColor: inProgressColor,
+        ),
+      ],
     );
   }
 }
