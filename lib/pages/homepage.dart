@@ -1,3 +1,4 @@
+import 'package:eaty_tourist/models/db.dart';
 import 'package:eaty_tourist/pages/login/login_ob.dart';
 import 'package:eaty_tourist/pages/profile.dart';
 import 'package:eaty_tourist/pages/splash.dart';
@@ -44,7 +45,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context){
     return ChangeNotifierProvider<HomeProvider>(
       create: (context) => HomeProvider(
-          Provider.of<ImpactService>(context, listen: false)),
+        Provider.of<ImpactService>(context, listen: false),
+        Provider.of<AppDatabase>(context, listen: false)
+      ),
+      lazy: false,
       builder: (context, child) => Scaffold(
         drawer: Drawer(
           child: ListView(
