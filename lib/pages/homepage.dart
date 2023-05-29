@@ -1,4 +1,5 @@
 import 'package:eaty_tourist/models/db.dart';
+import 'package:eaty_tourist/pages/information/foodAndRestaurants.dart';
 import 'package:eaty_tourist/pages/login/login_ob.dart';
 import 'package:eaty_tourist/pages/profile.dart';
 import 'package:eaty_tourist/pages/splash.dart';
@@ -77,7 +78,10 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 15,
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => FoodAndRestaurant()));
+                },
               ),
               ListTile(
                 leading: Icon(MdiIcons.bankOutline),
