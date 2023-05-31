@@ -3,7 +3,7 @@ import 'package:eaty_tourist/pages/profile.dart';
 import 'package:eaty_tourist/pages/splash.dart';
 import 'package:eaty_tourist/pages/splash_out.dart';
 import 'package:eaty_tourist/pages/statistics.dart';
-import 'package:eaty_tourist/pages/map.dart';
+import 'package:eaty_tourist/pages/home.dart';
 import 'package:eaty_tourist/providers/home_provider.dart';
 import 'package:eaty_tourist/services/impact.dart';
 import 'package:eaty_tourist/utils/shared_preferences.dart';
@@ -32,11 +32,11 @@ class _HomePageState extends State<HomePage> {
   Widget selectPage(int index){
     switch(index){
       case 0:
-        return ProcessTimelinePage();
+        return Home();
       case 1: 
         return Statistics();
       default: 
-        return ProcessTimelinePage();
+        return Home();
     }
   }
 
