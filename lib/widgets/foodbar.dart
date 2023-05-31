@@ -1,21 +1,36 @@
+import 'package:eaty_tourist/models/foods.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:vector_math/vector_math.dart';
 
-class foodbar extends CustomPainter {
+class Foodbar extends CustomPainter {
 
   //Costruttore della classe
-  const foodbar(
+  Foodbar(
       {required this.backColor,
       required this.frontColor,
+      required this.lastColor,
       required this.strokeWidth,
       required this.value,
-      required this.nfoods});
+      });
 
   //Variabili della classe
-  final Color backColor, frontColor;
+  final Color backColor, frontColor, lastColor;
   final double strokeWidth, value;
-  final int nfoods;
+
+  //Lista dei Foods
+  final List<Foods> foodList = [
+    const Foods(name: 'crackers', calories: 130, index: 1),
+    const Foods(name: 'pasta', calories: 400, index: 2),
+    const Foods(name: 'pizza', calories: 700, index: 3),
+  ];
+
+  //Numero di cibi
+  late int nfoods = foodList.length;
+
+  final uncompletedPaint = Paint();
+  final completedPaint = Paint();
+  final lastPaint = Paint();
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -24,27 +39,45 @@ class foodbar extends CustomPainter {
     //Valori dipartenza e fine delle linee
     //NOTA: Widget all'interno di una sized box centrata e larga 200
     const double start = 0;
-    const double end = 200;
+    double end = 500;
+    double scale = foodList.last.calories/end;
 
-    final uncompletedPaint = Paint()
+    uncompletedPaint
       ..strokeWidth = strokeWidth
       ..color = backColor
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
-    final completedPaint = Paint()
+    completedPaint
       ..strokeWidth = strokeWidth
       ..color = frontColor
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    lastPaint
+      ..strokeWidth = 10
+      ..color = lastColor
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     final r = Rect.fromCenter(center: Offset(w / 2, h / 2), width: w, height: h);
 
     //Linee della barra non completata e completata
-    canvas.drawLine(Offset(start, h / 2), Offset(end, h / 2), uncompletedPaint); //Gli argomenti sono coordinate partenza, fine, e paint
-    canvas.drawLine(Offset(start, h / 2), Offset(start + value, h / 2), completedPaint);
+    canvas.drawLine(Offset(start, start), Offset(start, end), uncompletedPaint); //Gli argomenti sono coordinate partenza, fine, e paint
+    canvas.drawLine(Offset(start, end), Offset(start, end - value/scale), completedPaint);
 
     //Ciclo for per disegnare i pallini della barra
+    canvas.drawCircle(Offset(start, end), 5, _selectPaint(value, 0));
     for (int i = 0; i < nfoods; i++) {
-      canvas.drawCircle(Offset(start + (i*(end-start))/(nfoods-1), h / 2), 2, uncompletedPaint);
+      canvas.drawCircle(Offset(start, end - foodList[i].calories/scale), 5, _selectPaint(value, i));
+    }
+    canvas.drawCircle(Offset(start, end - value/scale), 0.5, lastPaint);
+  }
+
+  Paint _selectPaint(double value, int foodIndex) {
+
+    if(value >= foodList[foodIndex].calories) {
+      return completedPaint;
+    }
+    else {
+      return uncompletedPaint;
     }
   }
 
