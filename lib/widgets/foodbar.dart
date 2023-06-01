@@ -2,6 +2,8 @@ import 'package:eaty_tourist/models/foods.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:vector_math/vector_math.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 
 class Foodbar extends CustomPainter {
 
@@ -11,20 +13,18 @@ class Foodbar extends CustomPainter {
       required this.frontColor,
       required this.lastColor,
       required this.strokeWidth,
+      required this.upBar,
+      required this.downBar,
+      required this.scale,
+      required this.foodList,
       required this.value,
       }
   );
 
   //Variabili della classe
   final Color backColor, frontColor, lastColor;
-  final double strokeWidth, value;
-
-  //Lista dei Foods
-  final List<Foods> foodList = [
-    const Foods(name: 'crackers', calories: 130, index: 1),
-    const Foods(name: 'pasta', calories: 400, index: 2),
-    const Foods(name: 'pizza', calories: 700, index: 3),
-  ];
+  final double strokeWidth, value, scale, upBar, downBar;
+  final List<Foods> foodList;
 
   //Numero di cibi
   late int nfoods = foodList.length;
@@ -38,12 +38,6 @@ class Foodbar extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width, h = size.height;
-
-    //Valori dipartenza e fine delle linee
-    //NOTA: Widget all'interno di una sized box definita in home
-    const double upBar = 0;
-    double downBar = 500;
-    double scale = foodList.last.calories/downBar;
 
     uncompletedPaint
       ..strokeWidth = strokeWidth
