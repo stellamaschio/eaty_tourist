@@ -3,7 +3,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:eaty_tourist/widgets/foodbar.dart';
 
 //Valore per provare il progresso della barra (max 200)
-const double calories = 350;
+const double calories = 400;
 
 class Home extends StatelessWidget {
   static const route = '/home/';
