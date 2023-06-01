@@ -1,5 +1,6 @@
 import 'package:eaty_tourist/models/foods.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 // ignore: depend_on_referenced_packages
 
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -67,10 +68,13 @@ class Foodbar extends CustomPainter {
 
       //Testo di ogni pallino
       final icon = foodList[i].icon;
-      const double fontsize = 30;
+      const double fontsize = 40;
+      final textCal = foodList[i].calories.toInt();
+      final food = foodList[i].name;
 
-      TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
-      textPainter.text = TextSpan(
+      //display food icons
+      TextPainter iconPainter = TextPainter(textDirection: TextDirection.ltr);
+      iconPainter.text = TextSpan(
         text: String.fromCharCode(icon.codePoint),
         style: TextStyle(
           color: _selectColor(value, i),
@@ -79,12 +83,91 @@ class Foodbar extends CustomPainter {
           package: icon.fontPackage, // This line is mandatory for external icon packs
         ),
       );
+      iconPainter.layout();
+      iconPainter.paint(canvas, Offset(0 - 70, downBar - foodList[i].calories/scale - fontsize/2));
+
+      //display text icon (calories)
+      TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr,
+        text: TextSpan(
+            text: '$textCal cal',
+            style: GoogleFonts.montserrat(
+              color: Colors.grey.shade600,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+      );
       textPainter.layout();
-      textPainter.paint(canvas, Offset(0 - 70, downBar - foodList[i].calories/scale - fontsize/2));
+      textPainter.paint(canvas, Offset(0 - 80, (downBar - foodList[i].calories/scale - fontsize/2)+40));
+    
+      // display food name
+      TextPainter foodPainter = TextPainter(textDirection: TextDirection.ltr,
+        text: TextSpan(
+            text: food,
+            style: GoogleFonts.montserrat(
+              color: Colors.grey.shade600,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+      );
+      foodPainter.layout();
+      foodPainter.paint(canvas, Offset(0 + 30, (downBar - foodList[i].calories/scale - fontsize/2)+10));
+    
     }
+
+    final IconData indicator = MdiIcons.arrowLeftThick;
+    const double fsize = 40;
+    
+    // display arrow icon
+    TextPainter indicatorPainter = TextPainter(textDirection: TextDirection.ltr);
+      indicatorPainter.text = TextSpan(
+        text: String.fromCharCode(indicator.codePoint),
+        style: TextStyle(
+          color: Color(0xA969F0AF),
+          fontSize: fsize,
+          fontFamily: indicator.fontFamily,
+          package: indicator.fontPackage, // This line is mandatory for external icon packs
+        ),
+      );
+      indicatorPainter.layout();
+      indicatorPainter.paint(canvas, Offset(0 + 30, (downBar - value/scale)-20));
+
+    final IconData minind = MdiIcons.minusThick;
+
+    // display arrow icon
+    TextPainter minusPainter = TextPainter(textDirection: TextDirection.ltr);
+      minusPainter.text = TextSpan(
+        text: String.fromCharCode(minind.codePoint),
+        style: TextStyle(
+          color: Color(0xA969F0AF),
+          fontSize: fsize,
+          fontFamily: minind.fontFamily,
+          package: minind.fontPackage, // This line is mandatory for external icon packs
+        ),
+      );
+      minusPainter.layout();
+      minusPainter.paint(canvas, Offset(0 + 57, (downBar - value/scale)-20));
+
+    final cal = value.toInt().toString();
+
+    // display calories
+    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr,
+        text: TextSpan(
+            text: '$cal cal',
+            style: GoogleFonts.montserrat(
+              color: Colors.grey.shade600,
+              fontSize: 38,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, Offset(0 + 120, (downBar - value/scale)-25));
 
     //Indicatore del progresso attuale della barra
     canvas.drawCircle(Offset(0, downBar - value/scale), 0.5, indicatorPaint);
+
   }
 
   //Metodo per selzionare la giusta paint per i pallini degli obiettivi (foods)
@@ -100,10 +183,10 @@ class Foodbar extends CustomPainter {
   //Metodo per selzionare la giusta paint per i pallini degli obiettivi (foods)
   Color _selectColor(double value, int foodIndex) {
     if(value >= foodList[foodIndex].calories) {
-      return Colors.black;
+      return Color(0xFF607D8B);
     }
     else {
-      return Colors.grey;
+      return Color(0xA969F0AF);
     }
   }
 

@@ -4,7 +4,7 @@ import 'package:eaty_tourist/widgets/foodbar.dart';
 import 'package:eaty_tourist/models/foods.dart';
 
 //Valore per provare il progresso della barra (max 200)
-const double calories = 400;
+const double calories = 500;
 
 //Valori dipartenza e fine delle linee
 //NOTA: Widget all'interno di una sized box definita in home
@@ -14,9 +14,9 @@ double scale = foodList.last.calories / (downBar-upBar);
 
 //Lista dei Foods
 final List<Foods> foodList = [
-  const Foods(name: 'crackers', calories: 130, index: 1, icon: MdiIcons.baguette),
-  const Foods(name: 'pasta', calories: 400, index: 2, icon: MdiIcons.pasta),
-  const Foods(name: 'pizza', calories: 700, index: 3, icon: MdiIcons.pizza),
+  const Foods(name: 'CRACKERS', calories: 130, index: 1, icon: MdiIcons.baguette),
+  const Foods(name: 'PASTA', calories: 400, index: 2, icon: MdiIcons.pasta),
+  const Foods(name: 'PIZZA', calories: 700, index: 3, icon: MdiIcons.pizza),
 ];
 
 class Home extends StatelessWidget {
