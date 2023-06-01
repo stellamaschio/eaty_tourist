@@ -1,7 +1,7 @@
 import 'package:eaty_tourist/models/foods.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
-import 'package:vector_math/vector_math.dart';
+
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 
@@ -64,7 +64,25 @@ class Foodbar extends CustomPainter {
     //Ciclo for per disegnare i pallini della barra
     for (int i = 0; i < nfoods; i++) {
       canvas.drawCircle(Offset(0, downBar - foodList[i].calories/scale), 5, _selectPaint(value, i));
+
+      //Testo di ogni pallino
+      final icon = foodList[i].icon;
+      const double fontsize = 30;
+
+      TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+      textPainter.text = TextSpan(
+        text: String.fromCharCode(icon.codePoint),
+        style: TextStyle(
+          color: _selectColor(value, i),
+          fontSize: fontsize,
+          fontFamily: icon.fontFamily,
+          package: icon.fontPackage, // This line is mandatory for external icon packs
+        ),
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, Offset(0 - 70, downBar - foodList[i].calories/scale - fontsize/2));
     }
+
     //Indicatore del progresso attuale della barra
     canvas.drawCircle(Offset(0, downBar - value/scale), 0.5, indicatorPaint);
   }
@@ -76,6 +94,16 @@ class Foodbar extends CustomPainter {
     }
     else {
       return uncompletedPaint;
+    }
+  }
+   
+  //Metodo per selzionare la giusta paint per i pallini degli obiettivi (foods)
+  Color _selectColor(double value, int foodIndex) {
+    if(value >= foodList[foodIndex].calories) {
+      return Colors.black;
+    }
+    else {
+      return Colors.grey;
     }
   }
 

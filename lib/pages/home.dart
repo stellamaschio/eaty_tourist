@@ -9,13 +9,12 @@ const double calories = 400;
 //Valori dipartenza e fine delle linee
 //NOTA: Widget all'interno di una sized box definita in home
 const double upBar = 0;
-double downBar = 500;
-double scale = foodList.last.calories / downBar;
+const double downBar = 600;
+double scale = foodList.last.calories / (downBar-upBar);
 
 //Lista dei Foods
 final List<Foods> foodList = [
-  const Foods(
-      name: 'crackers', calories: 130, index: 1, icon: MdiIcons.baguette),
+  const Foods(name: 'crackers', calories: 130, index: 1, icon: MdiIcons.baguette),
   const Foods(name: 'pasta', calories: 400, index: 2, icon: MdiIcons.pasta),
   const Foods(name: 'pizza', calories: 700, index: 3, icon: MdiIcons.pizza),
 ];
@@ -34,32 +33,19 @@ class Home extends StatelessWidget {
         alignment: Alignment.center,
         child: SizedBox(
           width: 200,
-          height: 500,
-          child: Row(
-            children: [
-              Column(
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        MdiIcons.accountCircle,
-                      )),
-                ],
-              ),
-              CustomPaint(
-                painter: Foodbar(
-                  backColor: Color(0xA969F0AF),
-                  frontColor: Color(0xFF607D8B),
-                  lastColor: Colors.white,
-                  strokeWidth: 15,
-                  upBar: upBar,
-                  downBar: downBar,
-                  scale: scale,
-                  foodList: foodList,
-                  value: calories,
-                ),
-              ),
-            ],
+          height: 600,
+          child: CustomPaint(
+            painter: Foodbar(
+              backColor: Color(0xA969F0AF),
+              frontColor: Color(0xFF607D8B),
+              lastColor: Colors.white,
+              strokeWidth: 15,
+              upBar: upBar,
+              downBar: downBar,
+              scale: scale,
+              foodList: foodList,
+              value: calories,
+            ),
           ),
         ),
       ),
