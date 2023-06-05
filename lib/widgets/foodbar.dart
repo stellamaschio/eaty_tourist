@@ -118,52 +118,6 @@ class Foodbar extends CustomPainter {
 
     final IconData indicator = MdiIcons.arrowLeftThick;
     const double fsize = 40;
-    
-    // display arrow icon
-    TextPainter indicatorPainter = TextPainter(textDirection: TextDirection.ltr);
-      indicatorPainter.text = TextSpan(
-        text: String.fromCharCode(indicator.codePoint),
-        style: TextStyle(
-          color: Color(0xA969F0AF),
-          fontSize: fsize,
-          fontFamily: indicator.fontFamily,
-          package: indicator.fontPackage, // This line is mandatory for external icon packs
-        ),
-      );
-      indicatorPainter.layout();
-      indicatorPainter.paint(canvas, Offset(0 + 30, (downBar - value/scale)-20));
-
-    final IconData minind = MdiIcons.minusThick;
-
-    // display arrow icon
-    TextPainter minusPainter = TextPainter(textDirection: TextDirection.ltr);
-      minusPainter.text = TextSpan(
-        text: String.fromCharCode(minind.codePoint),
-        style: TextStyle(
-          color: Color(0xA969F0AF),
-          fontSize: fsize,
-          fontFamily: minind.fontFamily,
-          package: minind.fontPackage, // This line is mandatory for external icon packs
-        ),
-      );
-      minusPainter.layout();
-      minusPainter.paint(canvas, Offset(0 + 57, (downBar - value/scale)-20));
-
-    final cal = value.toInt().toString();
-
-    // display calories
-    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr,
-        text: TextSpan(
-            text: '$cal cal',
-            style: GoogleFonts.montserrat(
-              color: Colors.grey.shade600,
-              fontSize: 38,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-      );
-      textPainter.layout();
-      textPainter.paint(canvas, Offset(0 + 120, (downBar - value/scale)-25));
 
     //Indicatore del progresso attuale della barra
     canvas.drawCircle(Offset(0, downBar - value/scale), 0.5, indicatorPaint);
