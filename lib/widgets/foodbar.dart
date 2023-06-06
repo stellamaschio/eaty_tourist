@@ -61,7 +61,7 @@ class Foodbar extends CustomPainter {
     canvas.drawLine(Offset(0, downBar), Offset(0, downBar - value/scale), completedPaint);
 
     //Pallino all'inizio della barra
-    canvas.drawCircle(Offset(0, downBar), 5, _selectPaint(value, 0));
+    canvas.drawCircle(Offset(0, downBar), 5, _paintFirstDot(value));
     //Ciclo for per disegnare i pallini della barra
     for (int i = 0; i < nfoods; i++) {
       canvas.drawCircle(Offset(0, downBar - foodList[i].calories/scale), 5, _selectPaint(value, i));
@@ -134,6 +134,15 @@ class Foodbar extends CustomPainter {
     }
   }
    
+  Paint _paintFirstDot(double value){
+    if(value>0){
+      return completedPaint;
+    }
+    else {
+      return uncompletedPaint;
+    }
+  }
+
   //Metodo per selzionare la giusta paint per i pallini degli obiettivi (foods)
   Color _selectColor(double value, int foodIndex) {
     if(value >= foodList[foodIndex].calories) {

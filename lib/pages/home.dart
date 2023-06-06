@@ -5,7 +5,7 @@ import 'package:eaty_tourist/widgets/foodbar.dart';
 import 'package:eaty_tourist/models/foods.dart';
 
 //Valore per provare il progresso della barra (max 200)
-const double calories = 199;
+const double calories = 300;
 int cal = calories.toInt();
 
 //Valori dipartenza e fine delle linee
@@ -25,11 +25,26 @@ final List<Foods> foodList = [
   const Foods(name: 'PIZZA', calories: 700, index: 7, icon: MdiIcons.pizza),
 ];
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   static const route = '/home/';
   static const routeDisplayName = 'HomePage';
 
-  const Home({Key? key}) : super(key: key);
+  Home({Key? key}) : super(key: key);
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+
+  //start is true because we are ready to start
+  bool start = true;
+
+  void _buttonState(){
+    setState(() {
+      start = !start;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +53,8 @@ class Home extends StatelessWidget {
       body: Align(
         alignment: Alignment.center,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(115, 100, 0, 0),
+          // foodbar padding
+          padding: EdgeInsets.fromLTRB(110, 100, 0, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,8 +72,9 @@ class Home extends StatelessWidget {
                   value: calories,
                 ),
               ),
+              // info padding
               Padding(
-                padding: const EdgeInsets.fromLTRB(120, 0, 0, 0),
+                padding: const EdgeInsets.fromLTRB(110, 0, 0, 0),
                 child: Column(
                   children: [
                     Container(
@@ -68,8 +85,19 @@ class Home extends StatelessWidget {
                       child: Row(
                         children: [
                           SizedBox(width: 10,),
+                          //info column
                           Column(
                             children: [
+                              SizedBox(height: 10,),
+                              Text(
+                                'Burned calories:',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 5,),
                               Text(
                                 '$cal cal',
                                 style: GoogleFonts.montserrat(
@@ -78,32 +106,88 @@ class Home extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              SizedBox(height: 30,),
                               Text(
-                                '$cal cal',
+                                'You unlocked',
                                 style: GoogleFonts.montserrat(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 38,
+                                  color: Color(0xFF607D8B),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                              SizedBox(height: 5,),
+                              // unlocked food name
+                              Text(_foodUnlockedName(_foodUnlockedIndex(calories, foodList),foodList),
+                                style: GoogleFonts.montserrat(
+                                  color: Color(0xFF607D8B),
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              //unlocked food button
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shadowColor: Color(0xFF607D8B),
+                                    elevation: 6,
+                                    backgroundColor: Colors.cyan.shade200,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                  ),
+                                  onPressed: () {
+                                    /*
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => InfoPollutants(),
+                                    ));*/
+                                  },
+                                  child: Icon(
+                                    _foodUnlokedIcon(
+                                      _foodUnlockedIndex(calories, foodList),foodList),
+                                    size: 35,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 10,),
                             ],
                           ),
                           SizedBox(width: 10,),
                         ],
                       ),
                     ),
+                    // start botton padding
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 480, 0, 0),
-                      child: ElevatedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: CircleBorder(),
-                          padding: EdgeInsets.all(18),
-                        ),
-                        onPressed: () {},
-                        child: Icon(
-                          MdiIcons.runFast,
-                          size: 35,
+                      padding: const EdgeInsets.fromLTRB(0, 270, 0, 0),
+                      child: Column(
+                        children: [
+                          ElevatedButton(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.amberAccent.shade400,
+                              shape: CircleBorder(),
+                              padding: EdgeInsets.all(18),
+                            ),
+                            onPressed: () {
+                              _buttonState();
+                            },
+                            child: (start)
+                              ? Icon(MdiIcons.runFast, size: 35,)
+                              : Icon(MdiIcons.stop, size: 35,),
                           ),
+                          SizedBox(height: 10,),
+                          Text(
+                            (start)
+                            ? '   START\nACTIVITY'
+                            : '   STOP\nACTIVITY',
+                            style: GoogleFonts.montserrat(
+                              color: Color(0xFF607D8B),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   ],
@@ -114,5 +198,35 @@ class Home extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  int _foodUnlockedIndex(double value, List<Foods> list){
+    if(value<list.first.calories){
+      // no unlocked food
+      return -1;
+    }
+    // unlocked food!
+    var result = list.takeWhile((x) => x.calories<=value);
+    int index = result.last.index-1;
+    return index;
+  }
+
+  IconData _foodUnlokedIcon(int index, List<Foods> list){
+    if(index<0){
+      return MdiIcons.foodOff;
+    }
+    else{
+      return list[index].icon;
+    }
+  }
+
+  String _foodUnlockedName(int index, List<Foods> list){
+    if(index<0){
+      return 'nothing';
+    }
+    else{
+      String foodname = list[index].name;
+      return '$foodname!';
+    }
   }
 }
