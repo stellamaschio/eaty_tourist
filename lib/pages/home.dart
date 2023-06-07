@@ -1,3 +1,11 @@
+import 'package:eaty_tourist/models/listFoods.dart';
+import 'package:eaty_tourist/pages/info/info_apple.dart';
+import 'package:eaty_tourist/pages/info/info_cake.dart';
+import 'package:eaty_tourist/pages/info/info_icecreams.dart';
+import 'package:eaty_tourist/pages/info/info_pasta.dart';
+import 'package:eaty_tourist/pages/info/info_pizza.dart';
+import 'package:eaty_tourist/pages/info/info_steak.dart';
+import 'package:eaty_tourist/pages/info/info_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -5,25 +13,17 @@ import 'package:eaty_tourist/widgets/foodbar.dart';
 import 'package:eaty_tourist/models/foods.dart';
 
 //Valore per provare il progresso della barra (max 200)
-const double calories = 300;
+const double calories = 400;
 int cal = calories.toInt();
 
 //Valori dipartenza e fine delle linee
 //NOTA: Widget all'interno di una sized box definita in home
 const double upBar = -25;
 const double downBar = 625;
-double scale = foodList.last.calories / (downBar - upBar);
 
-//Lista dei Foods
-final List<Foods> foodList = [
-  const Foods(name: 'APPLE', calories: 65, index: 1, icon: MdiIcons.foodApple),
-  const Foods(name: 'TOAST', calories: 150, index: 2, icon: MdiIcons.toaster),
-  const Foods(name: 'ICECREAM', calories: 247, index: 3, icon: MdiIcons.iceCream),
-  const Foods(name: 'PASTA', calories: 360, index: 4, icon: MdiIcons.pasta),
-  const Foods(name: 'CAKE', calories: 450, index: 5, icon: MdiIcons.cupcake),
-  const Foods(name: 'STEAK', calories: 630, index: 6, icon: MdiIcons.foodSteak),
-  const Foods(name: 'PIZZA', calories: 700, index: 7, icon: MdiIcons.pizza),
-];
+List<Foods> foodList = ListFoods.foodList;
+
+double scale = foodList.last.calories / (downBar - upBar);
 
 class Home extends StatefulWidget {
   static const route = '/home/';
@@ -139,14 +139,14 @@ class _HomeState extends State<Home> {
                                     padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
                                   ),
                                   onPressed: () {
-                                    /*
                                     Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => InfoPollutants(),
-                                    ));*/
+                                      builder: (context) => _selectPage(_foodUnlockedIndex(calories, foodList)),
+                                    ));
                                   },
                                   child: Icon(
                                     _foodUnlokedIcon(
-                                      _foodUnlockedIndex(calories, foodList),foodList),
+                                      _foodUnlockedIndex(calories, foodList),
+                                      foodList),
                                     size: 35,
                                   ),
                                 ),
@@ -227,6 +227,27 @@ class _HomeState extends State<Home> {
     else{
       String foodname = list[index].name;
       return '$foodname!';
+    }
+  }
+
+  Widget _selectPage(int index){
+    switch (index) {
+      case 0:
+        return Apple();
+      case 1:
+        return Toast();
+      case 2:
+        return Icecreams();
+      case 3:
+        return Pasta();
+      case 4:
+        return Cake();
+      case 5:
+        return Steak();
+      case 6:
+        return Pizza();
+      default:
+        return Pizza();
     }
   }
 }

@@ -1,4 +1,6 @@
 import 'package:eaty_tourist/models/db.dart';
+import 'package:eaty_tourist/models/foods.dart';
+import 'package:eaty_tourist/models/listFoods.dart';
 import 'package:eaty_tourist/pages/information/foodAndRestaurants.dart';
 import 'package:eaty_tourist/pages/login/login_ob.dart';
 import 'package:eaty_tourist/pages/profile.dart';
@@ -23,6 +25,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  List<Foods> foodList = ListFoods.foodList;
   int _selIdx = 0;
 
   void changePage(int index){
