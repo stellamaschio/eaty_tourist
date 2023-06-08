@@ -51,7 +51,7 @@ class Foodbar extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     indicatorPaint
-      ..strokeWidth = 10
+      ..strokeWidth = 8
       ..color = lastColor
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -61,14 +61,14 @@ class Foodbar extends CustomPainter {
     canvas.drawLine(Offset(0, downBar), Offset(0, downBar - value/scale), completedPaint);
 
     //Pallino all'inizio della barra
-    canvas.drawCircle(Offset(0, downBar), 5, _paintFirstDot(value));
+    canvas.drawCircle(Offset(0, downBar), 4, _paintFirstDot(value));
     //Ciclo for per disegnare i pallini della barra
     for (int i = 0; i < nfoods; i++) {
-      canvas.drawCircle(Offset(0, downBar - foodList[i].calories/scale), 5, _selectPaint(value, i));
+      canvas.drawCircle(Offset(0, downBar - foodList[i].calories/scale), 4, _selectPaint(value, i));
 
       //Testo di ogni pallino
       final icon = foodList[i].icon;
-      const double fontsize = 40;
+      const double fontsize = 37;
       final textCal = foodList[i].calories.toInt();
       final food = foodList[i].name;
 
@@ -84,7 +84,7 @@ class Foodbar extends CustomPainter {
         ),
       );
       iconPainter.layout();
-      iconPainter.paint(canvas, Offset(0 - 70, downBar - foodList[i].calories/scale - fontsize/2));
+      iconPainter.paint(canvas, Offset(0 - 65, downBar - foodList[i].calories/scale - fontsize/2));
 
       //display text icon (calories)
       TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr,
@@ -92,13 +92,13 @@ class Foodbar extends CustomPainter {
             text: '$textCal cal',
             style: GoogleFonts.montserrat(
               color: Colors.grey.shade600,
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
       );
       textPainter.layout();
-      textPainter.paint(canvas, Offset(0 - 80, (downBar - foodList[i].calories/scale - fontsize/2)+40));
+      textPainter.paint(canvas, Offset(0 - 75, (downBar - foodList[i].calories/scale - fontsize/2)+35));
     
       // display food name
       TextPainter foodPainter = TextPainter(textDirection: TextDirection.ltr,
@@ -106,18 +106,15 @@ class Foodbar extends CustomPainter {
             text: food,
             style: GoogleFonts.montserrat(
               color: Colors.grey.shade600,
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
       );
       foodPainter.layout();
-      foodPainter.paint(canvas, Offset(0 + 30, (downBar - foodList[i].calories/scale - fontsize/2)+10));
+      foodPainter.paint(canvas, Offset(0 + 25, (downBar - foodList[i].calories/scale - fontsize/2)+10));
     
     }
-
-    final IconData indicator = MdiIcons.arrowLeftThick;
-    const double fsize = 40;
 
     //Indicatore del progresso attuale della barra
     canvas.drawCircle(Offset(0, downBar - value/scale), 0.5, indicatorPaint);

@@ -18,8 +18,8 @@ int cal = calories.toInt();
 
 //Valori dipartenza e fine delle linee
 //NOTA: Widget all'interno di una sized box definita in home
-const double upBar = -25;
-const double downBar = 625;
+const double upBar = -40;
+const double downBar = 490;
 
 List<Foods> foodList = ListFoods.foodList;
 
@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
         alignment: Alignment.center,
         child: Padding(
           // foodbar padding
-          padding: EdgeInsets.fromLTRB(110, 100, 0, 0),
+          padding: EdgeInsets.fromLTRB(97, 100, 0, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
                   backColor: Color(0xA969F0AF),
                   frontColor: Color(0xFF607D8B),
                   lastColor: Colors.white,
-                  strokeWidth: 15,
+                  strokeWidth: 13,
                   upBar: upBar,
                   downBar: downBar,
                   scale: scale,
@@ -74,7 +74,7 @@ class _HomeState extends State<Home> {
               ),
               // info padding
               Padding(
-                padding: const EdgeInsets.fromLTRB(110, 0, 0, 0),
+                padding: const EdgeInsets.fromLTRB(90, 0, 0, 0),
                 child: Column(
                   children: [
                     Container(
@@ -93,41 +93,40 @@ class _HomeState extends State<Home> {
                                 'Burned calories:',
                                 style: GoogleFonts.montserrat(
                                   color: Colors.grey.shade600,
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 5,),
                               Text(
                                 '$cal cal',
                                 style: GoogleFonts.montserrat(
                                   color: Colors.grey.shade600,
-                                  fontSize: 38,
+                                  fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 30,),
+                              SizedBox(height: 25,),
                               Text(
                                 'You unlocked',
                                 style: GoogleFonts.montserrat(
                                   color: Color(0xFF607D8B),
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
-                              SizedBox(height: 5,),
+                              SizedBox(height: 3,),
                               // unlocked food name
                               Text(_foodUnlockedName(_foodUnlockedIndex(calories, foodList),foodList),
                                 style: GoogleFonts.montserrat(
                                   color: Color(0xFF607D8B),
-                                  fontSize: 20,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               //unlocked food button
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     shadowColor: Color(0xFF607D8B),
@@ -136,7 +135,7 @@ class _HomeState extends State<Home> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     ),
-                                    padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                    padding: EdgeInsets.fromLTRB(25, 7, 25, 7),
                                   ),
                                   onPressed: () {
                                     Navigator.of(context).push(MaterialPageRoute(
@@ -160,14 +159,14 @@ class _HomeState extends State<Home> {
                     ),
                     // start botton padding
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 270, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(0, 170, 0, 0),
                       child: Column(
                         children: [
                           ElevatedButton(
                             style: OutlinedButton.styleFrom(
                               backgroundColor: Colors.amberAccent.shade400,
                               shape: CircleBorder(),
-                              padding: EdgeInsets.all(18),
+                              padding: EdgeInsets.all(15),
                             ),
                             onPressed: () {
                               _buttonState();
@@ -183,7 +182,7 @@ class _HomeState extends State<Home> {
                             : '   STOP\nACTIVITY',
                             style: GoogleFonts.montserrat(
                               color: Color(0xFF607D8B),
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
