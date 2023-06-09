@@ -180,6 +180,7 @@ class ImpactService {
         String hour = dataday['time'];
         String datetime = '${day}T$hour';
         DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
+        int value = (dataday['value']).toInt();
         Calories calnew = Calories(null, dataday['value'], timestamp);
         if (!cal.any((e) => e.dateTime.isAtSameMomentAs(calnew.dateTime))) {
           cal.add(calnew);

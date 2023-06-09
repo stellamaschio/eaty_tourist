@@ -13,7 +13,7 @@ import 'package:eaty_tourist/widgets/foodbar.dart';
 import 'package:eaty_tourist/models/foods.dart';
 
 //Valore per provare il progresso della barra (max 200)
-const double calories = 400;
+const double calories = 361;
 int cal = calories.toInt();
 
 //Valori dipartenza e fine delle linee
@@ -74,7 +74,7 @@ class _HomeState extends State<Home> {
               ),
               // info padding
               Padding(
-                padding: const EdgeInsets.fromLTRB(90, 0, 0, 0),
+                padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
                 child: Column(
                   children: [
                     Container(
@@ -119,7 +119,7 @@ class _HomeState extends State<Home> {
                               // unlocked food name
                               Text(_foodUnlockedName(_foodUnlockedIndex(calories, foodList),foodList),
                                 style: GoogleFonts.montserrat(
-                                  color: Color(0xFF607D8B),
+                                  color: _colorUnloked(_foodUnlockedIndex(calories, foodList), foodList, calories),
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -226,6 +226,14 @@ class _HomeState extends State<Home> {
     else{
       String foodname = list[index].name;
       return '$foodname!';
+    }
+  }
+  Color _colorUnloked(int index, List<Foods> list, double value){
+    if(value == foodList[index].calories){
+      return Colors.yellowAccent;
+    }
+    else{
+      return Color(0xFF607D8B); 
     }
   }
 

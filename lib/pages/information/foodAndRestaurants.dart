@@ -17,14 +17,15 @@ class FoodAndRestaurant extends StatelessWidget {
   const FoodAndRestaurant({super.key});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(
           color: Color(0xFF607D8B),
         ),
         backgroundColor: const Color(0xA969F0AF),
-        title: Text('Food and Restaurants',
+        title: Text(
+          'Food and Restaurants',
           textAlign: TextAlign.center,
           style: GoogleFonts.montserrat(
             color: Color(0xFF607D8B),
@@ -33,80 +34,111 @@ class FoodAndRestaurant extends StatelessWidget {
           ),
         ),
       ),
-      body: ListView(
-        children: [
-          SizedBox(height: 10,),
-          _listDesign(0, context),
-          SizedBox(height: 10,),
-          _listDesign(1, context),
-          SizedBox(height: 10,),
-          _listDesign(2, context),
-          SizedBox(height: 10,),
-          _listDesign(3, context),
-          SizedBox(height: 10,),
-          _listDesign(4, context),
-          SizedBox(height: 10,),
-          _listDesign(5, context),
-          SizedBox(height: 10,),
-          _listDesign(6, context),
-        ]
-      ),
-
+      body: ListView(children: [
+        SizedBox(
+          height: 10,
+        ),
+        _listDesign(0, context),
+        SizedBox(
+          height: 10,
+        ),
+        _listDesign(1, context),
+        SizedBox(
+          height: 10,
+        ),
+        _listDesign(2, context),
+        SizedBox(
+          height: 10,
+        ),
+        _listDesign(3, context),
+        SizedBox(
+          height: 10,
+        ),
+        _listDesign(4, context),
+        SizedBox(
+          height: 10,
+        ),
+        _listDesign(5, context),
+        SizedBox(
+          height: 10,
+        ),
+        _listDesign(6, context),
+        SizedBox(
+          height: 15,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.ideographic,
+          children: [
+            SizedBox(width: 18,),
+            Icon(
+              MdiIcons.mapMarker,
+              color: Color(0xFF929497),
+            ),
+            Text('City: Padua, Italy',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                color: Color(0xFF929497),
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ],
+        ),
+      ]),
     );
   }
 
-  Widget _listDesign(int i, BuildContext context){
-      return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+  Widget _listDesign(int i, BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 5,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 10,
+      ),
+      child: ListTile(
+        leading: Icon(
+          foodList[i].icon,
+          color: Color(0xFF607D8B),
+          size: 30,
         ),
-        elevation: 5,
-        margin: EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
-        child: ListTile(
-          leading: Icon(
-            foodList[i].icon,
+        title: Text(
+          foodList[i].name,
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.bold,
             color: Color(0xFF607D8B),
-            size: 30,
+            fontSize: 18,
           ),
-          title: Text(
-            foodList[i].name,
-            style: GoogleFonts.montserrat(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF607D8B),
-              fontSize: 18,
-            ),
-          ),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => _selectPage(i),
-            ));
-          },
         ),
-      );
-    }
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => _selectPage(i),
+          ));
+        },
+      ),
+    );
   }
+}
 
-  Widget _selectPage(int index) {
-    switch (index) {
-      case 0:
-        return Apple();
-      case 1:
-        return Toast();
-      case 2:
-        return Icecreams();
-      case 3:
-        return Pasta();
-      case 4:
-        return Cake();
-      case 5:
-        return Steak();
-      case 6:
-        return Pizza();
-      default:
-        return Pizza();
-    }
-  
+Widget _selectPage(int index) {
+  switch (index) {
+    case 0:
+      return Apple();
+    case 1:
+      return Toast();
+    case 2:
+      return Icecreams();
+    case 3:
+      return Pasta();
+    case 4:
+      return Cake();
+    case 5:
+      return Steak();
+    case 6:
+      return Pizza();
+    default:
+      return Pizza();
+  }
 }
