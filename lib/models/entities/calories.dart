@@ -8,7 +8,7 @@ class Calories {
   @PrimaryKey(autoGenerate: true)
   final int? id;
 
-  final int value;
+  final double value;
 
   final DateTime dateTime;
 

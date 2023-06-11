@@ -145,33 +145,10 @@ class ImpactService {
     return r.data['data'][0]['username'];
   }
 
-  Future<List<HR>> getDataHRFromDay(DateTime startTime) async {
+  Future<List<Calories>> getDataCalories(DateTime startTime, DateTime endTime) async {
     await updateBearer();
     Response r = await _dio.get(
-        'data/v1/heart_rate/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
-    List<dynamic> data = r.data['data'];
-    List<HR> hr = [];
-    for (var daydata in data) {
-      String day = daydata['date'];
-      for (var dataday in daydata['data']) {
-        String hour = dataday['time'];
-        String datetime = '${day}T$hour';
-        DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
-        HR hrnew = HR(null, dataday['value'], timestamp);
-        if (!hr.any((e) => e.dateTime.isAtSameMomentAs(hrnew.dateTime))) {
-          hr.add(hrnew);
-        }
-      }
-    }
-    var hrlist = hr.toList()
-      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
-    return hrlist;
-  }
-
-  Future<List<Calories>> getDataCaloriesFromDay(DateTime startTime) async {
-    await updateBearer();
-    Response r = await _dio.get(
-        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
+        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(endTime)}/');
     List<dynamic> data = r.data['data'];
     List<Calories> cal = [];
     for (var daydata in data) {
@@ -180,7 +157,6 @@ class ImpactService {
         String hour = dataday['time'];
         String datetime = '${day}T$hour';
         DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
-        int value = (dataday['value']).toInt();
         Calories calnew = Calories(null, dataday['value'], timestamp);
         if (!cal.any((e) => e.dateTime.isAtSameMomentAs(calnew.dateTime))) {
           cal.add(calnew);

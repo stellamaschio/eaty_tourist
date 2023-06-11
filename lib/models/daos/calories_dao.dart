@@ -6,11 +6,11 @@ import 'package:eaty_tourist/models/entities/entities.dart';
 @dao
 abstract class CaloriesDao {
   //Query #0: SELECT -> this allows to obtain all the entries of the Calories table of a certain date
-  @Query('SELECT * FROM HR WHERE dateTime between :startTime and :endTime ORDER BY dateTime ASC')
-  Future<List<Calories>> findCaloriesbyDate(DateTime startTime, DateTime endTime);
+  @Query('SELECT * FROM Calories WHERE dateTime between :startTime and :endTime ORDER BY dateTime ASC')
+  Future<List<Calories>> findCaloriesbyTime(DateTime startTime, DateTime endTime);
 
   //Query #1: SELECT -> this allows to obtain all the entries of the Calories table
-  @Query('SELECT * FROM HR')
+  @Query('SELECT * FROM Calories')
   Future<List<Calories>> findAllCalories();
 
   //Query #2: INSERT -> this allows to add a Calories in the table

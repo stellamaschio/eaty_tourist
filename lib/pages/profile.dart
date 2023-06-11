@@ -46,8 +46,11 @@ class _Profile extends State<Profile> {
               SizedBox(
                 height: 20,
               ),
-              Image.asset('assets/avatar.png', scale: 1.5),
-              SizedBox(height: 50,),
+              Icon(MdiIcons.accountCircle,
+                color: Color(0xFF607D8B),
+                size: 110,
+              ),
+              SizedBox(height: 20,),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10, 
@@ -61,7 +64,7 @@ class _Profile extends State<Profile> {
                         color: Colors.grey.shade800,
                       ),
                     ),
-                    SizedBox(width: 50),
+                    SizedBox(width: 20),
                     Radio<Gender>(
                         value: Gender.male,
                         groupValue: _gender,
@@ -78,7 +81,7 @@ class _Profile extends State<Profile> {
                         color: Colors.grey.shade800,
                       ),
                     ),
-                    SizedBox(width: 30),
+                    SizedBox(width: 10),
                     Radio<Gender>(
                         value: Gender.female,
                         groupValue: _gender,
@@ -98,7 +101,7 @@ class _Profile extends State<Profile> {
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 40,),
               Row(
                 children: [
                   SizedBox(width: 10),

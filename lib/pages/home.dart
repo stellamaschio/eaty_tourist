@@ -6,15 +6,17 @@ import 'package:eaty_tourist/pages/info/info_pasta.dart';
 import 'package:eaty_tourist/pages/info/info_pizza.dart';
 import 'package:eaty_tourist/pages/info/info_steak.dart';
 import 'package:eaty_tourist/pages/info/info_toast.dart';
+import 'package:eaty_tourist/providers/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:eaty_tourist/widgets/foodbar.dart';
 import 'package:eaty_tourist/models/foods.dart';
+import 'package:provider/provider.dart';
 
 //Valore per provare il progresso della barra (max 200)
-const double calories = 361;
-int cal = calories.toInt();
+//const double calories = 360;
+//int cal = calories.toInt();
 
 //Valori dipartenza e fine delle linee
 //NOTA: Widget all'interno di una sized box definita in home
@@ -22,6 +24,7 @@ const double upBar = -40;
 const double downBar = 490;
 
 List<Foods> foodList = ListFoods.foodList;
+bool start = false;
 
 double scale = foodList.last.calories / (downBar - upBar);
 
@@ -38,8 +41,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   //start is true because we are ready to start
-  bool start = true;
-
   void _buttonState(){
     setState(() {
       start = !start;
@@ -48,152 +49,157 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Align(
-        alignment: Alignment.center,
-        child: Padding(
-          // foodbar padding
-          padding: EdgeInsets.fromLTRB(97, 100, 0, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomPaint(
-                painter: Foodbar(
-                  backColor: Color(0xA969F0AF),
-                  frontColor: Color(0xFF607D8B),
-                  lastColor: Colors.white,
-                  strokeWidth: 13,
-                  upBar: upBar,
-                  downBar: downBar,
-                  scale: scale,
-                  foodList: foodList,
-                  value: calories,
-                ),
-              ),
-              // info padding
-              Padding(
-                padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xA969F0AF),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(width: 10,),
-                          //info column
-                          Column(
+    return Consumer<HomeProvider>(
+        builder: (context, provider, child) => Scaffold(
+          backgroundColor: Colors.white,
+          body: Align(
+            alignment: Alignment.center,
+            child: Padding(
+              // foodbar padding
+              padding: EdgeInsets.fromLTRB(97, 100, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomPaint(
+                    painter: Foodbar(
+                      backColor: Color(0xA969F0AF),
+                      frontColor: Color(0xFF607D8B),
+                      lastColor: Colors.white,
+                      strokeWidth: 13,
+                      upBar: upBar,
+                      downBar: downBar,
+                      scale: scale,
+                      foodList: foodList,
+                      value: provider.calories.first.value,
+                    ),
+                  ),
+                  // info padding
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(95, 0, 0, 0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xA969F0AF),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
                             children: [
+                              SizedBox(width: 10,),
+                              //info column
+                              Column(
+                                children: [
+                                  SizedBox(height: 10,),
+                                  Text(
+                                    'Burned calories:',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${provider.calories.first.value.toInt()} cal',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 25,),
+                                  Text(
+                                    'You unlocked',
+                                    style: GoogleFonts.montserrat(
+                                      color: Color(0xFF607D8B),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                  SizedBox(height: 3,),
+                                  // unlocked food name
+                                  Text(_foodUnlockedName(_foodUnlockedIndex(provider.calories.first.value, foodList),foodList),
+                                    style: GoogleFonts.montserrat(
+                                      color: _colorUnlocked(_foodUnlockedIndex(provider.calories.first.value, foodList), foodList, provider.calories.first.value),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  //unlocked food button
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shadowColor: Color(0xFF607D8B),
+                                        elevation: 6,
+                                        backgroundColor: Colors.cyan.shade200,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                        padding: EdgeInsets.fromLTRB(25, 7, 25, 7),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) => _selectPage(_foodUnlockedIndex(provider.calories.first.value, foodList)),
+                                        ));
+                                      },
+                                      child: Icon(
+                                        _foodUnlokedIcon(
+                                          _foodUnlockedIndex(provider.calories.first.value, foodList),
+                                          foodList),
+                                        size: 35,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                ],
+                              ),
+                              SizedBox(width: 10,),
+                            ],
+                          ),
+                        ),
+                        // start botton padding
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 170, 0, 0),
+                          child: Column(
+                            children: [
+                              ElevatedButton(
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.amberAccent.shade400,
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(15),
+                                ),
+                                onPressed: () {
+                                  _buttonState();
+                                  while(start){
+                                    provider.refresh();
+                                  }
+                                },
+                                child: (start)
+                                  ? Icon(MdiIcons.stop, size: 35,)
+                                  : Icon(MdiIcons.runFast, size: 35,),
+                              ),
                               SizedBox(height: 10,),
                               Text(
-                                'Burned calories:',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '$cal cal',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 25,),
-                              Text(
-                                'You unlocked',
+                                (start)
+                                ? '   STOP\nACTIVITY'
+                                : '   START\nACTIVITY',
                                 style: GoogleFonts.montserrat(
                                   color: Color(0xFF607D8B),
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
                                 ),
                               ),
-                              SizedBox(height: 3,),
-                              // unlocked food name
-                              Text(_foodUnlockedName(_foodUnlockedIndex(calories, foodList),foodList),
-                                style: GoogleFonts.montserrat(
-                                  color: _colorUnloked(_foodUnlockedIndex(calories, foodList), foodList, calories),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              //unlocked food button
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    shadowColor: Color(0xFF607D8B),
-                                    elevation: 6,
-                                    backgroundColor: Colors.cyan.shade200,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    padding: EdgeInsets.fromLTRB(25, 7, 25, 7),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => _selectPage(_foodUnlockedIndex(calories, foodList)),
-                                    ));
-                                  },
-                                  child: Icon(
-                                    _foodUnlokedIcon(
-                                      _foodUnlockedIndex(calories, foodList),
-                                      foodList),
-                                    size: 35,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 10,),
                             ],
                           ),
-                          SizedBox(width: 10,),
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                    // start botton padding
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 170, 0, 0),
-                      child: Column(
-                        children: [
-                          ElevatedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.amberAccent.shade400,
-                              shape: CircleBorder(),
-                              padding: EdgeInsets.all(15),
-                            ),
-                            onPressed: () {
-                              _buttonState();
-                            },
-                            child: (start)
-                              ? Icon(MdiIcons.runFast, size: 35,)
-                              : Icon(MdiIcons.stop, size: 35,),
-                          ),
-                          SizedBox(height: 10,),
-                          Text(
-                            (start)
-                            ? '   START\nACTIVITY'
-                            : '   STOP\nACTIVITY',
-                            style: GoogleFonts.montserrat(
-                              color: Color(0xFF607D8B),
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
         ),
       ),
     );
@@ -228,8 +234,12 @@ class _HomeState extends State<Home> {
       return '$foodname!';
     }
   }
-  Color _colorUnloked(int index, List<Foods> list, double value){
-    if(value == foodList[index].calories){
+  
+  Color _colorUnlocked(int index, List<Foods> list, double value){
+    if(index<0){
+      return Color(0xFF607D8B);
+    }
+    else if(value == foodList[index].calories){
       return Colors.yellowAccent;
     }
     else{

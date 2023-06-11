@@ -61,8 +61,6 @@ class _$AppDatabase extends AppDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  HeartRatesDao? _heartRatesDaoInstance;
-
   CaloriesDao? _caloriesDaoInstance;
 
   Future<sqflite.Database> open(
@@ -87,9 +85,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `HR` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL)');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Calories` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Calories` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` REAL NOT NULL, `dateTime` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -98,96 +94,8 @@ class _$AppDatabase extends AppDatabase {
   }
 
   @override
-  HeartRatesDao get heartRatesDao {
-    return _heartRatesDaoInstance ??= _$HeartRatesDao(database, changeListener);
-  }
-
-  @override
   CaloriesDao get caloriesDao {
     return _caloriesDaoInstance ??= _$CaloriesDao(database, changeListener);
-  }
-}
-
-class _$HeartRatesDao extends HeartRatesDao {
-  _$HeartRatesDao(
-    this.database,
-    this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
-        _hRInsertionAdapter = InsertionAdapter(
-            database,
-            'HR',
-            (HR item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                }),
-        _hRUpdateAdapter = UpdateAdapter(
-            database,
-            'HR',
-            ['id'],
-            (HR item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                }),
-        _hRDeletionAdapter = DeletionAdapter(
-            database,
-            'HR',
-            ['id'],
-            (HR item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                });
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  final InsertionAdapter<HR> _hRInsertionAdapter;
-
-  final UpdateAdapter<HR> _hRUpdateAdapter;
-
-  final DeletionAdapter<HR> _hRDeletionAdapter;
-
-  @override
-  Future<List<HR>> findHeartRatesbyDate(
-    DateTime startTime,
-    DateTime endTime,
-  ) async {
-    return _queryAdapter.queryList(
-        'SELECT * FROM HR WHERE dateTime between ?1 and ?2 ORDER BY dateTime ASC',
-        mapper: (Map<String, Object?> row) => HR(row['id'] as int?, row['value'] as int, _dateTimeConverter.decode(row['dateTime'] as int)),
-        arguments: [
-          _dateTimeConverter.encode(startTime),
-          _dateTimeConverter.encode(endTime)
-        ]);
-  }
-
-  @override
-  Future<List<HR>> findAllHeartRates() async {
-    return _queryAdapter.queryList('SELECT * FROM HR',
-        mapper: (Map<String, Object?> row) => HR(
-            row['id'] as int?,
-            row['value'] as int,
-            _dateTimeConverter.decode(row['dateTime'] as int)));
-  }
-
-  @override
-  Future<void> insertHeartRate(HR heartRates) async {
-    await _hRInsertionAdapter.insert(heartRates, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> updateHeartRate(HR heartRates) async {
-    await _hRUpdateAdapter.update(heartRates, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> deleteHeartRate(HR heartRates) async {
-    await _hRDeletionAdapter.delete(heartRates);
   }
 }
 
@@ -236,13 +144,13 @@ class _$CaloriesDao extends CaloriesDao {
   final DeletionAdapter<Calories> _caloriesDeletionAdapter;
 
   @override
-  Future<List<Calories>> findCaloriesbyDate(
+  Future<List<Calories>> findCaloriesbyTime(
     DateTime startTime,
     DateTime endTime,
   ) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM HR WHERE dateTime between ?1 and ?2 ORDER BY dateTime ASC',
-        mapper: (Map<String, Object?> row) => Calories(row['id'] as int?, row['value'] as int, _dateTimeConverter.decode(row['dateTime'] as int)),
+        'SELECT * FROM Calories WHERE dateTime between ?1 and ?2 ORDER BY dateTime ASC',
+        mapper: (Map<String, Object?> row) => Calories(row['id'] as int?, row['value'] as double, _dateTimeConverter.decode(row['dateTime'] as int)),
         arguments: [
           _dateTimeConverter.encode(startTime),
           _dateTimeConverter.encode(endTime)
@@ -251,10 +159,10 @@ class _$CaloriesDao extends CaloriesDao {
 
   @override
   Future<List<Calories>> findAllCalories() async {
-    return _queryAdapter.queryList('SELECT * FROM HR',
+    return _queryAdapter.queryList('SELECT * FROM Calories',
         mapper: (Map<String, Object?> row) => Calories(
             row['id'] as int?,
-            row['value'] as int,
+            row['value'] as double,
             _dateTimeConverter.decode(row['dateTime'] as int)));
   }
 
@@ -264,7 +172,7 @@ class _$CaloriesDao extends CaloriesDao {
         'SELECT * FROM Calories ORDER BY dateTime ASC LIMIT 1',
         mapper: (Map<String, Object?> row) => Calories(
             row['id'] as int?,
-            row['value'] as int,
+            row['value'] as double,
             _dateTimeConverter.decode(row['dateTime'] as int)));
   }
 
@@ -274,7 +182,7 @@ class _$CaloriesDao extends CaloriesDao {
         'SELECT * FROM Calories ORDER BY dateTime DESC LIMIT 1',
         mapper: (Map<String, Object?> row) => Calories(
             row['id'] as int?,
-            row['value'] as int,
+            row['value'] as double,
             _dateTimeConverter.decode(row['dateTime'] as int)));
   }
 
