@@ -44,12 +44,6 @@ dependencies:
   provider: ^6.0.5
   dio: ^5.0.0
   jwt_decoder: ^2.0.1
-  floor:
-  path: ^1.8.0
-  path_provider: ^2.0.0
-
-  # Timelines
-  timelines: ^0.1.0
 
 dev_dependencies:
   flutter_test:

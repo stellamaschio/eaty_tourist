@@ -44,7 +44,7 @@ class Splash extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     
-    Future.delayed(Duration(seconds: 3), () => _checkAuth(context));
+    Future.delayed(Duration(seconds: 1), () => _checkAuth(context));
 
     return Material(
       child: Container(
