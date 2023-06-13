@@ -24,7 +24,6 @@ const double upBar = -40;
 const double downBar = 490;
 
 List<Foods> foodList = ListFoods.foodList;
-bool start = false;
 
 double scale = foodList.last.calories / (downBar - upBar);
 
@@ -39,6 +38,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  bool start = false;
 
   //start is true because we are ready to start
   void _buttonState(){
@@ -71,7 +72,7 @@ class _HomeState extends State<Home> {
                       downBar: downBar,
                       scale: scale,
                       foodList: foodList,
-                      value: provider.calories.first.value,
+                      value: provider.selectedCalories,
                     ),
                   ),
                   // info padding
@@ -100,7 +101,7 @@ class _HomeState extends State<Home> {
                                     ),
                                   ),
                                   Text(
-                                    '${provider.calories.first.value.toInt()} cal',
+                                    '${provider.selectedCalories.toInt()} cal',
                                     style: GoogleFonts.montserrat(
                                       color: Colors.grey.shade600,
                                       fontSize: 32,
@@ -119,9 +120,9 @@ class _HomeState extends State<Home> {
                                   ),
                                   SizedBox(height: 3,),
                                   // unlocked food name
-                                  Text(_foodUnlockedName(_foodUnlockedIndex(provider.calories.first.value, foodList),foodList),
+                                  Text(_foodUnlockedName(_foodUnlockedIndex(provider.selectedCalories, foodList),foodList),
                                     style: GoogleFonts.montserrat(
-                                      color: _colorUnlocked(_foodUnlockedIndex(provider.calories.first.value, foodList), foodList, provider.calories.first.value),
+                                      color: _colorUnlocked(_foodUnlockedIndex(provider.selectedCalories, foodList), foodList, provider.selectedCalories),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -141,12 +142,12 @@ class _HomeState extends State<Home> {
                                       ),
                                       onPressed: () {
                                         Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) => _selectPage(_foodUnlockedIndex(provider.calories.first.value, foodList)),
+                                          builder: (context) => _selectPage(_foodUnlockedIndex(provider.selectedCalories, foodList)),
                                         ));
                                       },
                                       child: Icon(
                                         _foodUnlokedIcon(
-                                          _foodUnlockedIndex(provider.calories.first.value, foodList),
+                                          _foodUnlockedIndex(provider.selectedCalories, foodList),
                                           foodList),
                                         size: 35,
                                       ),
@@ -172,12 +173,18 @@ class _HomeState extends State<Home> {
                                 ),
                                 onPressed: () {
                                   _buttonState();
-                                  while(start){
-                                    provider.refresh();
+                                  DateTime time = DateTime.now();
+                                  bool go = start;
+                                  while (go) {
+                                    // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
+                                    // qui interessano solo ora e minuto
+                                    provider.selectCalories(time);
+                                    time.add(Duration(minutes: 10));
+                                    go = checkStart(start);
                                   }
                                 },
                                 child: (start)
-                                  ? Icon(MdiIcons.stop, size: 35,)
+                                  ? (Icon(MdiIcons.stop, size: 35,))
                                   : Icon(MdiIcons.runFast, size: 35,),
                               ),
                               SizedBox(height: 10,),
@@ -204,6 +211,22 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+  bool checkStart(bool start){
+    return start;
+  }
+
+  /*
+  void switchAction(bool start, HomeProvider prov){
+    DateTime time = DateTime.now();
+    while(start){
+      // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
+      // qui interessano solo ora e minuto
+      prov.selectCalories(time);
+      time.add(Duration(minutes: 10));
+    }
+  }
+  */
 
   int _foodUnlockedIndex(double value, List<Foods> list){
     if(value<list.first.calories){

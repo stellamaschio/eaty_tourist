@@ -45,6 +45,14 @@ dependencies:
   dio: ^5.0.0
   jwt_decoder: ^2.0.1
 
+  #statistics
+  graphic: ^2.2.0
+  fl_chart: ^0.62.0
+
+  floor:
+  path: ^1.8.0
+  path_provider: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

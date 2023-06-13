@@ -145,10 +145,10 @@ class ImpactService {
     return r.data['data'][0]['username'];
   }
 
-  Future<List<Calories>> getDataCalories(DateTime startTime, DateTime endTime) async {
+  Future<List<Calories>> getDataCaloriesFromDay(DateTime startTime) async {
     await updateBearer();
     Response r = await _dio.get(
-        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(endTime)}/');
+        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
     List<dynamic> data = r.data['data'];
     List<Calories> cal = [];
     for (var daydata in data) {
@@ -157,7 +157,7 @@ class ImpactService {
         String hour = dataday['time'];
         String datetime = '${day}T$hour';
         DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
-        Calories calnew = Calories(null, dataday['value'], timestamp);
+        Calories calnew = Calories(null, double.parse(dataday['value']), timestamp);
         if (!cal.any((e) => e.dateTime.isAtSameMomentAs(calnew.dateTime))) {
           cal.add(calnew);
         }

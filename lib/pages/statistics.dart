@@ -1,4 +1,5 @@
 
+import 'package:eaty_tourist/providers/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -6,30 +7,32 @@ import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-Grafico1 grafico_1= Grafico1();
-
-Grafico2 grafico_2= Grafico2();
+import 'package:provider/provider.dart';
 
 class Statistics extends StatelessWidget {
   const Statistics({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        itemExtent: 310,
-        // Apllica un padding attorno ai Widget contenuti
-        padding: const EdgeInsets.all(10),
-        children: <Widget>[
-          Container(
-            child: grafico_1,
-          ),
-          Container(
-            child: grafico_2,
-          ),
-          ], 
-    ),);
+    return Consumer<HomeProvider>(
+      builder: (context, provider, child) => Scaffold(
+        body: ListView(
+          itemExtent: 310,
+          // Apllica un padding attorno ai Widget contenuti
+          padding: const EdgeInsets.all(10),
+          children: <Widget>[
+            Container(
+              child: Grafico1(),
+            ),
+            /*
+            Container(
+              child: Grafico2(),
+            ),
+            */
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -44,11 +47,11 @@ double altezza_grafico= 160;
 
 // Definizione dello stile di carattere usato
 var font = GoogleFonts.montserrat(
-                    color: const Color.fromARGB(255, 107, 107, 107),
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.normal,
-                    );
+  color: const Color.fromARGB(255, 107, 107, 107),
+  fontSize: 16,
+  fontWeight: FontWeight.bold,
+  fontStyle: FontStyle.normal,
+);
 
 //Definizione del grafico 1
 class Grafico1 extends StatefulWidget {
@@ -72,8 +75,9 @@ class Grafico1State extends State<Grafico1> {
   @override
   void initState() {
     super.initState();
+    HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
     // Qui ci sono i valori riportati nel grafico
-    final barGroup1 = makeGroupData(0, 10, 12);
+    final barGroup1 = makeGroupData(0, provider.totalCalories, 12);
     final barGroup2 = makeGroupData(1, 16, 12);
     final barGroup3 = makeGroupData(2, 18, 5);
     final barGroup4 = makeGroupData(3, 20, 16);
@@ -305,7 +309,7 @@ class Grafico1State extends State<Grafico1> {
   }
 }
 
-
+/*
 // Definzione del grafico 2
 class Grafico2 extends StatefulWidget {
   Grafico2({super.key});
@@ -519,3 +523,4 @@ class Grafico2State extends State<Grafico2> {
     );
   }
 }
+*/

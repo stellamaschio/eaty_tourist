@@ -58,7 +58,12 @@ class Foodbar extends CustomPainter {
 
     //Linee della barra non completata e completata
     canvas.drawLine(Offset(0, upBar), Offset(0, downBar), uncompletedPaint); //Gli argomenti sono coordinate partenza, fine, e paint
-    canvas.drawLine(Offset(0, downBar), Offset(0, downBar - value/scale), completedPaint);
+    if((value/scale)>700/scale){
+      canvas.drawLine(Offset(0, downBar), Offset(0, downBar - 700/scale), completedPaint);
+    }
+    else{
+      canvas.drawLine(Offset(0, downBar), Offset(0, downBar - value/scale), completedPaint);
+    }
 
     //Pallino all'inizio della barra
     canvas.drawCircle(Offset(0, downBar), 4, _paintFirstDot(value));
