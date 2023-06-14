@@ -57,12 +57,12 @@ class _LoginState extends State<Login> {
               style: GoogleFonts.montserrat(
                 color: const Color(0xFF607D8B),
                 fontWeight: FontWeight.bold,
-                fontSize: 58,
+                fontSize: 52,
               ),
             ),
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 50, 
+              horizontal: 30, 
               vertical: 30,
             ),        
             child: Card(
@@ -74,7 +74,7 @@ class _LoginState extends State<Login> {
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
-                    const SizedBox(height: 30,),
+                    const SizedBox(height: 20,),
                     Text('Login',
                       style: GoogleFonts.montserrat(
                         color: const Color(0xFF607D8B),
@@ -87,15 +87,13 @@ class _LoginState extends State<Login> {
                         fontSize: 16,
                       )
                     ),
-                    const SizedBox(
-                      height: 60,
-                    ),
+                    const SizedBox(height: 40,),
                     Row(
                       children: [
-                        SizedBox(width: 10),
+                        SizedBox(width: 15),
                         Text('Username',
                           style: GoogleFonts.montserrat(
-                            fontSize: 18, 
+                            fontSize: 17, 
                             fontWeight: FontWeight.bold,
                             color: Colors.grey.shade600,
                           ),
@@ -107,7 +105,7 @@ class _LoginState extends State<Login> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10, 
+                        horizontal: 15, 
                       ),
                       child: TextFormField(
                         style: GoogleFonts.montserrat(),
@@ -146,10 +144,10 @@ class _LoginState extends State<Login> {
                     ),
                     Row(
                       children: [
-                        SizedBox(width: 10),
+                        SizedBox(width: 15),
                         Text('Password',
                           style: GoogleFonts.montserrat(
-                            fontSize: 18, 
+                            fontSize: 17, 
                             fontWeight: FontWeight.bold,
                             color: Colors.grey.shade600,
                           ),
@@ -161,7 +159,7 @@ class _LoginState extends State<Login> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10, 
+                        horizontal: 15, 
                       ),
                       child: TextFormField(
                         style: GoogleFonts.montserrat(),
@@ -208,7 +206,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    SizedBox(height: 20),
                     Align(
                       child: Column(
                         children: [

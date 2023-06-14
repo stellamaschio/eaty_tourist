@@ -1,17 +1,24 @@
-import 'dart:math';
+//Imports that are necessary to the code generator of floor
+import 'dart:async';
 
-class HR {
-  // this class models the single heart rate data point
-  final DateTime timestamp;
-  final int value;
+import 'package:floor/floor.dart';
+import 'package:sqflite/sqflite.dart' as sqflite;
 
-  HR({required this.timestamp, required this.value});
-}
+import 'daos/dao.dart';
+import 'entities/entities.dart';
+import 'typeConverters/dateTimeConverter.dart';
 
-class Calories {
-  // this class models the single heart rate data point
-  final DateTime timestamp;
-  final int value;
+//Here, we are importing the entities and the daos of the database
 
-  Calories({required this.timestamp, required this.value});
-}
+//The generated code will be in database.g.dart
+part 'db.g.dart';
+
+//Here we are saying that this is the first version of the Database and it has just 1 entity, i.e., Meal.
+//We also added a TypeConverter to manage the DateTime of a Meal entry, since DateTimes are not natively
+//supported by Floor.
+@TypeConverters([DateTimeConverter])
+@Database(version: 1, entities: [Calories])
+abstract class AppDatabase extends FloorDatabase {
+  //Add all the daos as getters here
+  CaloriesDao get caloriesDao;
+}//AppDatabase

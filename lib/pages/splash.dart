@@ -44,7 +44,7 @@ class Splash extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     
-    Future.delayed(Duration(seconds: 3), () => _checkAuth(context));
+    Future.delayed(Duration(seconds: 1), () => _checkAuth(context));
 
     return Material(
       child: Container(
@@ -57,7 +57,7 @@ class Splash extends StatelessWidget{
               style: GoogleFonts.montserrat(
                 color: Color(0xFF607D8B),
                 fontWeight: FontWeight.bold,
-                textStyle: TextStyle(fontSize: 50),
+                fontSize: 50,
               ),
             ),
             CircularProgressIndicator(

@@ -1,9 +1,8 @@
-import 'package:eaty_tourist/models/db.dart';
+import 'package:eaty_tourist/models/entities/entities.dart';
 import 'package:eaty_tourist/services/server_strings.dart';
 import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:dio/dio.dart';
-import 'package:eaty_tourist/services/server_strings.dart';
 import 'package:eaty_tourist/utils/shared_preferences.dart';
 
 class ImpactService {
@@ -146,29 +145,6 @@ class ImpactService {
     return r.data['data'][0]['username'];
   }
 
-  Future<List<HR>> getDataHRFromDay(DateTime startTime) async {
-    await updateBearer();
-    Response r = await _dio.get(
-        'data/v1/heart_rate/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
-    List<dynamic> data = r.data['data'];
-    List<HR> hr = [];
-    for (var daydata in data) {
-      String day = daydata['date'];
-      for (var dataday in daydata['data']) {
-        String hour = dataday['time'];
-        String datetime = '${day}T$hour';
-        DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
-        HR hrnew = HR(timestamp: timestamp, value: dataday['value']);
-        if (!hr.any((e) => e.timestamp.isAtSameMomentAs(hrnew.timestamp))) {
-          hr.add(hrnew);
-        }
-      }
-    }
-    var hrlist = hr.toList()
-      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
-    return hrlist;
-  }
-
   Future<List<Calories>> getDataCaloriesFromDay(DateTime startTime) async {
     await updateBearer();
     Response r = await _dio.get(
@@ -181,14 +157,14 @@ class ImpactService {
         String hour = dataday['time'];
         String datetime = '${day}T$hour';
         DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
-        Calories calnew = Calories(timestamp: timestamp, value: dataday['value']);
-        if (!cal.any((e) => e.timestamp.isAtSameMomentAs(calnew.timestamp))) {
+        Calories calnew = Calories(null, double.parse(dataday['value']), timestamp);
+        if (!cal.any((e) => e.dateTime.isAtSameMomentAs(calnew.dateTime))) {
           cal.add(calnew);
         }
       }
     }
     var callist = cal.toList()
-      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
     return callist;
   }
 

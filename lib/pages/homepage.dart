@@ -1,9 +1,13 @@
+import 'package:eaty_tourist/models/db.dart';
+import 'package:eaty_tourist/models/foods.dart';
+import 'package:eaty_tourist/models/listFoods.dart';
+import 'package:eaty_tourist/pages/information/foodAndRestaurants.dart';
 import 'package:eaty_tourist/pages/login/login_ob.dart';
 import 'package:eaty_tourist/pages/profile.dart';
 import 'package:eaty_tourist/pages/splash.dart';
 import 'package:eaty_tourist/pages/splash_out.dart';
 import 'package:eaty_tourist/pages/statistics.dart';
-import 'package:eaty_tourist/pages/map.dart';
+import 'package:eaty_tourist/pages/home.dart';
 import 'package:eaty_tourist/providers/home_provider.dart';
 import 'package:eaty_tourist/services/impact.dart';
 import 'package:eaty_tourist/utils/shared_preferences.dart';
@@ -21,6 +25,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  List<Foods> foodList = ListFoods.foodList;
   int _selIdx = 0;
 
   void changePage(int index){
@@ -32,11 +38,11 @@ class _HomePageState extends State<HomePage> {
   Widget selectPage(int index){
     switch(index){
       case 0:
-        return Map();
+        return Home();
       case 1: 
         return Statistics();
       default: 
-        return Map();
+        return Home();
     }
   }
 
@@ -44,7 +50,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context){
     return ChangeNotifierProvider<HomeProvider>(
       create: (context) => HomeProvider(
-          Provider.of<ImpactService>(context, listen: false)),
+        Provider.of<ImpactService>(context, listen: false),
+        Provider.of<AppDatabase>(context, listen: false)
+      ),
+      lazy: false,
       builder: (context, child) => Scaffold(
         drawer: Drawer(
           child: ListView(
@@ -73,7 +82,10 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 15,
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => FoodAndRestaurant()));
+                },
               ),
               ListTile(
                 leading: Icon(MdiIcons.bankOutline),

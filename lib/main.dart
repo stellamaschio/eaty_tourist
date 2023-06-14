@@ -1,11 +1,15 @@
+import 'package:eaty_tourist/models/db.dart';
 import 'package:eaty_tourist/pages/splash.dart';
 import 'package:eaty_tourist/services/impact.dart';
 import 'package:eaty_tourist/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  // inizializzazione database
+  WidgetsFlutterBinding.ensureInitialized();
+  final db = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  runApp(Provider<AppDatabase>.value(value: db, child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

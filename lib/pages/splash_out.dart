@@ -27,7 +27,7 @@ class SplashOut extends StatelessWidget{
               style: GoogleFonts.montserrat(
                 color: Color(0xFF607D8B),
                 fontWeight: FontWeight.bold,
-                textStyle: TextStyle(fontSize: 50),
+                fontSize: 50,
               ),
             ),
             CircularProgressIndicator(
