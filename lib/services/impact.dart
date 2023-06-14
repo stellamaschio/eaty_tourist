@@ -168,8 +168,55 @@ class ImpactService {
     return callist;
   }
 
+  Future<List<Steps>> getDataStepsFromDay(DateTime startTime) async {
+    await updateBearer();
+    Response r = await _dio.get(
+        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
+    List<dynamic> data = r.data['data'];
+    List<Steps> step = [];
+    for (var daydata in data) {
+      String day = daydata['date'];
+      for (var dataday in daydata['data']) {
+        String hour = dataday['time'];
+        String datetime = '${day}T$hour';
+        DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
+        Steps stepsnew = Steps(null, double.parse(dataday['value']), timestamp);
+        if (!step.any((e) => e.dateTime.isAtSameMomentAs(stepsnew.dateTime))) {
+          step.add(stepsnew);
+        }
+      }
+    }
+    var steplist = step.toList()
+      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    return steplist;
+  }
+
   DateTime _truncateSeconds(DateTime input) {
     return DateTime(
         input.year, input.month, input.day, input.hour, input.minute);
   }
+
+  Future<List<Distance>> getDataDistanceFromDay(DateTime startTime) async {
+    await updateBearer();
+    Response r = await _dio.get(
+        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
+    List<dynamic> data = r.data['data'];
+    List<Distance> distance = [];
+    for (var daydata in data) {
+      String day = daydata['date'];
+      for (var dataday in daydata['data']) {
+        String hour = dataday['time'];
+        String datetime = '${day}T$hour';
+        DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
+        Distance distancenew = Distance(null, double.parse(dataday['value']), timestamp);
+        if (!distance.any((e) => e.dateTime.isAtSameMomentAs(distancenew.dateTime))) {
+          distance.add(distancenew);
+        }
+      }
+    }
+    var distancelist = distance.toList()
+      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    return distancelist;
+  }
+
 }

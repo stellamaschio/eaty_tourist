@@ -40,14 +40,42 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   bool start = false;
+  bool demo = false;
+  bool close = false;
+  int index = 1;
   late DateTime time = DateTime(0,0,0,0);
+  late DateTime startTime = DateTime(0,0,0,0);
 
   //start is true because we are ready to start
   void _buttonState(){
     setState(() {
       start = !start;
     });
+    time = DateTime.now();
+    startTime = time;
   }
+
+  void _buttonStateDemo(HomeProvider provider){
+    if(start){
+      setState(() {
+        demo = !demo;
+      });
+      time.add(Duration(minutes:1));
+      provider.selectCalories(time, index);
+      index++;
+    }
+  }
+
+  void _buttonStateClose(HomeProvider provider){
+    if(!start){
+      setState(() {
+        close = !close;
+      });
+      provider.setTimeRange(startTime, startTime.add(Duration(minutes: index)));
+      provider.setSelectedCalories(0);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +191,7 @@ class _HomeState extends State<Home> {
                         ),
                         //demo button
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(0, 18, 0, 0),
                           child: Column(
                             children: [
                               ElevatedButton(
@@ -173,12 +201,11 @@ class _HomeState extends State<Home> {
                                   padding: EdgeInsets.all(5),
                                 ),
                                 onPressed: () {
-                                  if(start){
                                     // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
                                   // qui interessano solo ora e minuto
-                                  provider.selectCalories(time);
-                                  time.add(Duration(minutes: 10));
-                                  }
+                                  _buttonStateDemo(provider);
+                                  
+                                  
                                 },
                                 child: Icon(MdiIcons.play, size: 35,)
                               ),
@@ -193,9 +220,36 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                         ),
+                        //erase button
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 18, 0, 0),
+                          child: Column(
+                            children: [
+                              ElevatedButton(
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.grey.shade500,
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(5),
+                                ),
+                                onPressed: () {
+                                  _buttonStateClose(provider);
+                                },
+                                child: Icon(MdiIcons.close, size: 35,)
+                              ),
+                              SizedBox(height: 5,),
+                              Text('CLOSE',
+                                style: GoogleFonts.montserrat(
+                                  color: Color(0xFF607D8B),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         // start botton padding
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                           child: Column(
                             children: [
                               ElevatedButton(
@@ -206,7 +260,9 @@ class _HomeState extends State<Home> {
                                 ),
                                 onPressed: () {
                                   _buttonState();
-                                  time = DateTime.now();
+                                  // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
+                                  // qui interessano solo ora e minuto
+                                  
                                 },
                                 child: (start)
                                   ? (Icon(MdiIcons.stop, size: 35,))

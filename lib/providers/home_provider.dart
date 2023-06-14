@@ -10,12 +10,21 @@ import 'package:eaty_tourist/models/entities/entities.dart';
 class HomeProvider extends ChangeNotifier {
   // data to be used by the UI
   late List<Calories> calories = [];
+  late List<Steps> steps = [];
+  late List<Distance> distance = [];
+
   double totalCalories = 0;
   late double selectedCalories = 0;
+
+  late double selectedSteps = 0;
+  late double selectedDistance = 0;
+
   final AppDatabase db;
 
   // data fetched from external services or db
   late List<Calories> _calories;
+  late List<Steps> _steps;
+  late List<Distance> _distance;
 
   // selected day of data to be shown --> date of yesterday
   DateTime showDate = DateTime.now().subtract(const Duration(days: 1));
@@ -59,7 +68,17 @@ class HomeProvider extends ChangeNotifier {
 
     _calories = await impactService.getDataCaloriesFromDay(lastFetch);
     for (var element in _calories) {
-      db.caloriesDao.insertCalories(element);
+      db.caloriesDao.insertCalories(element);    
+    } // db add to the table
+
+    _steps = await impactService.getDataStepsFromDay(lastFetch);
+    for (var element in _steps) {
+      db.stepsDao.insertSteps(element);    
+    } // db add to the table
+
+    _distance = await impactService.getDataDistanceFromDay(lastFetch);
+    for (var element in _distance) {
+      db.distanceDao.insertDistance(element);    
     } // db add to the table
   }
 
@@ -83,6 +102,14 @@ class HomeProvider extends ChangeNotifier {
     calories = await db.caloriesDao.findCaloriesbyTime(
         DateUtils.dateOnly(showDate),
         DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
+
+    steps = await db.stepsDao.findStepsbyTime(
+        DateUtils.dateOnly(showDate),
+        DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
+
+    distance = await db.distanceDao.findDistancebyTime(
+        DateUtils.dateOnly(showDate),
+        DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
     // after selecting all data we notify all consumers to rebuild
     totalCal();
     notifyListeners();
@@ -96,20 +123,35 @@ class HomeProvider extends ChangeNotifier {
     totalCalories = total;
   }
 
+  void setSelectedCalories(double val){
+    selectedCalories = val;
+  }
+
   // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-  void selectCalories(DateTime startTime){
+  void selectCalories(DateTime startTime, int i){
     int hour = startTime.hour;
     int minute = startTime.minute;
     int startMinute = hour*60 + minute;
-    Future.delayed(Duration(seconds: 5), () => {
-        for(int i=1; i<=10; i++){
-          selectedCalories = selectedCalories + calories[startMinute+i].value
-        }
-      }
-    );
+    
+    selectedCalories = selectedCalories + calories[startMinute+i].value;
+
+  }
+
+  void setTimeRange(DateTime startTime, DateTime endTime){
+    int stHour = startTime.hour;
+    int stMinute = startTime.minute;
+    int startMinute = stHour*60 + stMinute;
+
+    int edHour = startTime.hour;
+    int edMinute = startTime.minute;
+    int endMinute = stHour*60 + stMinute;
+
+    for(int i=startMinute; i<=endMinute; i++){
+      selectedSteps = selectedSteps + steps[startMinute+i].value;
+      selectedDistance = selectedDistance + distance[startMinute+i].value;
+    }
   }
   
-
 }
 
 

@@ -17,8 +17,10 @@ part 'db.g.dart';
 //We also added a TypeConverter to manage the DateTime of a Meal entry, since DateTimes are not natively
 //supported by Floor.
 @TypeConverters([DateTimeConverter])
-@Database(version: 1, entities: [Calories])
+@Database(version: 1, entities: [Calories, Steps, Distance])
 abstract class AppDatabase extends FloorDatabase {
   //Add all the daos as getters here
   CaloriesDao get caloriesDao;
+  StepsDao get stepsDao;
+  DistanceDao get distanceDao;
 }//AppDatabase

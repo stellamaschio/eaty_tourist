@@ -28,7 +28,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '100 km',
+                  '${provider.selectedDistance/100} km',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -46,7 +46,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '100 passi',
+                  '${provider.selectedDistance} steps',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
