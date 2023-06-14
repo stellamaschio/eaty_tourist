@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class Apple extends StatelessWidget {
   const Apple({super.key});
@@ -24,41 +25,63 @@ class Apple extends StatelessWidget {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child:
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, 
-                  children: [
-                    Text(
-                      'Apple',
-                      style: GoogleFonts.montserrat(
-                        color: Color(0xFF607D8B),
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                    SizedBox(height: 15,),
-                    Text(
-                      'Restaurant name',
-                      style: GoogleFonts.montserrat(
-                          color: Color(0xFF607D8B),
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'ciao come va io bene grazie',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.grey.shade600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ]
+              child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child:Column(crossAxisAlignment: 
+                CrossAxisAlignment.start, children: [
+              Text(
+                'Apple',
+                style: GoogleFonts.montserrat(
+                  color: Color(0xFF607D8B),
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
                 ),
-              )
-            ),
-          )
-        );
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                'Restaurant name',
+                style: GoogleFonts.montserrat(
+                    color: Color(0xFF607D8B),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.ideographic,
+                children: [
+                  Icon(
+                    MdiIcons.mapMarker,
+                    color: Color(0xFF929497),
+                    size: 15,
+                  ),
+                  Text(
+                    'Via ..',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      color: Color(0xFF929497),
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5,),
+              Row(
+                children: [
+                  SizedBox(width: 5,),
+                  Text(
+                    'ciao come va io bene grazie',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.grey.shade600,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ]),
+          )),
+        ));
   }
 }

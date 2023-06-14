@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Statistics extends StatelessWidget {
@@ -16,19 +17,93 @@ class Statistics extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (context, provider, child) => Scaffold(
-        body: ListView(
-          itemExtent: 310,
-          // Apllica un padding attorno ai Widget contenuti
-          padding: const EdgeInsets.all(10),
-          children: <Widget>[
-            Container(
-              child: Grafico1(),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 25, 0, 0),
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Color(0xA969F0AF),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '100 km',
+                  style: GoogleFonts.montserrat(
+                    color: const Color(0xFF607D8B),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-            /*
-            Container(
-              child: Grafico2(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Color(0xA969F0AF),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '100 passi',
+                  style: GoogleFonts.montserrat(
+                    color: const Color(0xFF607D8B),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-            */
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      icon: Icon(
+                        Icons.navigate_before,
+                        color: Colors.grey.shade600,
+                      ),
+                      onPressed: () {
+                        DateTime day =
+                            Provider.of<HomeProvider>(context, listen: false)
+                                .showDate;
+                        Provider.of<HomeProvider>(context, listen: false)
+                            .getDataOfDay(
+                                day.subtract(const Duration(days: 1)));
+                      }),
+                  Consumer<HomeProvider>(
+                      builder: (context, value, child) => Text(
+                            DateFormat('dd MMMM yyyy').format(value.showDate),
+                            style: GoogleFonts.montserrat(
+                              color: Colors.grey.shade600,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
+                  IconButton(
+                      icon: Icon(
+                        Icons.navigate_next,
+                        color: Colors.grey.shade600,
+                      ),
+                      onPressed: () {
+                        DateTime day =
+                            Provider.of<HomeProvider>(context, listen: false)
+                                .showDate;
+                        Provider.of<HomeProvider>(context, listen: false)
+                            .getDataOfDay(day.add(const Duration(days: 1)));
+                      })
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+              child: Container(
+                child: Grafico2(),
+              ),
+            ),
           ],
         ),
       ),
@@ -43,7 +118,7 @@ Color barra_3= const Color.fromARGB(255, 217, 84, 232);
 
 // Definizione altezza grafico
 // ignore: non_constant_identifier_names
-double altezza_grafico= 160;
+double altezza_grafico= 250;
 
 // Definizione dello stile di carattere usato
 var font = GoogleFonts.montserrat(
@@ -53,6 +128,7 @@ var font = GoogleFonts.montserrat(
   fontStyle: FontStyle.normal,
 );
 
+/*
 //Definizione del grafico 1
 class Grafico1 extends StatefulWidget {
   Grafico1({super.key});
@@ -308,8 +384,8 @@ class Grafico1State extends State<Grafico1> {
     );
   }
 }
+*/
 
-/*
 // Definzione del grafico 2
 class Grafico2 extends StatefulWidget {
   Grafico2({super.key});
@@ -331,8 +407,9 @@ class Grafico2State extends State<Grafico2> {
   @override
   void initState() {
     super.initState();
+    HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
     // Qui ci sono i valori riportati nel grafico
-    final barGroup1 = makeGroupData(0, 10);
+    final barGroup1 = makeGroupData(0, provider.totalCalories);
     final barGroup2 = makeGroupData(1, 16);
     final barGroup3 = makeGroupData(2, 18);
     final barGroup4 = makeGroupData(3, 20);
@@ -382,7 +459,7 @@ class Grafico2State extends State<Grafico2> {
               height: altezza_grafico,
               child: BarChart(
                 BarChartData(
-                  maxY: 18,
+                  maxY: 4500,
                   /*
                   barTouchData: BarTouchData(
                     enabled: true,
@@ -523,4 +600,3 @@ class Grafico2State extends State<Grafico2> {
     );
   }
 }
-*/

@@ -88,18 +88,6 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               ListTile(
-                leading: Icon(MdiIcons.bankOutline),
-                title: Text('Places and Museum',
-                  style: GoogleFonts.montserrat(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade600,
-                    fontSize: 15,
-                  ),
-                ),
-                onTap: () {},
-              ),
-              SizedBox(height: 30,),
-              ListTile(
                 leading: Icon(MdiIcons.logout),
                 title: Text('Logout',
                   style: GoogleFonts.montserrat(

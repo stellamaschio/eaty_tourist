@@ -40,6 +40,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   bool start = false;
+  late DateTime time = DateTime(0,0,0,0);
 
   //start is true because we are ready to start
   void _buttonState(){
@@ -160,9 +161,41 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                         ),
+                        //demo button
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                          child: Column(
+                            children: [
+                              ElevatedButton(
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.grey.shade500,
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(5),
+                                ),
+                                onPressed: () {
+                                  if(start){
+                                    // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
+                                  // qui interessano solo ora e minuto
+                                  provider.selectCalories(time);
+                                  time.add(Duration(minutes: 10));
+                                  }
+                                },
+                                child: Icon(MdiIcons.play, size: 35,)
+                              ),
+                              SizedBox(height: 5,),
+                              Text('DEMO',
+                                style: GoogleFonts.montserrat(
+                                  color: Color(0xFF607D8B),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         // start botton padding
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 170, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
                           child: Column(
                             children: [
                               ElevatedButton(
@@ -173,15 +206,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 onPressed: () {
                                   _buttonState();
-                                  DateTime time = DateTime.now();
-                                  bool go = start;
-                                  while (go) {
-                                    // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-                                    // qui interessano solo ora e minuto
-                                    provider.selectCalories(time);
-                                    time.add(Duration(minutes: 10));
-                                    go = checkStart(start);
-                                  }
+                                  time = DateTime.now();
                                 },
                                 child: (start)
                                   ? (Icon(MdiIcons.stop, size: 35,))

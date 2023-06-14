@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class Cake extends StatelessWidget {
   const Cake({super.key});
@@ -46,13 +47,38 @@ class Cake extends StatelessWidget {
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      'ciao come va io bene grazie',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.grey.shade600,
-                        fontSize: 16,
-                      ),
+                    Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.ideographic,
+                children: [
+                  Icon(
+                    MdiIcons.mapMarker,
+                    color: Color(0xFF929497),
+                    size: 15,
+                  ),
+                  Text(
+                    'Via ..',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      color: Color(0xFF929497),
+                      decoration: TextDecoration.underline,
                     ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5,),
+              Row(
+                children: [
+                  SizedBox(width: 5,),
+                  Text(
+                    'ciao come va io bene grazie',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.grey.shade600,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
                   ]
                 ),
               )
