@@ -518,4 +518,3 @@ class Grafico2State extends State<Grafico2> {
     );
   }
 }
-*/
