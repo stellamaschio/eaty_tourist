@@ -1,4 +1,3 @@
-
 import 'package:eaty_tourist/providers/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -122,11 +121,11 @@ double altezza_grafico= 250;
 
 // Definizione dello stile di carattere usato
 var font = GoogleFonts.montserrat(
-  color: const Color.fromARGB(255, 107, 107, 107),
-  fontSize: 16,
-  fontWeight: FontWeight.bold,
-  fontStyle: FontStyle.normal,
-);
+                    color: const Color.fromARGB(255, 107, 107, 107),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.normal,
+                    );
 
 /*
 //Definizione del grafico 1
@@ -151,9 +150,8 @@ class Grafico1State extends State<Grafico1> {
   @override
   void initState() {
     super.initState();
-    HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
     // Qui ci sono i valori riportati nel grafico
-    final barGroup1 = makeGroupData(0, provider.totalCalories, 12);
+    final barGroup1 = makeGroupData(0, 10, 12);
     final barGroup2 = makeGroupData(1, 16, 12);
     final barGroup3 = makeGroupData(2, 18, 5);
     final barGroup4 = makeGroupData(3, 20, 16);
@@ -600,3 +598,4 @@ class Grafico2State extends State<Grafico2> {
     );
   }
 }
+
