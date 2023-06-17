@@ -171,7 +171,7 @@ class ImpactService {
   Future<List<Steps>> getDataStepsFromDay(DateTime startTime) async {
     await updateBearer();
     Response r = await _dio.get(
-        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
+        'data/v1/steps/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
     List<dynamic> data = r.data['data'];
     List<Steps> step = [];
     for (var daydata in data) {
@@ -191,15 +191,10 @@ class ImpactService {
     return steplist;
   }
 
-  DateTime _truncateSeconds(DateTime input) {
-    return DateTime(
-        input.year, input.month, input.day, input.hour, input.minute);
-  }
-
   Future<List<Distance>> getDataDistanceFromDay(DateTime startTime) async {
     await updateBearer();
     Response r = await _dio.get(
-        'data/v1/calories/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
+        'data/v1/distance/patients/${prefs.impactUsername}/daterange/start_date/${DateFormat('y-M-d').format(startTime)}/end_date/${DateFormat('y-M-d').format(DateTime.now().subtract(const Duration(days: 1)))}/');
     List<dynamic> data = r.data['data'];
     List<Distance> distance = [];
     for (var daydata in data) {
@@ -217,6 +212,11 @@ class ImpactService {
     var distancelist = distance.toList()
       ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
     return distancelist;
+  }
+
+  DateTime _truncateSeconds(DateTime input) {
+    return DateTime(
+        input.year, input.month, input.day, input.hour, input.minute);
   }
 
 }

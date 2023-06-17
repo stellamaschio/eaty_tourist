@@ -48,11 +48,13 @@ class HomeProvider extends ChangeNotifier {
 
   Future<DateTime?> _getLastFetch() async {
     // sistemare
-    var data = await db.caloriesDao.findAllCalories();
-    if (data.isEmpty) {
+    var dataCal = await db.caloriesDao.findAllCalories();
+    //var dataSteps = await db.stepsDao.findAllSteps();
+    //var dataDist = await db.distanceDao.findAllDistance();
+    if (dataCal.isEmpty /*|| dataSteps.isEmpty || dataDist.isEmpty*/) {
       return null;
     }
-    return data.last.dateTime;
+    return dataCal.last.dateTime;
   }
 
   // method to fetch all data
@@ -68,12 +70,14 @@ class HomeProvider extends ChangeNotifier {
 
     _calories = await impactService.getDataCaloriesFromDay(lastFetch);
     for (var element in _calories) {
-      db.caloriesDao.insertCalories(element);    
+      db.caloriesDao.insertCalories(element); 
+      print('$element');   
     } // db add to the table
 
     _steps = await impactService.getDataStepsFromDay(lastFetch);
     for (var element in _steps) {
-      db.stepsDao.insertSteps(element);    
+      db.stepsDao.insertSteps(element);  
+      print('$element');  
     } // db add to the table
 
     _distance = await impactService.getDataDistanceFromDay(lastFetch);
@@ -132,7 +136,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> setTimeRange(DateTime startTime, DateTime endTime) async{
     
-    //steps = await db.stepsDao.findAllSteps();
+    steps = await db.stepsDao.findStepsbyTime(startTime, endTime);
     distance = await db.distanceDao.findDistancebyTime(startTime, endTime);
     
     for(var element in steps){
@@ -142,6 +146,13 @@ class HomeProvider extends ChangeNotifier {
     for(var element in distance){
       selectedDistance = selectedDistance + element.value;
     }
+
+    saveDay();
+  }
+  
+  // save calories, steps, and distance made during the day with the app
+  void saveDay(){
+    db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, DateTime.now()));
   }
   
 }

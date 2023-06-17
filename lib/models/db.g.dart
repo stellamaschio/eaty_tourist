@@ -67,6 +67,8 @@ class _$AppDatabase extends AppDatabase {
 
   DistanceDao? _distanceDaoInstance;
 
+  SelectedDao? _selectedDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -94,6 +96,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `Steps` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` INTEGER NOT NULL, `dateTime` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Distance` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` REAL NOT NULL, `dateTime` INTEGER NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Selected` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `calories` REAL NOT NULL, `steps` INTEGER NOT NULL, `distance` REAL NOT NULL, `dateTime` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -114,6 +118,11 @@ class _$AppDatabase extends AppDatabase {
   @override
   DistanceDao get distanceDao {
     return _distanceDaoInstance ??= _$DistanceDao(database, changeListener);
+  }
+
+  @override
+  SelectedDao get selectedDao {
+    return _selectedDaoInstance ??= _$SelectedDao(database, changeListener);
   }
 }
 
@@ -423,6 +432,121 @@ class _$DistanceDao extends DistanceDao {
   @override
   Future<void> deleteDistance(Distance distance) async {
     await _distanceDeletionAdapter.delete(distance);
+  }
+}
+
+class _$SelectedDao extends SelectedDao {
+  _$SelectedDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _selectedInsertionAdapter = InsertionAdapter(
+            database,
+            'Selected',
+            (Selected item) => <String, Object?>{
+                  'id': item.id,
+                  'calories': item.calories,
+                  'steps': item.steps,
+                  'distance': item.distance,
+                  'dateTime': _dateTimeConverter.encode(item.dateTime)
+                }),
+        _selectedUpdateAdapter = UpdateAdapter(
+            database,
+            'Selected',
+            ['id'],
+            (Selected item) => <String, Object?>{
+                  'id': item.id,
+                  'calories': item.calories,
+                  'steps': item.steps,
+                  'distance': item.distance,
+                  'dateTime': _dateTimeConverter.encode(item.dateTime)
+                }),
+        _selectedDeletionAdapter = DeletionAdapter(
+            database,
+            'Selected',
+            ['id'],
+            (Selected item) => <String, Object?>{
+                  'id': item.id,
+                  'calories': item.calories,
+                  'steps': item.steps,
+                  'distance': item.distance,
+                  'dateTime': _dateTimeConverter.encode(item.dateTime)
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Selected> _selectedInsertionAdapter;
+
+  final UpdateAdapter<Selected> _selectedUpdateAdapter;
+
+  final DeletionAdapter<Selected> _selectedDeletionAdapter;
+
+  @override
+  Future<List<Selected>> findSelectedbyTime(
+    DateTime startTime,
+    DateTime endTime,
+  ) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Selected WHERE dateTime between ?1 and ?2 ORDER BY dateTime ASC',
+        mapper: (Map<String, Object?> row) => Selected(row['id'] as int?, row['calories'] as double, row['steps'] as int, row['distance'] as double, _dateTimeConverter.decode(row['dateTime'] as int)),
+        arguments: [
+          _dateTimeConverter.encode(startTime),
+          _dateTimeConverter.encode(endTime)
+        ]);
+  }
+
+  @override
+  Future<List<Selected>> findAllSelected() async {
+    return _queryAdapter.queryList('SELECT * FROM Selected',
+        mapper: (Map<String, Object?> row) => Selected(
+            row['id'] as int?,
+            row['calories'] as double,
+            row['steps'] as int,
+            row['distance'] as double,
+            _dateTimeConverter.decode(row['dateTime'] as int)));
+  }
+
+  @override
+  Future<Selected?> findFirstDayInDb() async {
+    return _queryAdapter.query(
+        'SELECT * FROM Selected ORDER BY dateTime ASC LIMIT 1',
+        mapper: (Map<String, Object?> row) => Selected(
+            row['id'] as int?,
+            row['calories'] as double,
+            row['steps'] as int,
+            row['distance'] as double,
+            _dateTimeConverter.decode(row['dateTime'] as int)));
+  }
+
+  @override
+  Future<Selected?> findLastDayInDb() async {
+    return _queryAdapter.query(
+        'SELECT * FROM Selected ORDER BY dateTime DESC LIMIT 1',
+        mapper: (Map<String, Object?> row) => Selected(
+            row['id'] as int?,
+            row['calories'] as double,
+            row['steps'] as int,
+            row['distance'] as double,
+            _dateTimeConverter.decode(row['dateTime'] as int)));
+  }
+
+  @override
+  Future<void> insertSelected(Selected selected) async {
+    await _selectedInsertionAdapter.insert(selected, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateSelected(Selected selected) async {
+    await _selectedUpdateAdapter.update(selected, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> deleteSelected(Selected selected) async {
+    await _selectedDeletionAdapter.delete(selected);
   }
 }
 
