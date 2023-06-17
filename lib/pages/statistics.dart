@@ -9,6 +9,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+
+//Valori calorici nel grafico
+Map<String,double> calorie_giorno= {"Mn":2100, "Te":2000, "Wd":1643, "Tu":890, "Fr":2600, "St":1999, "Su":3000};
+
+//Valore massimo e rappresentazione massima del grafico
+    List<double> calorie = calorie_giorno.values.toList();
+    double val_max= calorie.reduce((a, b) => a > b ? a : b);
+    double rap_max= val_max*1.1;
+
 class Statistics extends StatelessWidget {
   const Statistics({super.key});
 
@@ -16,8 +25,7 @@ class Statistics extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (context, provider, child) => Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        body: ListView(
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 25, 0, 0),
@@ -56,7 +64,25 @@ class Statistics extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+              padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Color(0xA969F0AF),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '${provider.selectedDistance} Kcal',
+                  style: GoogleFonts.montserrat(
+                    color: const Color(0xFF607D8B),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -98,9 +124,60 @@ class Statistics extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+              padding: const EdgeInsets.fromLTRB(10, 30, 0, 0),
               child: Container(
                 child: Grafico2(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Consumer<HomeProvider>(
+                      builder: (context, value, child) => Text(
+                            "previous week",
+                            style: GoogleFonts.montserrat(
+                              color: Colors.grey.shade600,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
+                  IconButton(
+                      icon: Icon(
+                        Icons.navigate_before,
+                        color: Colors.grey.shade600,
+                      ),
+                      onPressed: () {
+                        DateTime day =
+                            Provider.of<HomeProvider>(context, listen: false)
+                                .showDate;
+                        Provider.of<HomeProvider>(context, listen: false)
+                            .getDataOfDay(
+                                day.subtract(const Duration(days: 1)));
+                      }),
+                  IconButton(
+                      icon: Icon(
+                        Icons.navigate_next,
+                        color: Colors.grey.shade600,
+                      ),
+                      onPressed: () {
+                        DateTime day =
+                            Provider.of<HomeProvider>(context, listen: false)
+                                .showDate;
+                        Provider.of<HomeProvider>(context, listen: false)
+                            .getDataOfDay(day.add(const Duration(days: 1)));
+                      }),
+                  Consumer<HomeProvider>(
+                      builder: (context, value, child) => Text(
+                            "next week",
+                            style: GoogleFonts.montserrat(
+                              color: Colors.grey.shade600,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )),
+                ],
               ),
             ),
           ],
@@ -407,13 +484,13 @@ class Grafico2State extends State<Grafico2> {
     super.initState();
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
     // Qui ci sono i valori riportati nel grafico
-    final barGroup1 = makeGroupData(0, provider.totalCalories);
-    final barGroup2 = makeGroupData(1, 16);
-    final barGroup3 = makeGroupData(2, 18);
-    final barGroup4 = makeGroupData(3, 20);
-    final barGroup5 = makeGroupData(4, 17);
-    final barGroup6 = makeGroupData(5, 19);
-    final barGroup7 = makeGroupData(6, 10);
+    final barGroup1 = makeGroupData(0, calorie_giorno["Mn"]!);
+    final barGroup2 = makeGroupData(1, calorie_giorno["Te"]!);
+    final barGroup3 = makeGroupData(2, calorie_giorno["Wd"]!);
+    final barGroup4 = makeGroupData(3, calorie_giorno["Tu"]!);
+    final barGroup5 = makeGroupData(4, calorie_giorno["Fr"]!);
+    final barGroup6 = makeGroupData(5, calorie_giorno["St"]!);
+    final barGroup7 = makeGroupData(6, calorie_giorno["Su"]!);
 
     final items = [
       barGroup1,
@@ -432,13 +509,11 @@ class Grafico2State extends State<Grafico2> {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1,
+    return Container(
       child: Padding(
         // Qui viene impostato il valore di padding del grafico dal bordo schermo.
         padding: const EdgeInsets.all(0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Row(
               children: [
@@ -451,13 +526,13 @@ class Grafico2State extends State<Grafico2> {
               ],
             ),
             const SizedBox(
-              height: 38,
+              height: 20,
             ),
             Container(
               height: altezza_grafico,
               child: BarChart(
                 BarChartData(
-                  maxY: 4500,
+                  maxY: rap_max,
                   /*
                   barTouchData: BarTouchData(
                     enabled: true,
@@ -520,13 +595,13 @@ class Grafico2State extends State<Grafico2> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: bottomTitles,
-                        reservedSize: 42,
+                        reservedSize: 32,
                       ),
                     ),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 28,
+                        reservedSize: 48,
                         interval: 1,
                         getTitlesWidget: leftTitles,
                       ),
@@ -534,9 +609,9 @@ class Grafico2State extends State<Grafico2> {
                   ),
                   borderData: FlBorderData(
                     show: false,
-                  ),
+                    ),
                   barGroups: showingBarGroups,
-                  gridData: FlGridData(show: false),
+                  gridData: FlGridData(show: true),
                 ),
               ),
             ),
@@ -550,15 +625,15 @@ class Grafico2State extends State<Grafico2> {
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
-    var style = font.copyWith(fontSize: 14, decorationColor: barra_3, 
+    var style = font.copyWith(fontSize: 12, decorationColor: barra_3, 
       decoration: TextDecoration.underline, decorationThickness: 5);
     String text;
-    if (value == 6) {
-      text = '10';
-    } else if (value == 12) {
-      text = '20';
-    } else if (value == 18) {
-      text = '30';
+    if (value == rap_max*(1/3)) {
+      text = (rap_max*(1/3)).toInt().toString();
+    } else if (value == rap_max*(2/3)) {
+      text = (rap_max*(2/3)).toInt().toString();
+    } else if (value == rap_max*(3/3)) {
+      text = (rap_max*(3/3)).toInt().toString();
     } else {
       return Container();
     }
@@ -579,7 +654,7 @@ class Grafico2State extends State<Grafico2> {
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 16, //margin top
+      space: 10, //margin top
       child: text,
     );
   }
