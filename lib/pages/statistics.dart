@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 
+
 //Valori calorici nel grafico
 Map<String,double> calorie_giorno= {"Mn":2100, "Te":2000, "Wd":1643, "Tu":890, "Fr":2600, "St":1999, "Su":3000};
 
@@ -54,7 +55,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.selectedDistance} steps',
+                  '${provider.selectedSteps} steps',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -72,7 +73,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.selectedDistance} Kcal',
+                  '${provider.selectedCalories} cal',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,

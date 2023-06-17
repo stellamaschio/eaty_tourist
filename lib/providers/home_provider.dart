@@ -13,11 +13,10 @@ class HomeProvider extends ChangeNotifier {
   late List<Steps> steps = [];
   late List<Distance> distance = [];
 
-  double totalCalories = 0;
   late double selectedCalories = 0;
-
   late int selectedSteps = 0;
   late double selectedDistance = 0;
+  late List<Selected> selected;
 
   final AppDatabase db;
 
@@ -71,13 +70,11 @@ class HomeProvider extends ChangeNotifier {
     _calories = await impactService.getDataCaloriesFromDay(lastFetch);
     for (var element in _calories) {
       db.caloriesDao.insertCalories(element); 
-      print('$element');   
     } // db add to the table
 
     _steps = await impactService.getDataStepsFromDay(lastFetch);
     for (var element in _steps) {
       db.stepsDao.insertSteps(element);  
-      print('$element');  
     } // db add to the table
 
     _distance = await impactService.getDataDistanceFromDay(lastFetch);
@@ -108,21 +105,13 @@ class HomeProvider extends ChangeNotifier {
         DateUtils.dateOnly(showDate),
         DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
 
-    //totalCal();
     notifyListeners();
   }
 
-/*
-  void totalCal(){
-    double total = 0;
-    for(var element in calories){
-      total = total + element.value;
-    }
-    totalCalories = total;
-  }*/
-
-  void setSelectedCalories(double val){
+  void setSelected(double val){
     selectedCalories = val;
+    selectedSteps = val.toInt();
+    selectedDistance = val;
   }
 
   // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
@@ -147,14 +136,17 @@ class HomeProvider extends ChangeNotifier {
       selectedDistance = selectedDistance + element.value;
     }
 
-    saveDay();
   }
   
   // save calories, steps, and distance made during the day with the app
   void saveDay(){
     db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, DateTime.now()));
+    setSelected(0);
   }
   
+  Future<void> getSelected() async{
+    selected = await db.selectedDao.findAllSelected();
+  }
 }
 
 

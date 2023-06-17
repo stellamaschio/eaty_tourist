@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
   bool start = false;
   bool demo = false;
   bool close = false;
-  int index = 1;
+  int index = 0;
   late DateTime time = DateTime(0,0,0,0);
   late DateTime endTime = DateTime(0,0,0,0);
   late int startMinute;
@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
     setState(() {
       start = !start;
     });
-    time = DateTime.now();
+    time = DateTime.now().subtract(const Duration(days: 1));
     // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
     // qui interessano solo ora e minuto
     
@@ -65,17 +65,21 @@ class _HomeState extends State<Home> {
         demo = !demo;
       });
       provider.selectCalories(startMinute);
-      startMinute = startMinute + 10;      
+      startMinute = startMinute + 10;   
+      index++;   
     }
   }
 
+  // sistemare caso quando non barretta piena !!! 
   void _buttonStateClose(HomeProvider provider){
-    if(!start){
+    if(!start && index!=0){
       setState(() {
         close = !close;
       });
-      provider.setTimeRange(time, DateTime.now());
-      provider.setSelectedCalories(0);
+      endTime = time.add(Duration(minutes: (10*index)));
+      provider.setTimeRange(time, endTime);
+      provider.saveDay();
+      index = 0;
     }
   }
 
