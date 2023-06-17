@@ -71,6 +71,7 @@ class HomeProvider extends ChangeNotifier {
       db.caloriesDao.insertCalories(element);    
     } // db add to the table
 
+    /*
     _steps = await impactService.getDataStepsFromDay(lastFetch);
     for (var element in _steps) {
       db.stepsDao.insertSteps(element);    
@@ -80,6 +81,7 @@ class HomeProvider extends ChangeNotifier {
     for (var element in _distance) {
       db.distanceDao.insertDistance(element);    
     } // db add to the table
+    */
   }
 
   // method to trigger a new data fetching
@@ -103,6 +105,7 @@ class HomeProvider extends ChangeNotifier {
         DateUtils.dateOnly(showDate),
         DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
 
+    /*
     steps = await db.stepsDao.findStepsbyTime(
         DateUtils.dateOnly(showDate),
         DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
@@ -111,6 +114,7 @@ class HomeProvider extends ChangeNotifier {
         DateUtils.dateOnly(showDate),
         DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
     // after selecting all data we notify all consumers to rebuild
+    */
     totalCal();
     notifyListeners();
   }
@@ -128,12 +132,11 @@ class HomeProvider extends ChangeNotifier {
   }
 
   // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-  void selectCalories(DateTime startTime, int i){
-    int hour = startTime.hour;
-    int minute = startTime.minute;
-    int startMinute = hour*60 + minute;
+  void selectCalories(int startMinute){
     
-    selectedCalories = selectedCalories + calories[startMinute+i].value;
+    for(int i=1; i<=10; i++){
+      selectedCalories = selectedCalories + calories[startMinute+i].value;
+    }
 
   }
 

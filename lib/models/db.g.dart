@@ -63,10 +63,6 @@ class _$AppDatabase extends AppDatabase {
 
   CaloriesDao? _caloriesDaoInstance;
 
-  StepsDao? _stepsDaoInstance;
-
-  DistanceDao? _distanceDaoInstance;
-
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -90,10 +86,6 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Calories` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` REAL NOT NULL, `dateTime` INTEGER NOT NULL)');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Steps` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` REAL NOT NULL, `dateTime` INTEGER NOT NULL)');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Distance` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` REAL NOT NULL, `dateTime` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -104,16 +96,6 @@ class _$AppDatabase extends AppDatabase {
   @override
   CaloriesDao get caloriesDao {
     return _caloriesDaoInstance ??= _$CaloriesDao(database, changeListener);
-  }
-
-  @override
-  StepsDao get stepsDao {
-    return _stepsDaoInstance ??= _$StepsDao(database, changeListener);
-  }
-
-  @override
-  DistanceDao get distanceDao {
-    return _distanceDaoInstance ??= _$DistanceDao(database, changeListener);
   }
 }
 
@@ -217,212 +199,6 @@ class _$CaloriesDao extends CaloriesDao {
   @override
   Future<void> deleteCalories(Calories calories) async {
     await _caloriesDeletionAdapter.delete(calories);
-  }
-}
-
-class _$StepsDao extends StepsDao {
-  _$StepsDao(
-    this.database,
-    this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
-        _stepsInsertionAdapter = InsertionAdapter(
-            database,
-            'Steps',
-            (Steps item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                }),
-        _stepsUpdateAdapter = UpdateAdapter(
-            database,
-            'Steps',
-            ['id'],
-            (Steps item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                }),
-        _stepsDeletionAdapter = DeletionAdapter(
-            database,
-            'Steps',
-            ['id'],
-            (Steps item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                });
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  final InsertionAdapter<Steps> _stepsInsertionAdapter;
-
-  final UpdateAdapter<Steps> _stepsUpdateAdapter;
-
-  final DeletionAdapter<Steps> _stepsDeletionAdapter;
-
-  @override
-  Future<List<Steps>> findStepsbyTime(
-    DateTime startTime,
-    DateTime endTime,
-  ) async {
-    return _queryAdapter.queryList(
-        'SELECT * FROM Steps WHERE dateTime between ?1 and ?2 ORDER BY dateTime ASC',
-        mapper: (Map<String, Object?> row) => Steps(row['id'] as int?, row['value'] as double, _dateTimeConverter.decode(row['dateTime'] as int)),
-        arguments: [
-          _dateTimeConverter.encode(startTime),
-          _dateTimeConverter.encode(endTime)
-        ]);
-  }
-
-  @override
-  Future<List<Steps>> findAllSteps() async {
-    return _queryAdapter.queryList('SELECT * FROM Steps',
-        mapper: (Map<String, Object?> row) => Steps(
-            row['id'] as int?,
-            row['value'] as double,
-            _dateTimeConverter.decode(row['dateTime'] as int)));
-  }
-
-  @override
-  Future<Steps?> findFirstDayInDb() async {
-    return _queryAdapter.query(
-        'SELECT * FROM Steps ORDER BY dateTime ASC LIMIT 1',
-        mapper: (Map<String, Object?> row) => Steps(
-            row['id'] as int?,
-            row['value'] as double,
-            _dateTimeConverter.decode(row['dateTime'] as int)));
-  }
-
-  @override
-  Future<Steps?> findLastDayInDb() async {
-    return _queryAdapter.query(
-        'SELECT * FROM Steps ORDER BY dateTime DESC LIMIT 1',
-        mapper: (Map<String, Object?> row) => Steps(
-            row['id'] as int?,
-            row['value'] as double,
-            _dateTimeConverter.decode(row['dateTime'] as int)));
-  }
-
-  @override
-  Future<void> insertSteps(Steps steps) async {
-    await _stepsInsertionAdapter.insert(steps, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> updateSteps(Steps steps) async {
-    await _stepsUpdateAdapter.update(steps, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> deleteSteps(Steps steps) async {
-    await _stepsDeletionAdapter.delete(steps);
-  }
-}
-
-class _$DistanceDao extends DistanceDao {
-  _$DistanceDao(
-    this.database,
-    this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
-        _distanceInsertionAdapter = InsertionAdapter(
-            database,
-            'Distance',
-            (Distance item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                }),
-        _distanceUpdateAdapter = UpdateAdapter(
-            database,
-            'Distance',
-            ['id'],
-            (Distance item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                }),
-        _distanceDeletionAdapter = DeletionAdapter(
-            database,
-            'Distance',
-            ['id'],
-            (Distance item) => <String, Object?>{
-                  'id': item.id,
-                  'value': item.value,
-                  'dateTime': _dateTimeConverter.encode(item.dateTime)
-                });
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  final InsertionAdapter<Distance> _distanceInsertionAdapter;
-
-  final UpdateAdapter<Distance> _distanceUpdateAdapter;
-
-  final DeletionAdapter<Distance> _distanceDeletionAdapter;
-
-  @override
-  Future<List<Distance>> findDistancebyTime(
-    DateTime startTime,
-    DateTime endTime,
-  ) async {
-    return _queryAdapter.queryList(
-        'SELECT * FROM Distance WHERE dateTime between ?1 and ?2 ORDER BY dateTime ASC',
-        mapper: (Map<String, Object?> row) => Distance(row['id'] as int?, row['value'] as double, _dateTimeConverter.decode(row['dateTime'] as int)),
-        arguments: [
-          _dateTimeConverter.encode(startTime),
-          _dateTimeConverter.encode(endTime)
-        ]);
-  }
-
-  @override
-  Future<List<Distance>> findAllDistance() async {
-    return _queryAdapter.queryList('SELECT * FROM Distance',
-        mapper: (Map<String, Object?> row) => Distance(
-            row['id'] as int?,
-            row['value'] as double,
-            _dateTimeConverter.decode(row['dateTime'] as int)));
-  }
-
-  @override
-  Future<Distance?> findFirstDayInDb() async {
-    return _queryAdapter.query(
-        'SELECT * FROM Distance ORDER BY dateTime ASC LIMIT 1',
-        mapper: (Map<String, Object?> row) => Distance(
-            row['id'] as int?,
-            row['value'] as double,
-            _dateTimeConverter.decode(row['dateTime'] as int)));
-  }
-
-  @override
-  Future<Distance?> findLastDayInDb() async {
-    return _queryAdapter.query(
-        'SELECT * FROM Distance ORDER BY dateTime DESC LIMIT 1',
-        mapper: (Map<String, Object?> row) => Distance(
-            row['id'] as int?,
-            row['value'] as double,
-            _dateTimeConverter.decode(row['dateTime'] as int)));
-  }
-
-  @override
-  Future<void> insertDistance(Distance distance) async {
-    await _distanceInsertionAdapter.insert(distance, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> updateDistance(Distance distance) async {
-    await _distanceUpdateAdapter.update(distance, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> deleteDistance(Distance distance) async {
-    await _distanceDeletionAdapter.delete(distance);
   }
 }
 
