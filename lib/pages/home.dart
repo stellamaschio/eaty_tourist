@@ -44,6 +44,7 @@ class _HomeState extends State<Home> {
   bool close = false;
   int index = 1;
   late DateTime time = DateTime(0,0,0,0);
+  late DateTime endTime = DateTime(0,0,0,0);
   late int startMinute;
 
   //start is true because we are ready to start
@@ -73,7 +74,7 @@ class _HomeState extends State<Home> {
       setState(() {
         close = !close;
       });
-      //provider.setTimeRange(startTime, startTime.add(Duration(minutes: index)));
+      provider.setTimeRange(time, DateTime.now());
       provider.setSelectedCalories(0);
     }
   }

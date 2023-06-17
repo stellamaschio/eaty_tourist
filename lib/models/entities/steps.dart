@@ -8,7 +8,7 @@ class Steps {
   @PrimaryKey(autoGenerate: true)
   final int? id;
 
-  final double value;
+  final int value;
 
   final DateTime dateTime;
 

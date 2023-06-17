@@ -180,7 +180,7 @@ class ImpactService {
         String hour = dataday['time'];
         String datetime = '${day}T$hour';
         DateTime timestamp = _truncateSeconds(DateTime.parse(datetime));
-        Steps stepsnew = Steps(null, double.parse(dataday['value']), timestamp);
+        Steps stepsnew = Steps(null, int.parse(dataday['value']), timestamp);
         if (!step.any((e) => e.dateTime.isAtSameMomentAs(stepsnew.dateTime))) {
           step.add(stepsnew);
         }

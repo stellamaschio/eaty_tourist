@@ -16,7 +16,7 @@ class HomeProvider extends ChangeNotifier {
   double totalCalories = 0;
   late double selectedCalories = 0;
 
-  late double selectedSteps = 0;
+  late int selectedSteps = 0;
   late double selectedDistance = 0;
 
   final AppDatabase db;
@@ -71,7 +71,6 @@ class HomeProvider extends ChangeNotifier {
       db.caloriesDao.insertCalories(element);    
     } // db add to the table
 
-    /*
     _steps = await impactService.getDataStepsFromDay(lastFetch);
     for (var element in _steps) {
       db.stepsDao.insertSteps(element);    
@@ -81,7 +80,7 @@ class HomeProvider extends ChangeNotifier {
     for (var element in _distance) {
       db.distanceDao.insertDistance(element);    
     } // db add to the table
-    */
+    
   }
 
   // method to trigger a new data fetching
@@ -105,27 +104,18 @@ class HomeProvider extends ChangeNotifier {
         DateUtils.dateOnly(showDate),
         DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
 
-    /*
-    steps = await db.stepsDao.findStepsbyTime(
-        DateUtils.dateOnly(showDate),
-        DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
-
-    distance = await db.distanceDao.findDistancebyTime(
-        DateUtils.dateOnly(showDate),
-        DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
-    // after selecting all data we notify all consumers to rebuild
-    */
-    totalCal();
+    //totalCal();
     notifyListeners();
   }
 
+/*
   void totalCal(){
     double total = 0;
     for(var element in calories){
       total = total + element.value;
     }
     totalCalories = total;
-  }
+  }*/
 
   void setSelectedCalories(double val){
     selectedCalories = val;
@@ -140,18 +130,17 @@ class HomeProvider extends ChangeNotifier {
 
   }
 
-  void setTimeRange(DateTime startTime, DateTime endTime){
-    int stHour = startTime.hour;
-    int stMinute = startTime.minute;
-    int startMinute = stHour*60 + stMinute;
+  Future<void> setTimeRange(DateTime startTime, DateTime endTime) async{
+    
+    //steps = await db.stepsDao.findAllSteps();
+    distance = await db.distanceDao.findDistancebyTime(startTime, endTime);
+    
+    for(var element in steps){
+      selectedSteps = selectedSteps + element.value;
+    }
 
-    int edHour = startTime.hour;
-    int edMinute = startTime.minute;
-    int endMinute = stHour*60 + stMinute;
-
-    for(int i=startMinute; i<=endMinute; i++){
-      selectedSteps = selectedSteps + steps[startMinute+i].value;
-      selectedDistance = selectedDistance + distance[startMinute+i].value;
+    for(var element in distance){
+      selectedDistance = selectedDistance + element.value;
     }
   }
   
