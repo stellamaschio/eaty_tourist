@@ -16,7 +16,10 @@ class HomeProvider extends ChangeNotifier {
   late double selectedCalories = 0;
   late int selectedSteps = 0;
   late double selectedDistance = 0;
-  late List<Selected> selected;
+  late List<Selected> selectedAll;
+  late List<Selected> selectedByTime;
+
+  late Selected data = Selected(null, 0, 0, 0, showDate);
 
   final AppDatabase db;
 
@@ -140,12 +143,38 @@ class HomeProvider extends ChangeNotifier {
   
   // save calories, steps, and distance made during the day with the app
   void saveDay(){
-    db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, DateTime.now()));
+    db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, showDate));
     setSelected(0);
   }
-  
-  Future<void> getSelected() async{
-    selected = await db.selectedDao.findAllSelected();
+
+  Future<void> getSelectedByTime(DateTime startTime, DateTime endTime, DateTime date) async{
+    // check if the day we want to show has data
+    var firstDay = await db.selectedDao.findFirstDayInDb();
+    var lastDay = await db.selectedDao.findLastDayInDb();
+
+    if (date.isAfter(lastDay!.dateTime) ||
+        date.isBefore(firstDay!.dateTime)) return;
+        
+    this.showDate = date;
+
+    late double cal = 0;
+    late int st = 0;
+    late double dist = 0;
+
+    selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
+
+    for(var element in selectedByTime){
+      cal = cal + element.calories;
+      st = st + element.steps;
+      dist = dist +element.distance;
+    }
+    data = Selected(null, cal, st, dist, date);
+    
+    notifyListeners();
+  }
+
+  void setShowDate(DateTime date){
+    this.showDate = date;
   }
 }
 

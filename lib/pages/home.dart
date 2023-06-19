@@ -48,11 +48,12 @@ class _HomeState extends State<Home> {
   late int startMinute;
 
   //start is true because we are ready to start
-  void _buttonState(){
+  void _buttonState(HomeProvider provider){
     setState(() {
       start = !start;
     });
     time = DateTime.now().subtract(const Duration(days: 1));
+    provider.setShowDate(time);
     // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
     // qui interessano solo ora e minuto
     
@@ -267,7 +268,7 @@ class _HomeState extends State<Home> {
                                   padding: EdgeInsets.all(15),
                                 ),
                                 onPressed: () {
-                                  _buttonState();
+                                  _buttonState(provider);
                                 },
                                 child: (start)
                                   ? (Icon(MdiIcons.stop, size: 35,))
