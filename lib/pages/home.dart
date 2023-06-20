@@ -46,6 +46,7 @@ class _HomeState extends State<Home> {
   late DateTime time = DateTime(0,0,0,0);
   late DateTime endTime = DateTime(0,0,0,0);
   late int startMinute;
+  final int minuteAdd = 10;
 
   //start is true because we are ready to start
   void _buttonState(HomeProvider provider){
@@ -65,8 +66,8 @@ class _HomeState extends State<Home> {
       setState(() {
         demo = !demo;
       });
-      provider.selectCalories(startMinute);
-      startMinute = startMinute + 10;   
+      provider.selectCalories(startMinute, minuteAdd);
+      startMinute = startMinute + minuteAdd;   
       index++;   
     }
   }
@@ -77,9 +78,9 @@ class _HomeState extends State<Home> {
       setState(() {
         close = !close;
       });
-      endTime = time.add(Duration(minutes: (10*index)));
+      endTime = time.add(Duration(minutes: (minuteAdd*index)));
       provider.setTimeRange(time, endTime);
-      provider.saveDay();
+      provider.saveDay(time);
       index = 0;
     }
   }
@@ -302,18 +303,6 @@ class _HomeState extends State<Home> {
   bool checkStart(bool start){
     return start;
   }
-
-  /*
-  void switchAction(bool start, HomeProvider prov){
-    DateTime time = DateTime.now();
-    while(start){
-      // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-      // qui interessano solo ora e minuto
-      prov.selectCalories(time);
-      time.add(Duration(minutes: 10));
-    }
-  }
-  */
 
   int _foodUnlockedIndex(double value, List<Foods> list){
     if(value<list.first.calories){

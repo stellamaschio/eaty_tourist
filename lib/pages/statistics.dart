@@ -9,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+DateTime today = DateTime.now();
+
 class Statistics extends StatelessWidget {
   const Statistics({super.key});
 
@@ -27,7 +29,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.data.distance/100000} km',
+                  '${provider.selectedByTime.last.distance/100000} km',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -45,7 +47,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.data.steps} steps',
+                  '${provider.selectedByTime.last.steps} steps',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -63,7 +65,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.data.calories.toInt()} cal',
+                  '${provider.selectedByTime.last.calories.toInt()} cal',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -83,12 +85,12 @@ class Statistics extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                       onPressed: () {
-                        DateTime day = provider.showDate;
-                        DateTime newDay = day.subtract(const Duration(days: 1));
+                        DateTime selDay = provider.showDate;
+                        DateTime prevDay = selDay.subtract(const Duration(days: 1));
                         provider.getSelectedByTime(
-                          DateUtils.dateOnly(newDay),
-                          DateTime(newDay.year, newDay.month, newDay.day, 23,59),
-                          newDay,
+                          DateUtils.dateOnly(prevDay),
+                          DateTime(prevDay.year, prevDay.month, prevDay.day, 23,59),
+                          prevDay,
                         );
                       }),
                   Consumer<HomeProvider>(
@@ -106,12 +108,13 @@ class Statistics extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                       onPressed: () {
-                        DateTime day = provider.showDate;
-                        DateTime newDay = day.add(const Duration(days: 1));
+                        DateTime selDay = provider.showDate;
+                        Duration difference = provider.lastSelTime.difference(selDay);
+                        DateTime nextDay = selDay.add(difference);
                         provider.getSelectedByTime(
-                          DateUtils.dateOnly(newDay),
-                          DateTime(newDay.year, newDay.month, newDay.day, 23,59),
-                          newDay,
+                          DateUtils.dateOnly(nextDay),
+                          provider.lastSelTime,
+                          nextDay,
                         );
                       })
                 ],
@@ -143,6 +146,7 @@ class Statistics extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  // previous week button
                   IconButton(
                       icon: Icon(
                         Icons.navigate_before,
@@ -151,6 +155,7 @@ class Statistics extends StatelessWidget {
                       onPressed: () {
                         
                       }),
+                  // next week button
                   IconButton(
                       icon: Icon(
                         Icons.navigate_next,
@@ -194,14 +199,6 @@ var font = GoogleFonts.montserrat(
                     fontStyle: FontStyle.normal,
                     );
 
-//Valori calorici nel grafico
-Map<String,double> calorie_giorno= {"Mn":2100, "Te":2000, "Wd":1643, "Tu":890, "Fr":2600, "St":1999, "Su":3000};
-
-//Valore massimo e rappresentazione massima del grafico
-    List<double> calorie = calorie_giorno.values.toList();
-    double val_max= calorie.reduce((a, b) => a > b ? a : b);
-    double rap_max= val_max*1.1;
-
 // Graphic class
 class Graphic extends StatefulWidget {
   Graphic({super.key});
@@ -220,6 +217,8 @@ class GraphicState extends State<Graphic> {
 
   int touchedGroupIndex = -1;
 
+  double rap_max = 0;
+
   @override
   void initState() {
     super.initState();
@@ -227,8 +226,17 @@ class GraphicState extends State<Graphic> {
     DateTime date = provider.showDate;
     provider.getSelectedByTime(
       DateUtils.dateOnly(date), 
-      DateTime(date.year, date.month, date.day, 23, 59), date,
+      provider.lastSelTime, 
+      date,
     );
+
+    //Valori calorici nel grafico
+    Map<String,double> calorie_giorno= {"Mn":provider.selectedByTime.last.calories, "Te":2000, "Wd":1643, "Tu":890, "Fr":2600, "St":1999, "Su":3000};
+
+    //Valore massimo e rappresentazione massima del grafico
+    List<double> calorie = calorie_giorno.values.toList();
+    double val_max= calorie.reduce((a, b) => a > b ? a : b);
+    rap_max= val_max*1.1;
 
     // Qui ci sono i valori riportati nel grafico
     final barGroup1 = makeGroupData(0, calorie_giorno["Mn"]!);
@@ -332,19 +340,19 @@ class GraphicState extends State<Graphic> {
   Widget leftTitles(double value, TitleMeta meta) {
     var style = font.copyWith(fontSize: 12);
     String text;
-    if (value == rap_max*(1/5)) {
+    if (value == (rap_max*(1/5)).toInt()) {
       text = (rap_max*(1/5)).toInt().toString();
     } 
-    else if (value == rap_max*(2/5)) {
+    else if (value == (rap_max*(2/5)).toInt()) {
       text = (rap_max*(2/5)).toInt().toString();
     } 
-    else if (value == rap_max*(3/5)) {
+    else if (value == (rap_max*(3/5)).toInt()) {
       text = (rap_max*(3/5)).toInt().toString();
     } 
-    else if (value == rap_max*(4/5)) {
+    else if (value == (rap_max*(4/5)).toInt()) {
       text = (rap_max*(4/5)).toInt().toString();
     } 
-    else if (value == rap_max*(5/5)) {
+    else if (value == (rap_max*(5/5)).toInt()) {
       text = (rap_max*(5/5)).toInt().toString();
     } 
     else {
