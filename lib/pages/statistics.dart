@@ -1,3 +1,4 @@
+import 'package:eaty_tourist/models/barObj.dart';
 import 'package:eaty_tourist/providers/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -29,7 +30,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.selectedByTime.last.distance/100000} km',
+                  '${provider.selectedByTime.last.distance.toInt()/100000} km',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -71,7 +72,7 @@ class Statistics extends StatelessWidget {
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
+                )
               ),
             ),
             Padding(
@@ -109,13 +110,15 @@ class Statistics extends StatelessWidget {
                       ),
                       onPressed: () {
                         DateTime selDay = provider.showDate;
-                        Duration difference = provider.lastSelTime.difference(selDay);
-                        DateTime nextDay = selDay.add(difference);
-                        provider.getSelectedByTime(
-                          DateUtils.dateOnly(nextDay),
-                          provider.lastSelTime,
-                          nextDay,
-                        );
+                        provider.todayLastTime(selDay.add(const Duration(days: 1)));
+                        Future.delayed(const Duration(milliseconds: 1), () => {
+                          provider.getSelectedByTime(
+                            DateUtils.dateOnly(selDay.add(provider.lastSelTime.difference(selDay)),),
+                            provider.lastSelTime,
+                            selDay.add(provider.lastSelTime.difference(selDay)),
+                          ),
+                        });
+                        
                       })
                 ],
               ),
@@ -202,50 +205,52 @@ var font = GoogleFonts.montserrat(
 // Graphic class
 class Graphic extends StatefulWidget {
   Graphic({super.key});
-  final Color leftBarColor = bar_1;
   @override
   State<StatefulWidget> createState() => GraphicState();
 }
 
 class GraphicState extends State<Graphic> {
   final double width = 7;
+  final Color leftBarColor = bar_1;
+  double rap_max = 0;
 
   // In dart, late keyword is used to declare a variable or field that will be initialized at a later time. 
   // It is used to declare a non-nullable variable that is not initialized at the time of declaration.
-  late List<BarChartGroupData> rawBarGroups;
-  late List<BarChartGroupData> showingBarGroups;
+  late List<BarChartGroupData>? rawBarGroups;
+  late List<BarChartGroupData>? showingBarGroups;
 
   int touchedGroupIndex = -1;
 
-  double rap_max = 0;
+  DateTime startDate = DateTime(2023,06,17);  //friday
+  List<int> week = [1,2,3,4,5,6,7];
+  int weekDay = 0;
+  List<double> calList = [];
+  List<BarChartGroupData>? items = [];
 
   @override
   void initState() {
     super.initState();
+
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
-    DateTime date = provider.showDate;
-    provider.getSelectedByTime(
-      DateUtils.dateOnly(date), 
-      provider.lastSelTime, 
-      date,
-    );
-
-    //Valori calorici nel grafico
-    Map<String,double> calorie_giorno= {"Mn":provider.selectedByTime.last.calories, "Te":2000, "Wd":1643, "Tu":890, "Fr":2600, "St":1999, "Su":3000};
-
-    //Valore massimo e rappresentazione massima del grafico
-    List<double> calorie = calorie_giorno.values.toList();
-    double val_max= calorie.reduce((a, b) => a > b ? a : b);
+    calList = getCalList(provider);
+    double val_max = calList.reduce((a, b) => a > b ? a : b);
     rap_max= val_max*1.1;
 
+    DateTime date = provider.showDate;
+    provider.lastTime();
+    provider.getSelectedByTime(
+      DateUtils.dateOnly(date), 
+      provider.dataLastTime, 
+      date,
+    );
     // Qui ci sono i valori riportati nel grafico
-    final barGroup1 = makeGroupData(0, calorie_giorno["Mn"]!);
-    final barGroup2 = makeGroupData(1, calorie_giorno["Te"]!);
-    final barGroup3 = makeGroupData(2, calorie_giorno["Wd"]!);
-    final barGroup4 = makeGroupData(3, calorie_giorno["Tu"]!);
-    final barGroup5 = makeGroupData(4, calorie_giorno["Fr"]!);
-    final barGroup6 = makeGroupData(5, calorie_giorno["St"]!);
-    final barGroup7 = makeGroupData(6, calorie_giorno["Su"]!);
+    final barGroup1 = makeGroupData(0, provider.cal_week.first.calories);
+    final barGroup2 = makeGroupData(1, provider.cal_week[2].calories);
+    final barGroup3 = makeGroupData(2, provider.cal_week[3].calories);
+    final barGroup4 = makeGroupData(3, provider.cal_week[4].calories);
+    final barGroup5 = makeGroupData(4, provider.cal_week[5].calories);
+    final barGroup6 = makeGroupData(5, provider.cal_week[6].calories);
+    final barGroup7 = makeGroupData(6, provider.cal_week[2].calories);
 
     final items = [
       barGroup1,
@@ -257,11 +262,12 @@ class GraphicState extends State<Graphic> {
       barGroup7,
     ];
 
+    makeItems(provider);
     rawBarGroups = items;
-
     showingBarGroups = rawBarGroups;
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -291,6 +297,13 @@ class GraphicState extends State<Graphic> {
               height: altezza_grafico,
               child: BarChart(
                 BarChartData(
+                  /*
+                  barTouchData: BarTouchData(
+                    touchTooltipData: BarTouchTooltipData(
+                      
+                    ),
+                  ),
+                  */
                   maxY: rap_max,
                   titlesData: FlTitlesData(
                     show: true,
@@ -323,7 +336,7 @@ class GraphicState extends State<Graphic> {
                   borderData: FlBorderData(
                     show: false,
                     ),
-                  barGroups: showingBarGroups,
+                  //barGroups: showingBarGroups,
                   gridData: FlGridData(
                     drawHorizontalLine: true,
                     drawVerticalLine: false,
@@ -336,6 +349,42 @@ class GraphicState extends State<Graphic> {
       ),
     );
   }
+
+  void makeItems(HomeProvider prov){
+    for(var element in prov.cal_week){
+      items?.add(createItems(element));
+    }
+  }
+
+  createItems(BarObj element){
+      switch(element.numb){
+        case 1:
+          return makeGroupData(1, element.getCal());
+        case 2:
+          return makeGroupData(2, element.getCal());
+        case 3:
+          return makeGroupData(3, element.getCal());
+        case 4:
+          return makeGroupData(4, element.getCal());
+        case 5:
+          return makeGroupData(5, element.getCal());
+        case 6:
+          return makeGroupData(6, element.getCal());
+        case 7:
+          return makeGroupData(7, element.getCal());
+        
+      }
+    }
+  
+
+  List<double> getCalList(HomeProvider prov){
+    List<double> list = [];
+    for(var element in prov.cal_week){
+      list.add(element.getCal());
+    }
+    return list;
+  }
+
 
   Widget leftTitles(double value, TitleMeta meta) {
     var style = font.copyWith(fontSize: 12);
@@ -368,6 +417,7 @@ class GraphicState extends State<Graphic> {
   Widget bottomTitles(double value, TitleMeta meta) {
     final titles = <String>['Mn', 'Te', 'Wd', 'Tu', 'Fr', 'St', 'Su'];
 
+
     final Widget text = Text(
       titles[value.toInt()],
       style: font.copyWith(fontSize: 14,),
@@ -395,11 +445,14 @@ class GraphicState extends State<Graphic> {
       barRods: [
         BarChartRodData(
           toY: y1,
-          color: widget.leftBarColor,
+          color: leftBarColor,
           width: width,
         ),
       ],
     );
   }
+  
 }
+
+
 

@@ -1,5 +1,7 @@
+import 'dart:js_util';
 import 'dart:math';
 
+import 'package:eaty_tourist/models/barObj.dart';
 import 'package:eaty_tourist/services/impact.dart';
 import 'package:flutter/material.dart';
 import 'package:eaty_tourist/models/db.dart';
@@ -19,9 +21,15 @@ class HomeProvider extends ChangeNotifier {
   late List<Selected> selectedByTime = [];
   late List<Selected> selectedUntilNow = [];
   late List<Selected> selectedAll = [];
+  late List<Selected> temp = [];
+  late Selected lastData;
+
 
   late DateTime lastSelTime;
+  late DateTime dataLastTime;
+  late DateTime firstDataTime;
 
+  late int firstDataDay;
 
   final AppDatabase db;
 
@@ -30,8 +38,15 @@ class HomeProvider extends ChangeNotifier {
   late List<Steps> _steps;
   late List<Distance> _distance;
 
+  List<BarObj> cal_week = [];
+
   // selected day of data to be shown --> date of yesterday
   DateTime showDate = DateTime.now().subtract(const Duration(days: 1));
+
+  // selected day of data to be shown --> date of yesterday
+  // don't change usuing the application
+  DateTime todayDate = DateTime.now().subtract(const Duration(days: 1));
+
 
   final ImpactService impactService;
   late DateTime lastFetch;
@@ -44,11 +59,17 @@ class HomeProvider extends ChangeNotifier {
 
   // constructor of provider which manages the fetching of all data from the servers and then notifies the ui to build
   Future<void> _init() async {
+    setSelected(0);
+    await _setDataLastTime();
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
     saveDay(showDate);
     doneInit = true;
     notifyListeners();
+  }
+
+  Future<DateTime?> _setDataLastTime() async {
+    dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
   }
 
   Future<DateTime?> _getLastFetch() async {
@@ -166,7 +187,6 @@ class HomeProvider extends ChangeNotifier {
     
     await db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, selTime));
     selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
-    setSelected(0);
 
     lastSelTime = selTime;
   }
@@ -182,8 +202,36 @@ class HomeProvider extends ChangeNotifier {
     this.showDate = date;
 
     selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
-    
+    if(selectedByTime.isEmpty){
+      await db.selectedDao.insertSelected(Selected(null, 0, 0, 0, showDate));
+      selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
+    }
+
     notifyListeners();
+  }
+
+  Future<void> lastTime() async{
+    dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
+  }
+
+  Future<void> todayLastTime(DateTime time) async{
+    selectAll();
+    
+    for(var element in selectedAll){
+      if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
+        temp.add(element);
+      }
+    }
+
+    if(temp.isEmpty){
+      return;
+    }
+    else{
+      lastSelTime = temp.last.dateTime;
+      lastData = temp.last;
+      notifyListeners();
+      temp = [];
+    }
   }
 
   void setShowDate(DateTime date){
@@ -192,6 +240,51 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> selectAll() async{
     selectedAll = await db.selectedDao.findAllSelected();
+  }
+  /*
+  Future<void> saveData(DateTime time) async{
+    selectAll();
+    
+    for(var element in selectedAll){
+      if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
+        temp.add(element);
+      }
+    }
+
+    await db.dataDao.insertData(
+      Data(null, temp.last.calories, temp.last.steps, temp.last.distance, 
+        time.day, time.month, time.weekday));
+  }*/
+
+  Future<void> makeWeekDay() async{
+    selectAll();
+    firstDataTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
+    Duration difference = todayDate.difference(firstDataTime);
+    int diff = difference.inDays;
+
+    int i = 0;
+
+    while(i<=diff){
+      todayLastTime(firstDataTime.add(Duration(days: i)));
+      i++;
+      switch(lastSelTime.weekday){
+        case 1:
+          return cal_week.add(BarObj(day: 'Mn', numb: 1, calories: lastData.calories));
+        case 2:
+          return cal_week.add(BarObj(day: 'Te', numb: 2, calories: lastData.calories));
+        case 3:
+          return cal_week.add(BarObj(day: 'Wd', numb: 3, calories: lastData.calories));
+        case 4:
+          return cal_week.add(BarObj(day: 'Tu', numb: 4, calories: lastData.calories));
+        case 5:
+          return cal_week.add(BarObj(day: 'Fr', numb: 5, calories: lastData.calories));
+        case 6:
+          return cal_week.add(BarObj(day: 'St', numb: 6, calories: lastData.calories));
+        case 7:
+          return cal_week.add(BarObj(day: 'Su', numb: 7, calories: lastData.calories));
+      }
+    }
+      
   }
 
 }
