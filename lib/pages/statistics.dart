@@ -30,7 +30,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.selectedByTime.last.distance.toInt()/100000} km',
+                  '${provider.selectedByTime.last.distance/100000} km',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -72,7 +72,7 @@ class Statistics extends StatelessWidget {
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
-                )
+                ),
               ),
             ),
             Padding(
@@ -118,7 +118,6 @@ class Statistics extends StatelessWidget {
                             selDay.add(provider.lastSelTime.difference(selDay)),
                           ),
                         });
-                        
                       })
                 ],
               ),
@@ -205,32 +204,30 @@ var font = GoogleFonts.montserrat(
 // Graphic class
 class Graphic extends StatefulWidget {
   Graphic({super.key});
+  final Color leftBarColor = bar_1;
   @override
   State<StatefulWidget> createState() => GraphicState();
 }
 
 class GraphicState extends State<Graphic> {
   final double width = 7;
-  final Color leftBarColor = bar_1;
-  double rap_max = 0;
 
   // In dart, late keyword is used to declare a variable or field that will be initialized at a later time. 
   // It is used to declare a non-nullable variable that is not initialized at the time of declaration.
-  late List<BarChartGroupData>? rawBarGroups;
-  late List<BarChartGroupData>? showingBarGroups;
+  late List<BarChartGroupData> rawBarGroups;
+  late List<BarChartGroupData> showingBarGroups;
 
   int touchedGroupIndex = -1;
 
-  DateTime startDate = DateTime(2023,06,17);  //friday
-  List<int> week = [1,2,3,4,5,6,7];
-  int weekDay = 0;
+  double rap_max = 0;
+
   List<double> calList = [];
   List<BarChartGroupData>? items = [];
+
 
   @override
   void initState() {
     super.initState();
-
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
     calList = getCalList(provider);
     double val_max = calList.reduce((a, b) => a > b ? a : b);
@@ -243,6 +240,7 @@ class GraphicState extends State<Graphic> {
       provider.dataLastTime, 
       date,
     );
+
     // Qui ci sono i valori riportati nel grafico
     final barGroup1 = makeGroupData(0, provider.cal_week.first.calories);
     final barGroup2 = makeGroupData(1, provider.cal_week[2].calories);
@@ -262,12 +260,13 @@ class GraphicState extends State<Graphic> {
       barGroup7,
     ];
 
+    provider.makeWeekDay();
     makeItems(provider);
     rawBarGroups = items;
+
     showingBarGroups = rawBarGroups;
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -297,13 +296,6 @@ class GraphicState extends State<Graphic> {
               height: altezza_grafico,
               child: BarChart(
                 BarChartData(
-                  /*
-                  barTouchData: BarTouchData(
-                    touchTooltipData: BarTouchTooltipData(
-                      
-                    ),
-                  ),
-                  */
                   maxY: rap_max,
                   titlesData: FlTitlesData(
                     show: true,
@@ -336,7 +328,7 @@ class GraphicState extends State<Graphic> {
                   borderData: FlBorderData(
                     show: false,
                     ),
-                  //barGroups: showingBarGroups,
+                  barGroups: showingBarGroups,
                   gridData: FlGridData(
                     drawHorizontalLine: true,
                     drawVerticalLine: false,
@@ -374,9 +366,9 @@ class GraphicState extends State<Graphic> {
           return makeGroupData(7, element.getCal());
         
       }
-    }
-  
+  }
 
+  
   List<double> getCalList(HomeProvider prov){
     List<double> list = [];
     for(var element in prov.cal_week){
@@ -384,7 +376,6 @@ class GraphicState extends State<Graphic> {
     }
     return list;
   }
-
 
   Widget leftTitles(double value, TitleMeta meta) {
     var style = font.copyWith(fontSize: 12);
@@ -417,7 +408,6 @@ class GraphicState extends State<Graphic> {
   Widget bottomTitles(double value, TitleMeta meta) {
     final titles = <String>['Mn', 'Te', 'Wd', 'Tu', 'Fr', 'St', 'Su'];
 
-
     final Widget text = Text(
       titles[value.toInt()],
       style: font.copyWith(fontSize: 14,),
@@ -445,14 +435,11 @@ class GraphicState extends State<Graphic> {
       barRods: [
         BarChartRodData(
           toY: y1,
-          color: leftBarColor,
+          color: widget.leftBarColor,
           width: width,
         ),
       ],
     );
   }
-  
 }
-
-
 

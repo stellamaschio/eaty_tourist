@@ -1,6 +1,4 @@
-import 'dart:js_util';
 import 'dart:math';
-
 import 'package:eaty_tourist/models/barObj.dart';
 import 'package:eaty_tourist/services/impact.dart';
 import 'package:flutter/material.dart';
