@@ -20,12 +20,12 @@ class HomeProvider extends ChangeNotifier {
   late List<Selected> selectedUntilNow = [];
   late List<Selected> selectedAll = [];
   late List<Selected> temp = [];
-  late Selected lastData;
+  late List<Selected> lastData = [];
 
 
-  late DateTime lastSelTime;
+  late DateTime lastSelTime = dataLastTime;
   late DateTime dataLastTime;
-  late DateTime firstDataTime;
+  late DateTime dataFirstTime;
 
   late int firstDataDay;
 
@@ -57,17 +57,17 @@ class HomeProvider extends ChangeNotifier {
 
   // constructor of provider which manages the fetching of all data from the servers and then notifies the ui to build
   Future<void> _init() async {
-    setSelected(0);
-    await _setDataLastTime();
+    await dayLastTime(showDate);
+    await lastTime();
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
-    saveDay(showDate);
     doneInit = true;
     notifyListeners();
   }
 
-  Future<DateTime?> _setDataLastTime() async {
+  Future<void> lastTime() async{
     dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
+    dataFirstTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
   }
 
   Future<DateTime?> _getLastFetch() async {
@@ -187,6 +187,8 @@ class HomeProvider extends ChangeNotifier {
     selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
 
     lastSelTime = selTime;
+
+    setSelected(0);
   }
 
   Future<void> getSelectedByTime(DateTime startTime, DateTime endTime, DateTime date) async{
@@ -205,11 +207,11 @@ class HomeProvider extends ChangeNotifier {
       selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
     }
 
-    notifyListeners();
-  }
+    lastData.clear();
+    lastData.add(selectedByTime.last);
 
-  Future<void> lastTime() async{
-    dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
+    notifyListeners();
+
   }
 
   Future<void> dayLastTime(DateTime time) async{
@@ -226,9 +228,12 @@ class HomeProvider extends ChangeNotifier {
     }
     else{
       lastSelTime = temp.last.dateTime;
-      lastData = temp.last;
-      notifyListeners();
-      temp = [];
+      lastData.clear();
+      lastData.add(temp.last);
+      Future.delayed(const Duration(microseconds: 1), () =>{
+        temp = [],
+      });
+      
     }
   }
 
@@ -239,22 +244,8 @@ class HomeProvider extends ChangeNotifier {
   Future<void> selectAll() async{
     selectedAll = await db.selectedDao.findAllSelected();
   }
+
   /*
-  Future<void> saveData(DateTime time) async{
-    selectAll();
-    
-    for(var element in selectedAll){
-      if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
-        temp.add(element);
-      }
-    }
-
-    await db.dataDao.insertData(
-      Data(null, temp.last.calories, temp.last.steps, temp.last.distance, 
-        time.day, time.month, time.weekday));
-  }*/
-
-
   // add to the list cal_week a BarObj for every lastData of the day in db 
   // at every lastData is assigned the corrispective day of the week
   Future<void> makeWeekDay() async{
@@ -264,25 +255,72 @@ class HomeProvider extends ChangeNotifier {
 
     for(int i=0; i<=diff; i++){
       dayLastTime(firstDataTime.add(Duration(days: i)));
+      //cal_week.add(BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories));
       
-      switch(lastSelTime.weekday){
-        case 1:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 1, calories: lastData.calories));
-        case 2:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 2, calories: lastData.calories));
-        case 3:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 3, calories: lastData.calories));
-        case 4:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 4, calories: lastData.calories));
-        case 5:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 5, calories: lastData.calories));
-        case 6:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 6, calories: lastData.calories));
-        case 7:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 7, calories: lastData.calories));
-      }
+      Future.delayed(const Duration(seconds: 1), () => {
+          cal_week.add(BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories)),
+
+        }
+      );
+      
+      
     } 
+  }*/
+
+  BarObj makeDay(DateTime day) {
+    /*
+    if(day.isAfter(dataFirstTime)){
+      
+      return BarObj(dateTime: day.subtract(const Duration(days: 1)), 
+                    weekDay: day.subtract(const Duration(days: 1)).weekday,
+                    calories: 0);
+    } 
+    else if(day.isAfter(dataLastTime)){
+      return BarObj(dateTime: day.add(const Duration(days: 1)), 
+                    weekDay: day.add(const Duration(days: 1)).weekday,
+                    calories: 0);
+    } */
+    if(day.isAfter(dataLastTime) || day.day == dataLastTime.day){
+      dayLastTime(day);
+      return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
+    }
+
+    dayLastTime(day);
+
+    return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
   }
+
+
+
+  /*
+  void switchCalWeek(){
+    switch(lastSelTime.weekday){
+        case 1:
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 1, calories: lastData.last.calories));
+        case 2:
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 2, calories: lastData.last.calories));
+        case 3:
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 3, calories: lastData.last.calories));
+        case 4:
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 4, calories: lastData.last.calories));
+        case 5:
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 5, calories: lastData.last.calories));
+        case 6:
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 6, calories: lastData.last.calories));
+        case 7:
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 7, calories: lastData.last.calories));
+    }
+  }*/
+
+  /*
+  BarObj selDayOfTheWeek(DateTime time){
+    for(var element in cal_week){
+      if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
+        return element;
+      }
+    }
+    return BarObj(dateTime: time, weekDay: time.weekday, calories: 0);
+  }*/
 
 }
 

@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 
 DateTime today = DateTime.now();
 
+bool changeWeek = false;
+
 class Statistics extends StatelessWidget {
   const Statistics({super.key});
 
@@ -124,7 +126,9 @@ class Statistics extends StatelessWidget {
                             provider.lastSelTime,
                             selDay.add(provider.lastSelTime.difference(selDay)),
                           ),
+                          weekCheck(selDay, selDay.add(provider.lastSelTime.difference(selDay))),
                         });
+                        
                       })
                 ],
               ),
@@ -189,6 +193,16 @@ class Statistics extends StatelessWidget {
       ),
     );
   }
+
+  void weekCheck(DateTime selDay, DateTime newday){
+    if(selDay.weekday == 7 && newday.weekday == 1){
+      changeWeek = true;
+    }
+    if(selDay.weekday == 1 && newday.weekday == 7){
+      changeWeek = true;
+    }
+  }
+
 }
 
 
@@ -221,16 +235,13 @@ class GraphicState extends State<Graphic> {
 
   // In dart, late keyword is used to declare a variable or field that will be initialized at a later time. 
   // It is used to declare a non-nullable variable that is not initialized at the time of declaration.
-  late List<BarChartGroupData> rawBarGroups;
-  late List<BarChartGroupData> showingBarGroups;
 
   int touchedGroupIndex = -1;
 
   double rap_max = 0;
+  double val_max = 1000;
 
-  List<double> calList = [];
-  List<BarChartGroupData>? items = [];
-
+  late List<BarChartGroupData> items = [];
 
   @override
   void initState() {
@@ -239,14 +250,20 @@ class GraphicState extends State<Graphic> {
 
     DateTime date = provider.showDate;
     provider.lastTime();
-    provider.getSelectedByTime(
-      DateUtils.dateOnly(date), 
-      provider.dataLastTime, 
-      date,
-    );
+      provider.getSelectedByTime(
+        DateUtils.dateOnly(date), 
+        provider.dataLastTime, 
+        date,
+      );
+      makeItems(provider);
 
-    calList = getCalList(provider);
+      rap_max = val_max;
+    
+    
+    
+    //calList = getCalList(provider);
 
+/*
     // Qui ci sono i valori riportati nel grafico
     final barGroup1 = makeGroupData(0, provider.cal_week.first.calories);
     final barGroup2 = makeGroupData(1, provider.cal_week[2].calories);
@@ -265,12 +282,10 @@ class GraphicState extends State<Graphic> {
       barGroup6,
       barGroup7,
     ];
-
-    provider.makeWeekDay();
-    makeItems(provider);
-
-    showingBarGroups = items;
+*/     
+      
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -333,7 +348,7 @@ class GraphicState extends State<Graphic> {
                   borderData: FlBorderData(
                     show: false,
                     ),
-                  barGroups: showingBarGroups,
+                  barGroups: items,
                   gridData: FlGridData(
                     drawHorizontalLine: true,
                     drawVerticalLine: false,
@@ -347,10 +362,32 @@ class GraphicState extends State<Graphic> {
     );
   }
 
-  void makeItems(HomeProvider prov){
-    for(var element in prov.cal_week){
-      items?.add(createItems(element));
+  List<BarChartGroupData> makeItems(HomeProvider prov){
+    DateTime date = prov.showDate;
+    BarObj today = prov.makeDay(date);
+    int day = today.weekDay;
+    int sun = 7;
+    DateTime startDay = date.subtract(Duration(days: (day)));
+    
+    for(int i=1;i<day;i++){
+      items.add(createItems(prov.makeDay(startDay.add(Duration(days: i)))));
+      
+      // code for the normalization of the values of the bars
+      BarObj obj = prov.makeDay(startDay.add(Duration(days: i)));
+      if(obj.calories > val_max){
+        val_max = obj.calories;
+      }
     }
+    for(int j=0;j<=(sun-day);j++){
+      items.add(createItems(prov.makeDay(date.add(Duration(days: j)))));
+
+      // code for the normalization of the values of the bars
+      BarObj obj = prov.makeDay(startDay.add(Duration(days: j)));
+      if(obj.calories > val_max){
+        val_max = obj.calories;
+      }
+    }
+    return items;
   }
 
   createItems(BarObj element){
@@ -373,10 +410,10 @@ class GraphicState extends State<Graphic> {
       }
   }
 
-  
+  /*
   List<double> getCalList(HomeProvider prov){
     List<double> list = [];
-    double val_max = 0;
+    double val_max = 1000;
     for(var element in prov.cal_week){
       list.add(element.getCal());
       if(element.getCal() >= val_max){
@@ -385,7 +422,7 @@ class GraphicState extends State<Graphic> {
     }
     rap_max = val_max*1.1;
     return list;
-  }
+  }*/
 
   Widget leftTitles(double value, TitleMeta meta) {
     var style = font.copyWith(fontSize: 12);
@@ -419,7 +456,7 @@ class GraphicState extends State<Graphic> {
     final titles = <String>['Mn', 'Te', 'Wd', 'Tu', 'Fr', 'St', 'Su'];
 
     final Widget text = Text(
-      titles[value.toInt()],
+      titles[value.toInt()-1],
       style: font.copyWith(fontSize: 14,),
     );
 

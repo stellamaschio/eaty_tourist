@@ -81,8 +81,10 @@ class _HomeState extends State<Home> {
       endTime = time.add(Duration(minutes: (minuteAdd*index)));
       provider.setTimeRange(time, endTime);
       provider.saveDay(time);
-      provider.setSelected(0);
-      index = 0;
+      Future.delayed(Duration(microseconds: 1), () => {
+        provider.setSelected(0),
+        index = 0,
+      });
     }
   }
 
