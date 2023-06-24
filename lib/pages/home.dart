@@ -159,7 +159,7 @@ class _HomeState extends State<Home> {
                                     ),
                                   ),
                                   Text(
-                                    '${provider.selectedCalories.toInt()} cal',
+                                    '${provider.day.calories.toInt()} cal',
                                     style: GoogleFonts.montserrat(
                                       color: Colors.grey.shade600,
                                       fontSize: 32,
@@ -178,9 +178,9 @@ class _HomeState extends State<Home> {
                                   ),
                                   SizedBox(height: 3,),
                                   // unlocked food name
-                                  Text(_foodUnlockedName(_foodUnlockedIndex(provider.selectedCalories, foodList),foodList),
+                                  Text(_foodUnlockedName(_foodUnlockedIndex(provider.day.calories, foodList),foodList),
                                     style: GoogleFonts.montserrat(
-                                      color: _colorUnlocked(_foodUnlockedIndex(provider.selectedCalories, foodList), foodList, provider.selectedCalories),
+                                      color: _colorUnlocked(_foodUnlockedIndex(provider.day.calories, foodList), foodList, provider.selectedCalories),
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -200,12 +200,12 @@ class _HomeState extends State<Home> {
                                       ),
                                       onPressed: () {
                                         Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (context) => _selectPage(_foodUnlockedIndex(provider.selectedCalories, foodList)),
+                                          builder: (context) => _selectPage(_foodUnlockedIndex(provider.day.calories, foodList)),
                                         ));
                                       },
                                       child: Icon(
                                         _foodUnlokedIcon(
-                                          _foodUnlockedIndex(provider.selectedCalories, foodList),
+                                          _foodUnlockedIndex(provider.day.calories, foodList),
                                           foodList),
                                         size: 35,
                                       ),

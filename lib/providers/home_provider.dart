@@ -12,7 +12,12 @@ import '../models/day.dart';
 class HomeProvider extends ChangeNotifier {
 
   //Reworked Variables
-  late Day day;
+  late Day day = Day(
+    date: DateTime(0,0,0,0),
+    calories: 0,
+    distance: 0,
+    steps: 0,
+  );
 
   // data to be used by the UI
   late List<Calories> calories = [];

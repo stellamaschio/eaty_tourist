@@ -1,7 +1,3 @@
-import 'entities/calories.dart';
-import 'entities/distance.dart';
-import 'entities/steps.dart';
-
 class Day {
 
   //Constructor

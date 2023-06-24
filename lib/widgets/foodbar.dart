@@ -25,7 +25,7 @@ class Foodbar extends CustomPainter {
   //Variabili della classe
   final Color backColor, frontColor, lastColor;
   final double strokeWidth, value, scale, upBar, downBar;
-  final List<Foods> foodList;
+  final List<Food> foodList;
 
   //Numero di cibi
   late int nfoods = foodList.length;
