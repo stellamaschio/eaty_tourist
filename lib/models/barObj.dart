@@ -5,15 +5,15 @@ class BarObj {
   //Costruttore
   const BarObj(
       {
-        required this.day,
-        required this.numb,
+        required this.dateTime,
+        required this.weekDay,
         required this.calories,
       }
   );
 
   //Variabili della classe
-  final String day;
-  final int numb;
+  final DateTime dateTime;
+  final int weekDay;
   final double calories;
 
   double getCal(){

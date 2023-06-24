@@ -30,7 +30,9 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.selectedByTime.last.distance/100000} km',
+                  (provider.selectedByTime.isEmpty)
+                  ? '0 km'
+                  : '${provider.selectedByTime.last.distance/100000} km',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -48,7 +50,9 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.selectedByTime.last.steps} steps',
+                  (provider.selectedByTime.isEmpty)
+                  ? '0 steps'
+                  : '${provider.selectedByTime.last.steps} steps',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -66,7 +70,9 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.selectedByTime.last.calories.toInt()} cal',
+                  (provider.selectedByTime.isEmpty)
+                  ? '0 cal'
+                  : '${provider.selectedByTime.last.calories.toInt()} cal',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -110,8 +116,9 @@ class Statistics extends StatelessWidget {
                       ),
                       onPressed: () {
                         DateTime selDay = provider.showDate;
-                        provider.todayLastTime(selDay.add(const Duration(days: 1)));
+                        provider.dayLastTime(selDay.add(const Duration(days: 1)));
                         Future.delayed(const Duration(milliseconds: 1), () => {
+                          // data from time 00:01 of the next day
                           provider.getSelectedByTime(
                             DateUtils.dateOnly(selDay.add(provider.lastSelTime.difference(selDay)),),
                             provider.lastSelTime,
@@ -229,9 +236,6 @@ class GraphicState extends State<Graphic> {
   void initState() {
     super.initState();
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
-    calList = getCalList(provider);
-    double val_max = calList.reduce((a, b) => a > b ? a : b);
-    rap_max= val_max*1.1;
 
     DateTime date = provider.showDate;
     provider.lastTime();
@@ -240,6 +244,8 @@ class GraphicState extends State<Graphic> {
       provider.dataLastTime, 
       date,
     );
+
+    calList = getCalList(provider);
 
     // Qui ci sono i valori riportati nel grafico
     final barGroup1 = makeGroupData(0, provider.cal_week.first.calories);
@@ -262,9 +268,8 @@ class GraphicState extends State<Graphic> {
 
     provider.makeWeekDay();
     makeItems(provider);
-    rawBarGroups = items;
 
-    showingBarGroups = rawBarGroups;
+    showingBarGroups = items;
   }
 
   @override
@@ -349,7 +354,7 @@ class GraphicState extends State<Graphic> {
   }
 
   createItems(BarObj element){
-      switch(element.numb){
+      switch(element.weekDay){
         case 1:
           return makeGroupData(1, element.getCal());
         case 2:
@@ -371,9 +376,14 @@ class GraphicState extends State<Graphic> {
   
   List<double> getCalList(HomeProvider prov){
     List<double> list = [];
+    double val_max = 0;
     for(var element in prov.cal_week){
       list.add(element.getCal());
+      if(element.getCal() >= val_max){
+        val_max = element.getCal();
+      }
     }
+    rap_max = val_max*1.1;
     return list;
   }
 

@@ -176,7 +176,7 @@ class HomeProvider extends ChangeNotifier {
       // by the methods selectCalories() and setTimeRange()
     }
     else{
-      selTime = selectedUntilNow.last.dateTime.add(const Duration(minutes: 1));
+      selTime = time;
 
       selectedCalories = selectedCalories + selectedUntilNow.last.calories;
       selectedSteps = selectedSteps + selectedUntilNow.last.steps;
@@ -212,7 +212,7 @@ class HomeProvider extends ChangeNotifier {
     dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
   }
 
-  Future<void> todayLastTime(DateTime time) async{
+  Future<void> dayLastTime(DateTime time) async{
     selectAll();
     
     for(var element in selectedAll){
@@ -254,35 +254,34 @@ class HomeProvider extends ChangeNotifier {
         time.day, time.month, time.weekday));
   }*/
 
+
+  // add to the list cal_week a BarObj for every lastData of the day in db 
+  // at every lastData is assigned the corrispective day of the week
   Future<void> makeWeekDay() async{
-    selectAll();
     firstDataTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
     Duration difference = todayDate.difference(firstDataTime);
     int diff = difference.inDays;
 
-    int i = 0;
-
-    while(i<=diff){
-      todayLastTime(firstDataTime.add(Duration(days: i)));
-      i++;
+    for(int i=0; i<=diff; i++){
+      dayLastTime(firstDataTime.add(Duration(days: i)));
+      
       switch(lastSelTime.weekday){
         case 1:
-          return cal_week.add(BarObj(day: 'Mn', numb: 1, calories: lastData.calories));
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 1, calories: lastData.calories));
         case 2:
-          return cal_week.add(BarObj(day: 'Te', numb: 2, calories: lastData.calories));
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 2, calories: lastData.calories));
         case 3:
-          return cal_week.add(BarObj(day: 'Wd', numb: 3, calories: lastData.calories));
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 3, calories: lastData.calories));
         case 4:
-          return cal_week.add(BarObj(day: 'Tu', numb: 4, calories: lastData.calories));
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 4, calories: lastData.calories));
         case 5:
-          return cal_week.add(BarObj(day: 'Fr', numb: 5, calories: lastData.calories));
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 5, calories: lastData.calories));
         case 6:
-          return cal_week.add(BarObj(day: 'St', numb: 6, calories: lastData.calories));
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 6, calories: lastData.calories));
         case 7:
-          return cal_week.add(BarObj(day: 'Su', numb: 7, calories: lastData.calories));
+          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 7, calories: lastData.calories));
       }
-    }
-      
+    } 
   }
 
 }
