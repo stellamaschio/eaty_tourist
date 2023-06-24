@@ -3,10 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
-class Foods {
+class Food {
 
   //Costruttore
-  const Foods(
+  const Food(
       {required this.name,
       required this.calories,
       required this.index,

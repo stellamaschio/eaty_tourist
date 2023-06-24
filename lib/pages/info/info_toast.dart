@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-List<Foods> foodList = ListFoods.foodList;
+List<Food> foodList = ListFoods.foodList;
 
 class Toast extends StatelessWidget {
   const Toast({super.key});

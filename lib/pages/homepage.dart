@@ -26,7 +26,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List<Foods> foodList = ListFoods.foodList;
+  List<Food> foodList = ListFoods.foodList;
   int _selIdx = 0;
 
   void changePage(int index){

@@ -18,15 +18,17 @@ import 'package:provider/provider.dart';
 //const double calories = 360;
 //int cal = calories.toInt();
 
-//Valori dipartenza e fine delle linee
-//NOTA: Widget all'interno di una sized box definita in home
+//FoodBar dimension values
 const double upBar = -40;
 const double downBar = 490;
 
-List<Foods> foodList = ListFoods.foodList;
+//List of Foods already initialized
+List<Food> foodList = ListFoods.foodList;
 
+//Scale to adjust the calories to the foodbar
 double scale = foodList.last.calories / (downBar - upBar);
 
+//Home
 class Home extends StatefulWidget {
   static const route = '/home/';
   static const routeDisplayName = 'HomePage';
@@ -37,60 +39,72 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+//State of Home
 class _HomeState extends State<Home> {
 
+  //Booleans of the start, stop and demo buttons
   bool start = false;
   bool demo = false;
   bool close = false;
-  int index = 0;
-  late DateTime time = DateTime(0,0,0,0);
+
+  //Number of times the demo button had been pressed
+  int numberOfIncrements = 0;
+
+  //Time Variables
+  late DateTime StartTime = DateTime(0,0,0,0);
   late DateTime endTime = DateTime(0,0,0,0);
   late int startMinute;
-  final int minuteAdd = 10;
 
-  //start is true because we are ready to start
-  void _buttonState(HomeProvider provider){
+  //Minute increment at every pression of Demo button
+  final int minuteIncrement = 10;
+
+  //Start Button State
+  void _buttonStateStart(HomeProvider provider){
     setState(() {
       start = !start;
     });
-    time = DateTime.now().subtract(const Duration(days: 1));
-    provider.setShowDate(time);
-    // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-    // qui interessano solo ora e minuto
+
+    //We refer to yesterday data
+    StartTime = DateTime.now().subtract(const Duration(days: 1));
+
+    //Initialization of the date field of Day
+    provider.day.setDayTime(StartTime);
     
-    startMinute = _dateTime2Minute(time);
+    startMinute = StartTime.hour*60 + StartTime.minute;
   }
 
+  //Demo Button State
   void _buttonStateDemo(HomeProvider provider){
     if(start){
       setState(() {
         demo = !demo;
       });
-      provider.selectCalories(startMinute, minuteAdd);
-      startMinute = startMinute + minuteAdd;   
-      index++;   
+
+      //Update the Day calories
+      provider.updateDayCalories(minuteIncrement, minuteIncrement);
+
+      startMinute += minuteIncrement;   
+      numberOfIncrements++;   
     }
   }
 
-  // sistemare caso quando non barretta piena !!! 
+  //Stop Button State
   void _buttonStateClose(HomeProvider provider){
-    if(!start && index!=0){
+    if(!start && numberOfIncrements!=0){
       setState(() {
         close = !close;
       });
-      endTime = time.add(Duration(minutes: (minuteAdd*index)));
-      provider.setTimeRange(time, endTime);
-      provider.saveDay(time);
+
+      //Update endTime, steps and Distance of day
+      endTime = StartTime.add(Duration(minutes: (minuteIncrement*numberOfIncrements)));
+      provider.updateDayDistance(StartTime, endTime);
+      provider.updateDaySteps(StartTime, endTime);
+
+      //Reset the bar and the increments counter
       provider.setSelected(0);
-      index = 0;
+      numberOfIncrements = 0;
     }
   }
-
-  int _dateTime2Minute(DateTime t){
-    return t.hour*60 + t.minute;
-  }
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +284,7 @@ class _HomeState extends State<Home> {
                                   padding: EdgeInsets.all(15),
                                 ),
                                 onPressed: () {
-                                  _buttonState(provider);
+                                  _buttonStateStart(provider);
                                 },
                                 child: (start)
                                   ? (Icon(MdiIcons.stop, size: 35,))
@@ -305,7 +319,7 @@ class _HomeState extends State<Home> {
     return start;
   }
 
-  int _foodUnlockedIndex(double value, List<Foods> list){
+  int _foodUnlockedIndex(double value, List<Food> list){
     if(value<list.first.calories){
       // no unlocked food
       return -1;
@@ -316,7 +330,7 @@ class _HomeState extends State<Home> {
     return index;
   }
 
-  IconData _foodUnlokedIcon(int index, List<Foods> list){
+  IconData _foodUnlokedIcon(int index, List<Food> list){
     if(index<0){
       return MdiIcons.foodOff;
     }
@@ -325,7 +339,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  String _foodUnlockedName(int index, List<Foods> list){
+  String _foodUnlockedName(int index, List<Food> list){
     if(index<0){
       return 'nothing';
     }
@@ -335,7 +349,7 @@ class _HomeState extends State<Home> {
     }
   }
   
-  Color _colorUnlocked(int index, List<Foods> list, double value){
+  Color _colorUnlocked(int index, List<Food> list, double value){
     if(index<0){
       return Color(0xFF607D8B);
     }

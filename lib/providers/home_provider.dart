@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:eaty_tourist/models/db.dart';
 import 'package:eaty_tourist/models/entities/entities.dart';
 
+import '../models/day.dart';
+
 // this is the change notifier. it will manage all the logic of the home page: fetching the correct data from the database
 // and on startup fetching the data from the online services
 class HomeProvider extends ChangeNotifier {
+
+  //Reworked Variables
+  late Day day;
+
   // data to be used by the UI
   late List<Calories> calories = [];
   late List<Steps> steps = [];
@@ -139,28 +145,32 @@ class HomeProvider extends ChangeNotifier {
     selectedDistance = val;
   }
 
-  // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-  void selectCalories(int startMinute, int minuteAdd){
+  // Update the day calories
+  void updateDayCalories(int startMinute, int minuteAdd){
     
     for(int i=1; i<=minuteAdd; i++){
-      selectedCalories = selectedCalories + calories[startMinute+i].value;
+      day.calories += calories[startMinute+i].value;
     }
-
   }
 
-  Future<void> setTimeRange(DateTime startTime, DateTime endTime) async{
-    
-    steps = await db.stepsDao.findStepsbyTime(startTime, endTime);
+  //Update the day distance
+  Future<void> updateDayDistance(DateTime startTime, DateTime endTime) async{
+      
     distance = await db.distanceDao.findDistancebyTime(startTime, endTime);
-    
-    for(var element in steps){
-      selectedSteps = selectedSteps + element.value;
-    }
 
     for(var element in distance){
       selectedDistance = selectedDistance + element.value;
     }
+  }
 
+  //Update the day steps
+  Future<void> updateDaySteps(DateTime startTime, DateTime endTime) async{
+      
+    steps = await db.stepsDao.findStepsbyTime(startTime, endTime);
+
+   for(var element in steps){
+      selectedSteps = selectedSteps + element.value;
+    }
   }
   
   // save calories, steps, and distance made during the day with the app
