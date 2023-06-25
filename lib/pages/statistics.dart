@@ -1,10 +1,6 @@
 import 'package:eaty_tourist/models/barObj.dart';
 import 'package:eaty_tourist/providers/home_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter/material.dart';
-import 'package:graphic/graphic.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -142,9 +138,8 @@ class Statistics extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
-              child: Container(
-                child: Graphic(),
-              ),
+              child: Consumer<HomeProvider>(
+                builder: (context, value, child) => Graphic()),  
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -208,7 +203,6 @@ class Statistics extends StatelessWidget {
 
 
 // Interface color
-Color bar_1= Color.fromARGB(255, 228, 139, 238);
 
 // Definizione altezza grafico
 // ignore: non_constant_identifier_names
@@ -225,13 +219,13 @@ var font = GoogleFonts.montserrat(
 // Graphic class
 class Graphic extends StatefulWidget {
   Graphic({super.key});
-  final Color leftBarColor = bar_1;
+  
   @override
   State<StatefulWidget> createState() => GraphicState();
 }
 
 class GraphicState extends State<Graphic> {
-  final double width = 7;
+  
 
   // In dart, late keyword is used to declare a variable or field that will be initialized at a later time. 
   // It is used to declare a non-nullable variable that is not initialized at the time of declaration.
@@ -239,7 +233,6 @@ class GraphicState extends State<Graphic> {
   int touchedGroupIndex = -1;
 
   double rap_max = 0;
-  double val_max = 1000;
 
   late List<BarChartGroupData> items = [];
 
@@ -249,15 +242,18 @@ class GraphicState extends State<Graphic> {
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
 
     DateTime date = provider.showDate;
+    
     provider.lastTime();
-      provider.getSelectedByTime(
-        DateUtils.dateOnly(date), 
-        provider.dataLastTime, 
-        date,
-      );
-      makeItems(provider);
+    provider.getSelectedByTime(
+      DateUtils.dateOnly(date), 
+      provider.dataLastTime, 
+      date,
+    );
 
-      rap_max = val_max;
+    provider.makeItems();
+    items = provider.items;
+
+    rap_max = provider.val_max;
     
     
     
@@ -289,8 +285,8 @@ class GraphicState extends State<Graphic> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
+    return Consumer<HomeProvider>(
+      builder: (context, provider, child) => Padding(
         // Qui viene impostato il valore di padding del grafico dal bordo schermo.
         padding: const EdgeInsets.all(0),
         child: Column(
@@ -300,7 +296,7 @@ class GraphicState extends State<Graphic> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: bar_1
+                    color: Color.fromARGB(255, 228, 139, 238),
                   ),
                   padding: const EdgeInsets.all(5),
                   child: Text("cal/day",
@@ -361,7 +357,7 @@ class GraphicState extends State<Graphic> {
       ),
     );
   }
-
+  /*
   List<BarChartGroupData> makeItems(HomeProvider prov){
     DateTime date = prov.showDate;
     BarObj today = prov.makeDay(date);
@@ -370,7 +366,7 @@ class GraphicState extends State<Graphic> {
     DateTime startDay = date.subtract(Duration(days: (day)));
     
     for(int i=1;i<day;i++){
-      items.add(createItems(prov.makeDay(startDay.add(Duration(days: i)))));
+      items.add(createItems(prov.makeDay(startDay.add(Duration(days: i))), prov));
       
       // code for the normalization of the values of the bars
       BarObj obj = prov.makeDay(startDay.add(Duration(days: i)));
@@ -379,10 +375,10 @@ class GraphicState extends State<Graphic> {
       }
     }
     for(int j=0;j<=(sun-day);j++){
-      items.add(createItems(prov.makeDay(date.add(Duration(days: j)))));
+      items.add(createItems(prov.makeDay(date.add(Duration(days: j))), prov));
 
       // code for the normalization of the values of the bars
-      BarObj obj = prov.makeDay(startDay.add(Duration(days: j)));
+      BarObj obj = prov.makeDay(date.add(Duration(days: j)));
       if(obj.calories > val_max){
         val_max = obj.calories;
       }
@@ -390,10 +386,39 @@ class GraphicState extends State<Graphic> {
     return items;
   }
 
-  createItems(BarObj element){
-      switch(element.weekDay){
-        case 1:
-          return makeGroupData(1, element.getCal());
+  BarChartGroupData createItems(BarObj element, HomeProvider provider){
+    if(element.weekDay == provider.showDate.weekday){
+      return switchSelDay(element);
+    }
+    else{
+      return switchOtherDays(element);
+    }
+  }
+
+  switchSelDay(BarObj element){
+    switch(element.weekDay){
+        case 1: 
+          return makeGroupDataDay(1, element.getCal());          
+        case 2:
+          return makeGroupDataDay(2, element.getCal());
+        case 3:
+          return makeGroupDataDay(3, element.getCal());
+        case 4:
+          return makeGroupDataDay(4, element.getCal());
+        case 5:
+          return makeGroupDataDay(5, element.getCal());
+        case 6:
+          return makeGroupDataDay(6, element.getCal());
+        case 7:
+          return makeGroupDataDay(7, element.getCal());
+        
+      }
+  }
+
+  switchOtherDays(BarObj element){
+    switch(element.weekDay){
+        case 1: 
+          return makeGroupData(1, element.getCal());          
         case 2:
           return makeGroupData(2, element.getCal());
         case 3:
@@ -409,7 +434,7 @@ class GraphicState extends State<Graphic> {
         
       }
   }
-
+  */
   /*
   List<double> getCalList(HomeProvider prov){
     List<double> list = [];
@@ -475,18 +500,6 @@ class GraphicState extends State<Graphic> {
     );
   }
 
-  BarChartGroupData makeGroupData(int x, double y1) {
-    return BarChartGroupData(
-      barsSpace: 4,
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: y1,
-          color: widget.leftBarColor,
-          width: width,
-        ),
-      ],
-    );
-  }
+  
 }
 

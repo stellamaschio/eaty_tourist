@@ -67,8 +67,12 @@ class _HomeState extends State<Home> {
         demo = !demo;
       });
       provider.selectCalories(startMinute, minuteAdd);
-      startMinute = startMinute + minuteAdd;   
-      index++;   
+        startMinute = startMinute + minuteAdd;
+        index++;
+        /*
+      Future.delayed(const Duration(milliseconds: 1), () => {
+        
+      });*/
     }
   }
 
@@ -81,10 +85,8 @@ class _HomeState extends State<Home> {
       endTime = time.add(Duration(minutes: (minuteAdd*index)));
       provider.setTimeRange(time, endTime);
       provider.saveDay(time);
-      Future.delayed(Duration(microseconds: 1), () => {
-        provider.setSelected(0),
-        index = 0,
-      });
+      index = 0;
+      
     }
   }
 

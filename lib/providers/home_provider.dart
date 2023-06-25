@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:eaty_tourist/models/barObj.dart';
 import 'package:eaty_tourist/services/impact.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:eaty_tourist/models/db.dart';
 import 'package:eaty_tourist/models/entities/entities.dart';
@@ -67,7 +68,6 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> lastTime() async{
     dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
-    dataFirstTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
   }
 
   Future<DateTime?> _getLastFetch() async {
@@ -210,6 +210,8 @@ class HomeProvider extends ChangeNotifier {
     lastData.clear();
     lastData.add(selectedByTime.last);
 
+    lastSelTime = selectedByTime.last.dateTime;
+
     notifyListeners();
 
   }
@@ -280,47 +282,137 @@ class HomeProvider extends ChangeNotifier {
                     weekDay: day.add(const Duration(days: 1)).weekday,
                     calories: 0);
     } */
-    if(day.isAfter(dataLastTime) || day.day == dataLastTime.day){
+    if(day.isAfter(dataLastTime) && day.day == dataLastTime.day){
       dayLastTime(day);
       return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
     }
-
-    dayLastTime(day);
-
-    return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
+    else if(day.isAfter(dataLastTime)){
+      dayLastTime(day);
+      return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
+    }
+    else{
+      dayLastTime(day);
+      return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
+    }
+    
   }
 
+  
+  //methods for graphics
 
+  final Color SelDayBarColor = Colors.pinkAccent.shade400;
+  final Color OtherDaysBarColor = Color.fromARGB(255, 228, 139, 238);
 
-  /*
-  void switchCalWeek(){
-    switch(lastSelTime.weekday){
-        case 1:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 1, calories: lastData.last.calories));
-        case 2:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 2, calories: lastData.last.calories));
-        case 3:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 3, calories: lastData.last.calories));
-        case 4:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 4, calories: lastData.last.calories));
-        case 5:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 5, calories: lastData.last.calories));
-        case 6:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 6, calories: lastData.last.calories));
-        case 7:
-          return cal_week.add(BarObj(dateTime: lastSelTime, weekDay: 7, calories: lastData.last.calories));
-    }
-  }*/
+  late List<BarChartGroupData> items = [];
+  double rap_max = 0;
+  double val_max = 1000;
 
-  /*
-  BarObj selDayOfTheWeek(DateTime time){
-    for(var element in cal_week){
-      if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
-        return element;
+  List<BarChartGroupData> makeItems(){
+    items.clear();
+    DateTime date = showDate;
+    BarObj today = makeDay(date);
+    int day = today.weekDay;
+    int sun = 7;
+    DateTime startDay = date.subtract(Duration(days: (day)));
+    
+    for(int i=1;i<day;i++){
+      items.add(createItems(makeDay(startDay.add(Duration(days: i)))));
+      
+      // code for the normalization of the values of the bars
+      BarObj obj = makeDay(startDay.add(Duration(days: i)));
+      if(obj.calories > val_max){
+        val_max = obj.calories;
       }
     }
-    return BarObj(dateTime: time, weekDay: time.weekday, calories: 0);
-  }*/
+    for(int j=0;j<=(sun-day);j++){
+      items.add(createItems(makeDay(date.add(Duration(days: j)))));
+
+      // code for the normalization of the values of the bars
+      BarObj obj = makeDay(date.add(Duration(days: j)));
+      if(obj.calories > val_max){
+        val_max = obj.calories;
+      }
+    }
+    return items;
+  }
+
+  BarChartGroupData createItems(BarObj element){
+    if(element.weekDay == showDate.weekday){
+      return switchSelDay(element);
+    }
+    else{
+      return switchOtherDays(element);
+    }
+  }
+
+  switchSelDay(BarObj element){
+    switch(element.weekDay){
+        case 1: 
+          return makeGroupDataDay(1, element.getCal());          
+        case 2:
+          return makeGroupDataDay(2, element.getCal());
+        case 3:
+          return makeGroupDataDay(3, element.getCal());
+        case 4:
+          return makeGroupDataDay(4, element.getCal());
+        case 5:
+          return makeGroupDataDay(5, element.getCal());
+        case 6:
+          return makeGroupDataDay(6, element.getCal());
+        case 7:
+          return makeGroupDataDay(7, element.getCal());
+        
+      }
+  }
+
+  switchOtherDays(BarObj element){
+    switch(element.weekDay){
+        case 1: 
+          return makeGroupData(1, element.getCal());          
+        case 2:
+          return makeGroupData(2, element.getCal());
+        case 3:
+          return makeGroupData(3, element.getCal());
+        case 4:
+          return makeGroupData(4, element.getCal());
+        case 5:
+          return makeGroupData(5, element.getCal());
+        case 6:
+          return makeGroupData(6, element.getCal());
+        case 7:
+          return makeGroupData(7, element.getCal());
+        
+      }
+  }
+
+  BarChartGroupData makeGroupData(int x, double y1) {
+    return BarChartGroupData(
+      barsSpace: 4,
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: y1,
+          color: OtherDaysBarColor,
+          width: 7,
+        ),
+      ],
+    );
+  }
+
+  BarChartGroupData makeGroupDataDay(int x, double y1) {
+    return BarChartGroupData(
+      barsSpace: 4,
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: y1,
+          color: SelDayBarColor,
+          width: 7,
+        ),
+      ],
+    );
+  }
+
 
 }
 
