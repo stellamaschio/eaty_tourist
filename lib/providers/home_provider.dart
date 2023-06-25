@@ -271,22 +271,12 @@ class HomeProvider extends ChangeNotifier {
 
   BarObj makeDay(DateTime day) {
     /*
-    if(day.isAfter(dataFirstTime)){
-      
-      return BarObj(dateTime: day.subtract(const Duration(days: 1)), 
-                    weekDay: day.subtract(const Duration(days: 1)).weekday,
-                    calories: 0);
-    } 
-    else if(day.isAfter(dataLastTime)){
-      return BarObj(dateTime: day.add(const Duration(days: 1)), 
-                    weekDay: day.add(const Duration(days: 1)).weekday,
-                    calories: 0);
-    } */
     if(day.isAfter(dataLastTime) && day.day == dataLastTime.day){
       dayLastTime(day);
       return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
     }
-    else if(day.isAfter(dataLastTime)){
+    else */
+    if(day.isAfter(dataLastTime)){
       dayLastTime(day);
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
     }
@@ -296,123 +286,6 @@ class HomeProvider extends ChangeNotifier {
     }
     
   }
-
-  
-  //methods for graphics
-
-  final Color SelDayBarColor = Colors.pinkAccent.shade400;
-  final Color OtherDaysBarColor = Color.fromARGB(255, 228, 139, 238);
-
-  late List<BarChartGroupData> items = [];
-  double rap_max = 0;
-  double val_max = 1000;
-
-  List<BarChartGroupData> makeItems(){
-    items.clear();
-    DateTime date = showDate;
-    BarObj today = makeDay(date);
-    int day = today.weekDay;
-    int sun = 7;
-    DateTime startDay = date.subtract(Duration(days: (day)));
-    
-    for(int i=1;i<day;i++){
-      items.add(createItems(makeDay(startDay.add(Duration(days: i)))));
-      
-      // code for the normalization of the values of the bars
-      BarObj obj = makeDay(startDay.add(Duration(days: i)));
-      if(obj.calories > val_max){
-        val_max = obj.calories;
-      }
-    }
-    for(int j=0;j<=(sun-day);j++){
-      items.add(createItems(makeDay(date.add(Duration(days: j)))));
-
-      // code for the normalization of the values of the bars
-      BarObj obj = makeDay(date.add(Duration(days: j)));
-      if(obj.calories > val_max){
-        val_max = obj.calories;
-      }
-    }
-    return items;
-  }
-
-  BarChartGroupData createItems(BarObj element){
-    if(element.weekDay == showDate.weekday){
-      return switchSelDay(element);
-    }
-    else{
-      return switchOtherDays(element);
-    }
-  }
-
-  switchSelDay(BarObj element){
-    switch(element.weekDay){
-        case 1: 
-          return makeGroupDataDay(1, element.getCal());          
-        case 2:
-          return makeGroupDataDay(2, element.getCal());
-        case 3:
-          return makeGroupDataDay(3, element.getCal());
-        case 4:
-          return makeGroupDataDay(4, element.getCal());
-        case 5:
-          return makeGroupDataDay(5, element.getCal());
-        case 6:
-          return makeGroupDataDay(6, element.getCal());
-        case 7:
-          return makeGroupDataDay(7, element.getCal());
-        
-      }
-  }
-
-  switchOtherDays(BarObj element){
-    switch(element.weekDay){
-        case 1: 
-          return makeGroupData(1, element.getCal());          
-        case 2:
-          return makeGroupData(2, element.getCal());
-        case 3:
-          return makeGroupData(3, element.getCal());
-        case 4:
-          return makeGroupData(4, element.getCal());
-        case 5:
-          return makeGroupData(5, element.getCal());
-        case 6:
-          return makeGroupData(6, element.getCal());
-        case 7:
-          return makeGroupData(7, element.getCal());
-        
-      }
-  }
-
-  BarChartGroupData makeGroupData(int x, double y1) {
-    return BarChartGroupData(
-      barsSpace: 4,
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: y1,
-          color: OtherDaysBarColor,
-          width: 7,
-        ),
-      ],
-    );
-  }
-
-  BarChartGroupData makeGroupDataDay(int x, double y1) {
-    return BarChartGroupData(
-      barsSpace: 4,
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: y1,
-          color: SelDayBarColor,
-          width: 7,
-        ),
-      ],
-    );
-  }
-
 
 }
 

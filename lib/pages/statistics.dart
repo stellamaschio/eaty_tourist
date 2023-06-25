@@ -29,7 +29,7 @@ class Statistics extends StatelessWidget {
                 ),
                 child: Text(
                   (provider.selectedByTime.isEmpty)
-                  ? '0 km'
+                  ? '0.0 km'
                   : '${provider.selectedByTime.last.distance/100000} km',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
@@ -232,9 +232,11 @@ class GraphicState extends State<Graphic> {
 
   int touchedGroupIndex = -1;
 
-  double rap_max = 0;
+  final Color barColor = Color.fromARGB(255, 228, 139, 238);
 
   late List<BarChartGroupData> items = [];
+  double rap_max = 0;
+  double val_max = 1000;
 
   @override
   void initState() {
@@ -250,10 +252,9 @@ class GraphicState extends State<Graphic> {
       date,
     );
 
-    provider.makeItems();
-    items = provider.items;
-
-    rap_max = provider.val_max;
+    makeItems(provider);
+    
+    rap_max = val_max;
     
     
     
@@ -357,7 +358,7 @@ class GraphicState extends State<Graphic> {
       ),
     );
   }
-  /*
+  
   List<BarChartGroupData> makeItems(HomeProvider prov){
     DateTime date = prov.showDate;
     BarObj today = prov.makeDay(date);
@@ -366,7 +367,7 @@ class GraphicState extends State<Graphic> {
     DateTime startDay = date.subtract(Duration(days: (day)));
     
     for(int i=1;i<day;i++){
-      items.add(createItems(prov.makeDay(startDay.add(Duration(days: i))), prov));
+      items.add(createItems(prov.makeDay(startDay.add(Duration(days: i)))));
       
       // code for the normalization of the values of the bars
       BarObj obj = prov.makeDay(startDay.add(Duration(days: i)));
@@ -375,7 +376,7 @@ class GraphicState extends State<Graphic> {
       }
     }
     for(int j=0;j<=(sun-day);j++){
-      items.add(createItems(prov.makeDay(date.add(Duration(days: j))), prov));
+      items.add(createItems(prov.makeDay(date.add(Duration(days: j)))));
 
       // code for the normalization of the values of the bars
       BarObj obj = prov.makeDay(date.add(Duration(days: j)));
@@ -386,36 +387,7 @@ class GraphicState extends State<Graphic> {
     return items;
   }
 
-  BarChartGroupData createItems(BarObj element, HomeProvider provider){
-    if(element.weekDay == provider.showDate.weekday){
-      return switchSelDay(element);
-    }
-    else{
-      return switchOtherDays(element);
-    }
-  }
-
-  switchSelDay(BarObj element){
-    switch(element.weekDay){
-        case 1: 
-          return makeGroupDataDay(1, element.getCal());          
-        case 2:
-          return makeGroupDataDay(2, element.getCal());
-        case 3:
-          return makeGroupDataDay(3, element.getCal());
-        case 4:
-          return makeGroupDataDay(4, element.getCal());
-        case 5:
-          return makeGroupDataDay(5, element.getCal());
-        case 6:
-          return makeGroupDataDay(6, element.getCal());
-        case 7:
-          return makeGroupDataDay(7, element.getCal());
-        
-      }
-  }
-
-  switchOtherDays(BarObj element){
+  createItems(BarObj element){
     switch(element.weekDay){
         case 1: 
           return makeGroupData(1, element.getCal());          
@@ -434,20 +406,6 @@ class GraphicState extends State<Graphic> {
         
       }
   }
-  */
-  /*
-  List<double> getCalList(HomeProvider prov){
-    List<double> list = [];
-    double val_max = 1000;
-    for(var element in prov.cal_week){
-      list.add(element.getCal());
-      if(element.getCal() >= val_max){
-        val_max = element.getCal();
-      }
-    }
-    rap_max = val_max*1.1;
-    return list;
-  }*/
 
   Widget leftTitles(double value, TitleMeta meta) {
     var style = font.copyWith(fontSize: 12);
@@ -500,6 +458,19 @@ class GraphicState extends State<Graphic> {
     );
   }
 
+  BarChartGroupData makeGroupData(int x, double y1) {
+    return BarChartGroupData(
+      barsSpace: 4,
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: y1,
+          color: barColor,
+          width: 7,
+        ),
+      ],
+    );
+  }
   
 }
 
