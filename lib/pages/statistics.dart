@@ -92,6 +92,7 @@ class Statistics extends StatelessWidget {
                           prevDay,
                         );
                         provider.setStatDate(prevDay);
+                        provider.makeItems();
                       }),
                   Consumer<HomeProvider>(
                       builder: (context, value, child) => Text(
@@ -109,7 +110,6 @@ class Statistics extends StatelessWidget {
                       ),
                       onPressed: () {
                         DateTime selDay = provider.showDate;
-                        DateTime newDay = selDay.add(const Duration(days: 1));
                           provider.dayLastTime(selDay.add(const Duration(days: 1)));
                           // data from time 00:01 of the next day
                           provider.getSelectedByTime(
@@ -118,6 +118,7 @@ class Statistics extends StatelessWidget {
                             selDay.add(provider.lastSelTime.difference(selDay)),
                           );
                           provider.setStatDate(selDay.add(provider.lastSelTime.difference(selDay)));
+                          provider.makeItems();
                         //weekCheck(selDay, selDay.add(provider.lastSelTime.difference(selDay))),
                       },
                     ),

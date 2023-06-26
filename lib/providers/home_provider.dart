@@ -14,6 +14,7 @@ class HomeProvider extends ChangeNotifier {
   late List<Steps> steps = [];
   late List<Distance> distance = [];
 
+  double selCal = 0;
   double selectedCalories = 0;
   int selectedSteps = 0;
   double selectedDistance = 0;
@@ -144,6 +145,7 @@ class HomeProvider extends ChangeNotifier {
 
   void setSelected(double val){
     selectedCalories = val;
+    selCal = val;
     selectedSteps = val.toInt();
     selectedDistance = val;
 
@@ -154,7 +156,7 @@ class HomeProvider extends ChangeNotifier {
   void selectCalories(int startMinute, int minuteAdd, DateTime startTime, DateTime endTime){
     
     for(int i=1; i<=minuteAdd; i++){
-      selectedCalories = selectedCalories + calories[startMinute+i].value;
+      selCal = selCal + calories[startMinute+i].value;
     }
     setTimeRange(startTime, endTime);
     notifyListeners();
@@ -182,6 +184,8 @@ class HomeProvider extends ChangeNotifier {
     DateTime startTime = DateTime(time.year, time.month, time.day, 00, 01);
     DateTime endTime = time;
     DateTime selTime = time;
+
+    selectedCalories = selCal;
 
     selectedUntilNow = await db.selectedDao.findSelectedbyTime(startTime, endTime);
     if(selectedUntilNow.isEmpty){
@@ -235,11 +239,12 @@ class HomeProvider extends ChangeNotifier {
     else if((date.day == todayDate.day) || 
                 date.isBefore(dataLastTime) && date.isAfter(dataFirstTime)){
                   
+        statDate = date;
         showDate = date;
         selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
 
         if(selectedByTime.isEmpty){
-          await db.selectedDao.insertSelected(Selected(null, 0, 0, 0, showDate));
+          await db.selectedDao.insertSelected(Selected(null, 0, 0, 0, date));
           selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
           lastData.clear();
           lastData.add(selectedByTime.last);
@@ -337,7 +342,7 @@ class HomeProvider extends ChangeNotifier {
 
   List<BarChartGroupData> makeItems(){
     items.clear();
-    DateTime date = showDate;
+    DateTime date = statDate;
     BarObj today = makeDay(date);
     int day = today.weekDay;
     int sun = 7;
@@ -365,7 +370,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   BarChartGroupData createItems(BarObj element){
-    if(element.weekDay == showDate.weekday){
+    if(element.weekDay == statDate.weekday){
       return switchSelDay(element);
     }
     else{
