@@ -37,8 +37,6 @@ class HomeProvider extends ChangeNotifier {
   late List<Steps> _steps;
   late List<Distance> _distance;
 
-  List<BarObj> cal_week = [];
-
   // selected day of data to be shown --> date of yesterday
   DateTime showDate = DateTime.now().subtract(const Duration(days: 1));
 
@@ -68,6 +66,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> lastTime() async{
     dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
+    notifyListeners();
   }
 
   Future<DateTime?> _getLastFetch() async {
@@ -107,13 +106,16 @@ class HomeProvider extends ChangeNotifier {
       db.distanceDao.insertDistance(element);    
     } // db add to the table
     
+    notifyListeners();
   }
 
+  /*
   // method to trigger a new data fetching
   Future<void> refresh() async {
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
   }
+  */
 
   // method to select only the data of the chosen day
   Future<void> getDataOfDay(DateTime showDate) async {
@@ -137,6 +139,8 @@ class HomeProvider extends ChangeNotifier {
     selectedCalories = val;
     selectedSteps = val.toInt();
     selectedDistance = val;
+
+    notifyListeners();
   }
 
   // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
@@ -145,7 +149,7 @@ class HomeProvider extends ChangeNotifier {
     for(int i=1; i<=minuteAdd; i++){
       selectedCalories = selectedCalories + calories[startMinute+i].value;
     }
-
+    notifyListeners();
   }
 
   Future<void> setTimeRange(DateTime startTime, DateTime endTime) async{
@@ -160,7 +164,8 @@ class HomeProvider extends ChangeNotifier {
     for(var element in distance){
       selectedDistance = selectedDistance + element.value;
     }
-
+    
+    notifyListeners();
   }
   
   // save calories, steps, and distance made during the day with the app
@@ -187,8 +192,10 @@ class HomeProvider extends ChangeNotifier {
     selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
 
     lastSelTime = selTime;
-
     setSelected(0);
+    lastTime();
+
+    notifyListeners();
   }
 
   Future<void> getSelectedByTime(DateTime startTime, DateTime endTime, DateTime date) async{
@@ -196,23 +203,35 @@ class HomeProvider extends ChangeNotifier {
     var firstDay = await db.selectedDao.findFirstDayInDb();
     var lastDay = await db.selectedDao.findLastDayInDb();
 
-    if (date.isAfter(lastDay!.dateTime) ||
-          date.isBefore(firstDay!.dateTime)) return;
-        
-    this.showDate = date;
-
-    selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
-    if(selectedByTime.isEmpty){
-      await db.selectedDao.insertSelected(Selected(null, 0, 0, 0, showDate));
-      selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
+    if (date.isBefore(firstDay!.dateTime)) {
+      return;
     }
 
-    lastData.clear();
-    lastData.add(selectedByTime.last);
+    else if((date.day == todayDate.day) || 
+                date.isBefore(lastDay!.dateTime) && date.isAfter(firstDay.dateTime)){
+                  
+        showDate = date;
+        selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
 
-    lastSelTime = selectedByTime.last.dateTime;
+        if(selectedByTime.isEmpty){
+          await db.selectedDao.insertSelected(Selected(null, 0, 0, 0, showDate));
+          selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
+          lastData.clear();
+          lastData.add(selectedByTime.last);
+          notifyListeners();
+          return;
+        }
+        else{
+          lastData.clear();
+          lastData.add(selectedByTime.last);
+          notifyListeners();
+          return;
+        }
+    }   
 
-    notifyListeners();
+    else {
+      return;
+    }
 
   }
 
@@ -226,56 +245,35 @@ class HomeProvider extends ChangeNotifier {
     }
 
     if(temp.isEmpty){
+      lastData.clear();
+      lastData.add(Selected(null, 0, 0, 0, time));
+      lastSelTime = time;
       return;
     }
     else{
       lastSelTime = temp.last.dateTime;
       lastData.clear();
       lastData.add(temp.last);
-      Future.delayed(const Duration(microseconds: 1), () =>{
-        temp = [],
-      });
-      
+      temp = [];
     }
   }
 
   void setShowDate(DateTime date){
-    this.showDate = date;
+    showDate = date;
+    notifyListeners();
   }
 
   Future<void> selectAll() async{
     selectedAll = await db.selectedDao.findAllSelected();
   }
 
-  /*
-  // add to the list cal_week a BarObj for every lastData of the day in db 
-  // at every lastData is assigned the corrispective day of the week
-  Future<void> makeWeekDay() async{
-    firstDataTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
-    Duration difference = todayDate.difference(firstDataTime);
-    int diff = difference.inDays;
-
-    for(int i=0; i<=diff; i++){
-      dayLastTime(firstDataTime.add(Duration(days: i)));
-      //cal_week.add(BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories));
-      
-      Future.delayed(const Duration(seconds: 1), () => {
-          cal_week.add(BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories)),
-
-        }
-      );
-      
-      
-    } 
-  }*/
-
   BarObj makeDay(DateTime day) {
-    /*
+    
     if(day.isAfter(dataLastTime) && day.day == dataLastTime.day){
       dayLastTime(day);
       return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
     }
-    else */
+    else 
     if(day.isAfter(dataLastTime)){
       dayLastTime(day);
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);

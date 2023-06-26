@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-DateTime today = DateTime.now();
+DateTime today = DateTime.now().subtract(const Duration(days: 1));
 
 bool changeWeek = false;
 
@@ -28,9 +28,9 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  (provider.selectedByTime.isEmpty)
+                  (provider.lastData.isEmpty)
                   ? '0.0 km'
-                  : '${provider.selectedByTime.last.distance/100000} km',
+                  : '${provider.lastData.last.distance/100000} km',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -48,9 +48,9 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  (provider.selectedByTime.isEmpty)
+                  (provider.lastData.isEmpty)
                   ? '0 steps'
-                  : '${provider.selectedByTime.last.steps} steps',
+                  : '${provider.lastData.last.steps} steps',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -68,9 +68,9 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  (provider.selectedByTime.isEmpty)
+                  (provider.lastData.isEmpty)
                   ? '0 cal'
-                  : '${provider.selectedByTime.last.calories.toInt()} cal',
+                  : '${provider.lastData.last.calories.toInt()} cal',
                   style: GoogleFonts.montserrat(
                     color: const Color(0xFF607D8B),
                     fontSize: 30,
@@ -114,18 +114,18 @@ class Statistics extends StatelessWidget {
                       ),
                       onPressed: () {
                         DateTime selDay = provider.showDate;
-                        provider.dayLastTime(selDay.add(const Duration(days: 1)));
-                        Future.delayed(const Duration(milliseconds: 1), () => {
+                        DateTime newDay = selDay.add(const Duration(days: 1));
+                          provider.dayLastTime(selDay.add(const Duration(days: 1)));
                           // data from time 00:01 of the next day
                           provider.getSelectedByTime(
                             DateUtils.dateOnly(selDay.add(provider.lastSelTime.difference(selDay)),),
                             provider.lastSelTime,
                             selDay.add(provider.lastSelTime.difference(selDay)),
-                          ),
-                          weekCheck(selDay, selDay.add(provider.lastSelTime.difference(selDay))),
-                        });
+                          );
                         
-                      })
+                        //weekCheck(selDay, selDay.add(provider.lastSelTime.difference(selDay))),
+                      },
+                    ),
                 ],
               ),
             ),
@@ -246,6 +246,7 @@ class GraphicState extends State<Graphic> {
     DateTime date = provider.showDate;
     
     provider.lastTime();
+    provider.dayLastTime(date);
     provider.getSelectedByTime(
       DateUtils.dateOnly(date), 
       provider.dataLastTime, 
@@ -255,31 +256,6 @@ class GraphicState extends State<Graphic> {
     makeItems(provider);
     
     rap_max = val_max;
-    
-    
-    
-    //calList = getCalList(provider);
-
-/*
-    // Qui ci sono i valori riportati nel grafico
-    final barGroup1 = makeGroupData(0, provider.cal_week.first.calories);
-    final barGroup2 = makeGroupData(1, provider.cal_week[2].calories);
-    final barGroup3 = makeGroupData(2, provider.cal_week[3].calories);
-    final barGroup4 = makeGroupData(3, provider.cal_week[4].calories);
-    final barGroup5 = makeGroupData(4, provider.cal_week[5].calories);
-    final barGroup6 = makeGroupData(5, provider.cal_week[6].calories);
-    final barGroup7 = makeGroupData(6, provider.cal_week[2].calories);
-
-    final items = [
-      barGroup1,
-      barGroup2,
-      barGroup3,
-      barGroup4,
-      barGroup5,
-      barGroup6,
-      barGroup7,
-    ];
-*/     
       
   }
 
