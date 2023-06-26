@@ -26,6 +26,8 @@ class HomeProvider extends ChangeNotifier {
 
   late DateTime lastSelTime = dataLastTime;
   late DateTime dataLastTime;
+  late DateTime dataFirstTime;
+
 
   final AppDatabase db;
 
@@ -66,6 +68,11 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> lastTime() async{
     dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
+    notifyListeners();
+  }
+
+  Future<void> firstTime() async{
+    dataFirstTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
     notifyListeners();
   }
 
@@ -218,15 +225,15 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> getSelectedByTime(DateTime startTime, DateTime endTime, DateTime date) async{
     // check if the day we want to show has data
-    var firstDay = await db.selectedDao.findFirstDayInDb();
-    var lastDay = await db.selectedDao.findLastDayInDb();
+    lastTime();
+    firstTime();
 
-    if (date.isBefore(firstDay!.dateTime)) {
+    if (date.isBefore(dataFirstTime)) {
       return;
     }
 
     else if((date.day == todayDate.day) || 
-                date.isBefore(lastDay!.dateTime) && date.isAfter(firstDay.dateTime)){
+                date.isBefore(dataLastTime) && date.isAfter(dataFirstTime)){
                   
         showDate = date;
         selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
@@ -255,6 +262,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> dayLastTime(DateTime time) async{
     selectAll();
+    firstTime();
     
     for(var element in selectedAll){
       if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
@@ -262,10 +270,13 @@ class HomeProvider extends ChangeNotifier {
       }
     }
 
-    if(temp.isEmpty){
+    if(temp.isEmpty && time.day == todayDate.day){
       lastData.clear();
       lastData.add(Selected(null, 0, 0, 0, time));
       lastSelTime = time;
+      return;
+    }
+    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(dataFirstTime))) {
       return;
     }
     else{

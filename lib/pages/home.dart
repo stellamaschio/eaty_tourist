@@ -74,10 +74,7 @@ class _HomeState extends State<Home> {
       startTime = startTime.add(Duration(minutes: minuteAdd));
       endTime = endTime.add(Duration(minutes: minuteAdd));
       index++;
-        /*
-      Future.delayed(const Duration(milliseconds: 1), () => {
-        
-      });*/
+      
     }
   }
 
@@ -91,7 +88,7 @@ class _HomeState extends State<Home> {
       //provider.setTimeRange(time, endTime);
       provider.saveDay(time);
       index = 0;
-      
+      provider.setStatDate(provider.showDate);
     }
   }
 
