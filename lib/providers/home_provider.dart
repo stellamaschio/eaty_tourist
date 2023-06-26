@@ -14,9 +14,9 @@ class HomeProvider extends ChangeNotifier {
   late List<Steps> steps = [];
   late List<Distance> distance = [];
 
-  late double selectedCalories = 0;
-  late int selectedSteps = 0;
-  late double selectedDistance = 0;
+  double selectedCalories = 0;
+  int selectedSteps = 0;
+  double selectedDistance = 0;
   late List<Selected> selectedByTime = [];
   late List<Selected> selectedUntilNow = [];
   late List<Selected> selectedAll = [];
@@ -26,9 +26,6 @@ class HomeProvider extends ChangeNotifier {
 
   late DateTime lastSelTime = dataLastTime;
   late DateTime dataLastTime;
-  late DateTime dataFirstTime;
-
-  late int firstDataDay;
 
   final AppDatabase db;
 
@@ -43,6 +40,9 @@ class HomeProvider extends ChangeNotifier {
   // selected day of data to be shown --> date of yesterday
   // don't change usuing the application
   DateTime todayDate = DateTime.now().subtract(const Duration(days: 1));
+
+  //page statistics date
+  late DateTime statDate = DateTime.now().subtract(const Duration(days: 1));
 
 
   final ImpactService impactService;
@@ -144,11 +144,12 @@ class HomeProvider extends ChangeNotifier {
   }
 
   // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-  void selectCalories(int startMinute, int minuteAdd){
+  void selectCalories(int startMinute, int minuteAdd, DateTime startTime, DateTime endTime){
     
     for(int i=1; i<=minuteAdd; i++){
       selectedCalories = selectedCalories + calories[startMinute+i].value;
     }
+    setTimeRange(startTime, endTime);
     notifyListeners();
   }
 
@@ -159,13 +160,14 @@ class HomeProvider extends ChangeNotifier {
     
     for(var element in steps){
       selectedSteps = selectedSteps + element.value;
+      notifyListeners();
     }
 
     for(var element in distance){
       selectedDistance = selectedDistance + element.value;
+      notifyListeners();
     }
     
-    notifyListeners();
   }
   
   // save calories, steps, and distance made during the day with the app
@@ -179,23 +181,39 @@ class HomeProvider extends ChangeNotifier {
       selTime = time;
       // selectedCalories, selectedSteps, selectedDistance remain the same updated
       // by the methods selectCalories() and setTimeRange()
+
+      await db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, selTime));
+      selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
+
+      lastData.clear();
+      lastData.add(selectedByTime.last);
+      lastSelTime = selTime;
+      setSelected(0);
+      lastTime();
+
+      notifyListeners();
     }
     else{
+      
       selTime = time;
 
       selectedCalories = selectedCalories + selectedUntilNow.last.calories;
       selectedSteps = selectedSteps + selectedUntilNow.last.steps;
       selectedDistance = selectedDistance + selectedUntilNow.last.distance;
+
+      await db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, selTime));
+      selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
+      
+      lastData.clear();
+      lastData.add(selectedByTime.last);
+      lastSelTime = selTime;
+      setSelected(0);
+      lastTime();
+
+      notifyListeners();
     }
     
-    await db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, selTime));
-    selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
-
-    lastSelTime = selTime;
-    setSelected(0);
-    lastTime();
-
-    notifyListeners();
+    
   }
 
   Future<void> getSelectedByTime(DateTime startTime, DateTime endTime, DateTime date) async{
@@ -263,10 +281,31 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setStatDate(DateTime date){
+    statDate = date;
+    notifyListeners();
+  }
+
   Future<void> selectAll() async{
     selectedAll = await db.selectedDao.findAllSelected();
   }
 
+  Future<void> deleteSelected() async{
+    selectAll();
+    await db.selectedDao.deleteSelected(selectedAll.last);
+    notifyListeners();
+  }
+
+
+  // methods for statistics page
+  List<BarChartGroupData> items = [];
+  double val_max = 1000;
+  double rap_max = 0;
+
+  final Color otherDaysBarColor = Color.fromARGB(255, 228, 139, 238);
+  final Color selDayBarColor = Color.fromARGB(255, 216, 30, 236);
+
+  
   BarObj makeDay(DateTime day) {
     
     if(day.isAfter(dataLastTime) && day.day == dataLastTime.day){
@@ -283,6 +322,112 @@ class HomeProvider extends ChangeNotifier {
       return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
     }
     
+  }
+
+  List<BarChartGroupData> makeItems(){
+    items.clear();
+    DateTime date = showDate;
+    BarObj today = makeDay(date);
+    int day = today.weekDay;
+    int sun = 7;
+    DateTime startDay = date.subtract(Duration(days: (day)));
+    
+    for(int i=1;i<day;i++){
+      items.add(createItems(makeDay(startDay.add(Duration(days: i)))));
+      
+      // code for the normalization of the values of the bars
+      BarObj obj = makeDay(startDay.add(Duration(days: i)));
+      if(obj.calories > val_max){
+        val_max = obj.calories;
+      }
+    }
+    for(int j=0;j<=(sun-day);j++){
+      items.add(createItems(makeDay(date.add(Duration(days: j)))));
+
+      // code for the normalization of the values of the bars
+      BarObj obj = makeDay(date.add(Duration(days: j)));
+      if(obj.calories > val_max){
+        val_max = obj.calories;
+      }
+    }
+    return items;
+  }
+
+  BarChartGroupData createItems(BarObj element){
+    if(element.weekDay == showDate.weekday){
+      return switchSelDay(element);
+    }
+    else{
+      return switchOtherDays(element);
+    }
+  }
+
+  switchSelDay(BarObj element){
+    switch(element.weekDay){
+        case 1: 
+          return makeGroupDataDay(1, element.getCal());          
+        case 2:
+          return makeGroupDataDay(2, element.getCal());
+        case 3:
+          return makeGroupDataDay(3, element.getCal());
+        case 4:
+          return makeGroupDataDay(4, element.getCal());
+        case 5:
+          return makeGroupDataDay(5, element.getCal());
+        case 6:
+          return makeGroupDataDay(6, element.getCal());
+        case 7:
+          return makeGroupDataDay(7, element.getCal());
+        
+      }
+  }
+
+  switchOtherDays(BarObj element){
+    switch(element.weekDay){
+        case 1: 
+          return makeGroupData(1, element.getCal());          
+        case 2:
+          return makeGroupData(2, element.getCal());
+        case 3:
+          return makeGroupData(3, element.getCal());
+        case 4:
+          return makeGroupData(4, element.getCal());
+        case 5:
+          return makeGroupData(5, element.getCal());
+        case 6:
+          return makeGroupData(6, element.getCal());
+        case 7:
+          return makeGroupData(7, element.getCal());
+        
+      }
+  }
+
+  BarChartGroupData makeGroupData(int x, double y1) {
+    return BarChartGroupData(
+      barsSpace: 4,
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: y1,
+          color: otherDaysBarColor,
+          width: 7,
+        ),
+      ],
+    );
+  }
+
+  BarChartGroupData makeGroupDataDay(int x, double y1) {
+    return BarChartGroupData(
+      barsSpace: 4,
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: y1,
+          color: selDayBarColor,
+          width: 7,
+        ),
+      ],
+    );
   }
 
 }

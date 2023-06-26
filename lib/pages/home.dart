@@ -44,6 +44,7 @@ class _HomeState extends State<Home> {
   bool close = false;
   int index = 0;
   late DateTime time = DateTime(0,0,0,0);
+  late DateTime startTime = DateTime(0,0,0,0);
   late DateTime endTime = DateTime(0,0,0,0);
   late int startMinute;
   final int minuteAdd = 10;
@@ -59,6 +60,8 @@ class _HomeState extends State<Home> {
     // qui interessano solo ora e minuto
     
     startMinute = _dateTime2Minute(time);
+    startTime = time;
+    endTime = time.add(Duration(minutes: minuteAdd));
   }
 
   void _buttonStateDemo(HomeProvider provider){
@@ -66,9 +69,11 @@ class _HomeState extends State<Home> {
       setState(() {
         demo = !demo;
       });
-      provider.selectCalories(startMinute, minuteAdd);
-        startMinute = startMinute + minuteAdd;
-        index++;
+      provider.selectCalories(startMinute, minuteAdd, startTime, endTime);
+      startMinute = startMinute + minuteAdd;
+      startTime = startTime.add(Duration(minutes: minuteAdd));
+      endTime = endTime.add(Duration(minutes: minuteAdd));
+      index++;
         /*
       Future.delayed(const Duration(milliseconds: 1), () => {
         
@@ -82,8 +87,8 @@ class _HomeState extends State<Home> {
       setState(() {
         close = !close;
       });
-      endTime = time.add(Duration(minutes: (minuteAdd*index)));
-      provider.setTimeRange(time, endTime);
+      //endTime = time.add(Duration(minutes: (minuteAdd*index)));
+      //provider.setTimeRange(time, endTime);
       provider.saveDay(time);
       index = 0;
       

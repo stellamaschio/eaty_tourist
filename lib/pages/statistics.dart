@@ -24,15 +24,13 @@ class Statistics extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color(0xA969F0AF),
+                  color: Color.fromARGB(169, 143, 240, 193),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  (provider.lastData.isEmpty)
-                  ? '0.0 km'
-                  : '${provider.lastData.last.distance/100000} km',
+                  '${provider.lastData.last.distance/100000} km',
                   style: GoogleFonts.montserrat(
-                    color: const Color(0xFF607D8B),
+                    color: Colors.grey.shade600,
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
@@ -44,15 +42,13 @@ class Statistics extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color(0xA969F0AF),
+                  color: Color.fromARGB(169, 143, 240, 193),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  (provider.lastData.isEmpty)
-                  ? '0 steps'
-                  : '${provider.lastData.last.steps} steps',
+                  '${provider.lastData.last.steps} steps',
                   style: GoogleFonts.montserrat(
-                    color: const Color(0xFF607D8B),
+                    color: Colors.grey.shade600,
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
@@ -64,15 +60,13 @@ class Statistics extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color(0xA969F0AF),
+                  color: Color.fromARGB(169, 143, 240, 193),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  (provider.lastData.isEmpty)
-                  ? '0 cal'
-                  : '${provider.lastData.last.calories.toInt()} cal',
+                  '${provider.lastData.last.calories.toInt()} cal',
                   style: GoogleFonts.montserrat(
-                    color: const Color(0xFF607D8B),
+                    color: Colors.grey.shade600,
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
@@ -97,10 +91,11 @@ class Statistics extends StatelessWidget {
                           DateTime(prevDay.year, prevDay.month, prevDay.day, 23,59),
                           prevDay,
                         );
+                        provider.setStatDate(prevDay);
                       }),
                   Consumer<HomeProvider>(
                       builder: (context, value, child) => Text(
-                            DateFormat('dd MMMM yyyy').format(value.showDate),
+                            DateFormat('dd MMMM yyyy').format(value.statDate),
                             style: GoogleFonts.montserrat(
                               color: Colors.grey.shade600,
                               fontSize: 18,
@@ -122,7 +117,7 @@ class Statistics extends StatelessWidget {
                             provider.lastSelTime,
                             selDay.add(provider.lastSelTime.difference(selDay)),
                           );
-                        
+                          provider.setStatDate(selDay.add(provider.lastSelTime.difference(selDay)));
                         //weekCheck(selDay, selDay.add(provider.lastSelTime.difference(selDay))),
                       },
                     ),
@@ -170,7 +165,7 @@ class Statistics extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                       onPressed: () {
-                        
+                        provider.deleteSelected();
                       }),
                   Text(
                     "next week",
@@ -232,30 +227,29 @@ class GraphicState extends State<Graphic> {
 
   int touchedGroupIndex = -1;
 
-  final Color barColor = Color.fromARGB(255, 228, 139, 238);
+  //final Color barColor = Color.fromARGB(255, 228, 139, 238);
 
   late List<BarChartGroupData> items = [];
   double rap_max = 0;
-  double val_max = 1000;
+  
 
   @override
   void initState() {
     super.initState();
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
 
-    DateTime date = provider.showDate;
+    DateTime date = provider.statDate;
     
-    provider.lastTime();
     provider.dayLastTime(date);
     provider.getSelectedByTime(
       DateUtils.dateOnly(date), 
-      provider.dataLastTime, 
+      provider.lastSelTime, 
       date,
     );
 
-    makeItems(provider);
+    provider.makeItems();
     
-    rap_max = val_max;
+    rap_max = provider.val_max;
       
   }
 
@@ -321,7 +315,7 @@ class GraphicState extends State<Graphic> {
                   borderData: FlBorderData(
                     show: false,
                     ),
-                  barGroups: items,
+                  barGroups: provider.items,
                   gridData: FlGridData(
                     drawHorizontalLine: true,
                     drawVerticalLine: false,
@@ -334,7 +328,7 @@ class GraphicState extends State<Graphic> {
       ),
     );
   }
-  
+  /*
   List<BarChartGroupData> makeItems(HomeProvider prov){
     DateTime date = prov.showDate;
     BarObj today = prov.makeDay(date);
@@ -381,7 +375,7 @@ class GraphicState extends State<Graphic> {
           return makeGroupData(7, element.getCal());
         
       }
-  }
+  }*/
 
   Widget leftTitles(double value, TitleMeta meta) {
     var style = font.copyWith(fontSize: 12);
@@ -434,6 +428,7 @@ class GraphicState extends State<Graphic> {
     );
   }
 
+  /*
   BarChartGroupData makeGroupData(int x, double y1) {
     return BarChartGroupData(
       barsSpace: 4,
@@ -441,12 +436,12 @@ class GraphicState extends State<Graphic> {
       barRods: [
         BarChartRodData(
           toY: y1,
-          color: barColor,
+          color: ,
           width: 7,
         ),
       ],
     );
-  }
+  }*/
   
 }
 
