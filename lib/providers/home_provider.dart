@@ -72,11 +72,6 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> firstTime() async{
-    dataFirstTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
-    notifyListeners();
-  }
-
   Future<DateTime?> _getLastFetch() async {
     // sistemare
     var dataCal = await db.caloriesDao.findAllCalories();
@@ -229,15 +224,15 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> getSelectedByTime(DateTime startTime, DateTime endTime, DateTime date) async{
     // check if the day we want to show has data
-    lastTime();
-    firstTime();
+    var firstDay = await db.selectedDao.findFirstDayInDb();
+    var lastDay = await db.selectedDao.findLastDayInDb();
 
-    if (date.isBefore(dataFirstTime)) {
+    if (date.isBefore(firstDay!.dateTime)) {
       return;
     }
 
     else if((date.day == todayDate.day) || 
-                date.isBefore(dataLastTime) && date.isAfter(dataFirstTime)){
+                (date.isBefore(lastDay!.dateTime) && date.isAfter(firstDay.dateTime))){
                   
         statDate = date;
         showDate = date;
@@ -248,12 +243,14 @@ class HomeProvider extends ChangeNotifier {
           selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
           lastData.clear();
           lastData.add(selectedByTime.last);
+          lastSelTime = date;
           notifyListeners();
           return;
         }
         else{
           lastData.clear();
           lastData.add(selectedByTime.last);
+          lastSelTime = selectedByTime.last.dateTime;
           notifyListeners();
           return;
         }
@@ -267,7 +264,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> dayLastTime(DateTime time) async{
     selectAll();
-    firstTime();
+    var firstDay = await db.selectedDao.findFirstDayInDb();
     
     for(var element in selectedAll){
       if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
@@ -281,7 +278,7 @@ class HomeProvider extends ChangeNotifier {
       lastSelTime = time;
       return;
     }
-    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(dataFirstTime))) {
+    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(firstDay!.dateTime))) {
       return;
     }
     else{
@@ -322,14 +319,14 @@ class HomeProvider extends ChangeNotifier {
   final Color selDayBarColor = Color.fromARGB(255, 216, 30, 236);
 
   
-  BarObj makeDay(DateTime day) {
+  BarObj makeDay(DateTime day, DateTime lastDay) {
     
-    if(day.isAfter(dataLastTime) && day.day == dataLastTime.day){
+    if(day.isAfter(lastDay) && day.day == lastDay.day){
       dayLastTime(day);
       return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
     }
     else 
-    if(day.isAfter(dataLastTime)){
+    if(day.isAfter(lastDay)){
       dayLastTime(day);
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
     }
@@ -340,33 +337,55 @@ class HomeProvider extends ChangeNotifier {
     
   }
 
-  List<BarChartGroupData> makeItems(){
+  late int prec = 0;
+  late int now = 0;
+
+  void setNow(int val){
+    now = val;
+  }
+
+  void setPrec(int val){
+    prec = val;
+  }
+
+  Future<void> makeItems() async {
     items.clear();
+    var lastDay = await db.selectedDao.findLastDayInDb();
     DateTime date = statDate;
-    BarObj today = makeDay(date);
+    BarObj today = makeDay(date, lastDay!.dateTime);
     int day = today.weekDay;
     int sun = 7;
-    DateTime startDay = date.subtract(Duration(days: (day)));
+    DateTime startDay = DateTime(0,0,0,0);
+
+    //int sub = (sun-day).abs()
+
+    if(sun%now == sun){
+      startDay = date.subtract(Duration(days: (sun)));
+    }
+    else{
+      startDay = date.subtract(Duration(days: (day)));
+    }
+
+    
     
     for(int i=1;i<day;i++){
-      items.add(createItems(makeDay(startDay.add(Duration(days: i)))));
+      items.add(createItems(makeDay(startDay.add(Duration(days: i)), lastDay.dateTime)));
       
       // code for the normalization of the values of the bars
-      BarObj obj = makeDay(startDay.add(Duration(days: i)));
+      BarObj obj = makeDay(startDay.add(Duration(days: i)), lastDay.dateTime);
       if(obj.calories > val_max){
         val_max = obj.calories;
       }
     }
     for(int j=0;j<=(sun-day);j++){
-      items.add(createItems(makeDay(date.add(Duration(days: j)))));
+      items.add(createItems(makeDay(date.add(Duration(days: j)), lastDay.dateTime)));
 
       // code for the normalization of the values of the bars
-      BarObj obj = makeDay(date.add(Duration(days: j)));
+      BarObj obj = makeDay(date.add(Duration(days: j)), lastDay.dateTime);
       if(obj.calories > val_max){
         val_max = obj.calories;
       }
     }
-    return items;
   }
 
   BarChartGroupData createItems(BarObj element){

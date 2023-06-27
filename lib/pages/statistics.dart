@@ -1,10 +1,10 @@
-import 'package:eaty_tourist/models/barObj.dart';
 import 'package:eaty_tourist/providers/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 DateTime today = DateTime.now().subtract(const Duration(days: 1));
 
@@ -28,7 +28,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.lastData.last.distance/100000} km',
+                  '${(provider.lastData.last.distance/100000).toStringAsPrecision(3)} km',
                   style: GoogleFonts.montserrat(
                     color: Colors.grey.shade600,
                     fontSize: 30,
@@ -91,6 +91,8 @@ class Statistics extends StatelessWidget {
                           DateTime(prevDay.year, prevDay.month, prevDay.day, 23,59),
                           prevDay,
                         );
+                        provider.setPrec(selDay.weekday);
+                        provider.setNow(prevDay.weekday);
                         provider.setStatDate(prevDay);
                         provider.makeItems();
                       }),
@@ -230,7 +232,6 @@ class GraphicState extends State<Graphic> {
 
   //final Color barColor = Color.fromARGB(255, 228, 139, 238);
 
-  late List<BarChartGroupData> items = [];
   double rap_max = 0;
   
 
@@ -240,6 +241,7 @@ class GraphicState extends State<Graphic> {
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
 
     DateTime date = provider.statDate;
+    provider.setNow(provider.statDate.weekday);
     
     provider.dayLastTime(date);
     provider.getSelectedByTime(
