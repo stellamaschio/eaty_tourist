@@ -129,17 +129,22 @@ class HomeProvider extends ChangeNotifier {
     // check if the day we want to show has data
     var firstDay = await db.caloriesDao.findFirstDayInDb();
     var lastDay = await db.caloriesDao.findLastDayInDb();
-    if (showDate.isAfter(lastDay!.dateTime) ||
+
+    if(showDate.isAfter(lastDay!.dateTime) && showDate.day==todayDate.day){
+      this.showDate = showDate;
+
+      // prendo solo perchè ho già filtrato nella query
+      calories = await db.caloriesDao.findCaloriesbyTime(
+          DateUtils.dateOnly(showDate),
+          DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
+
+      notifyListeners();
+    }
+
+    if (showDate.isAfter(lastDay.dateTime) ||
         showDate.isBefore(firstDay!.dateTime)) return;
         
-    this.showDate = showDate;
-
-    // prendo solo perchè ho già filtrato nella query
-    calories = await db.caloriesDao.findCaloriesbyTime(
-        DateUtils.dateOnly(showDate),
-        DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
-
-    notifyListeners();
+    
   }
 
   void setSelected(double val){
@@ -318,14 +323,17 @@ class HomeProvider extends ChangeNotifier {
 
   
   BarObj makeDay(DateTime day) {
-    
+    firstTime();
+
     if(day.isAfter(dataLastTime) && day.day == dataLastTime.day){
       dayLastTime(day);
       return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
     }
-    else 
-    if(day.isAfter(dataLastTime)){
+    else if(day.isAfter(dataLastTime)){
       dayLastTime(day);
+      return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
+    }
+    else if(day.isBefore(dataFirstTime)){
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
     }
     else{
