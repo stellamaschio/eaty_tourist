@@ -28,7 +28,7 @@ class Statistics extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '${provider.lastData.last.distance/100000} km',
+                  '${(provider.lastData.last.distance/100000).toStringAsPrecision(3)} km',
                   style: GoogleFonts.montserrat(
                     color: Colors.grey.shade600,
                     fontSize: 30,
@@ -92,6 +92,7 @@ class Statistics extends StatelessWidget {
                           prevDay,
                         );
                         provider.setStatDate(prevDay);
+                        provider.makeItems();
                       }),
                   Consumer<HomeProvider>(
                       builder: (context, value, child) => Text(
@@ -118,6 +119,7 @@ class Statistics extends StatelessWidget {
                             selDay.add(provider.lastSelTime.difference(selDay)),
                           );
                           provider.setStatDate(selDay.add(provider.lastSelTime.difference(selDay)));
+                          provider.makeItems();
                         //weekCheck(selDay, selDay.add(provider.lastSelTime.difference(selDay))),
                       },
                     ),
