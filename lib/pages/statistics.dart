@@ -91,8 +91,8 @@ class Statistics extends StatelessWidget {
                           DateTime(prevDay.year, prevDay.month, prevDay.day, 23,59),
                           prevDay,
                         );
-                        provider.setPrec(selDay.weekday);
-                        provider.setNow(prevDay.weekday);
+                        provider.setPrecBack(selDay.weekday);
+                        provider.setNowBack(prevDay.weekday);
                         provider.setStatDate(prevDay);
                         provider.makeItems();
                       }),
@@ -113,13 +113,16 @@ class Statistics extends StatelessWidget {
                       onPressed: () {
                         DateTime selDay = provider.showDate;
                           provider.dayLastTime(selDay.add(const Duration(days: 1)));
+                          DateTime newDay = selDay.add(provider.lastSelTime.difference(selDay));
                           // data from time 00:01 of the next day
                           provider.getSelectedByTime(
-                            DateUtils.dateOnly(selDay.add(provider.lastSelTime.difference(selDay)),),
+                            DateUtils.dateOnly(newDay),
                             provider.lastSelTime,
-                            selDay.add(provider.lastSelTime.difference(selDay)),
+                            newDay,
                           );
-                          provider.setStatDate(selDay.add(provider.lastSelTime.difference(selDay)));
+                          provider.setPrecFront(selDay.weekday);
+                          provider.setNowFront(newDay.weekday);
+                          provider.setStatDate(newDay);
                           provider.makeItems();
                         //weekCheck(selDay, selDay.add(provider.lastSelTime.difference(selDay))),
                       },
@@ -241,7 +244,8 @@ class GraphicState extends State<Graphic> {
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
 
     DateTime date = provider.statDate;
-    provider.setNow(provider.statDate.weekday);
+    provider.setNowBack(provider.statDate.weekday);
+    provider.setNowFront(provider.statDate.weekday);
     
     provider.dayLastTime(date);
     provider.getSelectedByTime(

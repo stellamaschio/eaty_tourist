@@ -325,8 +325,7 @@ class HomeProvider extends ChangeNotifier {
       dayLastTime(day);
       return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
     }
-    else 
-    if(day.isAfter(lastDay)){
+    else if(day.isAfter(lastDay)){
       dayLastTime(day);
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
     }
@@ -337,16 +336,28 @@ class HomeProvider extends ChangeNotifier {
     
   }
 
-  late int prec = 0;
-  late int now = 0;
+  int precBack = 0;
+  int nowBack = 0;
+  int precFront = 0;
+  int nowFront = 0;
+  int index = 0;
 
-  void setNow(int val){
-    now = val;
+  void setNowBack(int val){
+    nowBack = val;
   }
 
-  void setPrec(int val){
-    prec = val;
+  void setPrecBack(int val){
+    precBack = val;
   }
+
+  void setNowFront(int val){
+    nowFront = val;
+  }
+
+  void setPrecFront(int val){
+    precFront = val;
+  }
+
 
   Future<void> makeItems() async {
     items.clear();
@@ -359,17 +370,21 @@ class HomeProvider extends ChangeNotifier {
 
     //int sub = (sun-day).abs()
 
-    if(sun%now == sun){
-      startDay = date.subtract(Duration(days: (sun)));
+    if(nowBack==7 && precBack==1){
+      index++;
+      startDay = date.subtract(Duration(days: (sun*index)));
+    }
+    else if(nowFront==1 && precFront==7){
+      index--;
+      startDay = date.subtract(Duration(days: (sun*index)));
     }
     else{
       startDay = date.subtract(Duration(days: (day)));
     }
 
-    
-    
     for(int i=1;i<day;i++){
-      items.add(createItems(makeDay(startDay.add(Duration(days: i)), lastDay.dateTime)));
+      DateTime dayBarFirst = startDay.add(Duration(days: i));
+      items.add(createItems(makeDay(dayBarFirst, lastDay.dateTime)));
       
       // code for the normalization of the values of the bars
       BarObj obj = makeDay(startDay.add(Duration(days: i)), lastDay.dateTime);
@@ -378,10 +393,11 @@ class HomeProvider extends ChangeNotifier {
       }
     }
     for(int j=0;j<=(sun-day);j++){
-      items.add(createItems(makeDay(date.add(Duration(days: j)), lastDay.dateTime)));
+      DateTime dayBarSecond = date.add(Duration(days: j));
+      items.add(createItems(makeDay(dayBarSecond, lastDay.dateTime)));
 
       // code for the normalization of the values of the bars
-      BarObj obj = makeDay(date.add(Duration(days: j)), lastDay.dateTime);
+      BarObj obj = makeDay(dayBarSecond, lastDay.dateTime);
       if(obj.calories > val_max){
         val_max = obj.calories;
       }
