@@ -63,6 +63,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _init() async {
     await dayLastTime(showDate);
     await lastTime();
+    await firstTime();
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
     doneInit = true;
@@ -236,15 +237,16 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> getSelectedByTime(DateTime startTime, DateTime endTime, DateTime date) async{
     // check if the day we want to show has data
-    lastTime();
-    firstTime();
+    var firstDay = await db.caloriesDao.findFirstDayInDb();
+    var lastDay = await db.caloriesDao.findLastDayInDb();
 
-    if (date.isBefore(dataFirstTime)) {
+
+    if (date.isBefore(firstDay!.dateTime)) {
       return;
     }
 
     else if((date.day == todayDate.day) || 
-                date.isBefore(dataLastTime) && date.isAfter(dataFirstTime)){
+                date.isBefore(lastDay!.dateTime) && date.isAfter(firstDay.dateTime)){
                   
         showDate = date;
         statDate = date;
@@ -274,7 +276,7 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> dayLastTime(DateTime time) async{
     selectAll();
-    firstTime();
+    var firstDay = await db.caloriesDao.findFirstDayInDb();
     
     for(var element in selectedAll){
       if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
@@ -288,7 +290,7 @@ class HomeProvider extends ChangeNotifier {
       lastSelTime = time;
       return;
     }
-    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(dataFirstTime))) {
+    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(firstDay!.dateTime))) {
       return;
     }
     // controllo per giorni passati in cui non sono stati inseriti dati
@@ -298,9 +300,9 @@ class HomeProvider extends ChangeNotifier {
       lastSelTime = lastData.last.dateTime;
     }
     else{
-      lastSelTime = temp.last.dateTime;
       lastData.clear();
       lastData.add(temp.last);
+      lastSelTime = lastData.last.dateTime;
       temp = [];
     }
   }
