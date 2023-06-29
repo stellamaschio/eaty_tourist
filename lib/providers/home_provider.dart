@@ -30,6 +30,7 @@ class HomeProvider extends ChangeNotifier {
   late DateTime lastSelTimeBar = dataLastTime;
   late DateTime dataLastTime;
   late DateTime dataFirstTime;
+  late DateTime firstDataDay;
 
 
   final AppDatabase db;
@@ -64,6 +65,7 @@ class HomeProvider extends ChangeNotifier {
     await dayLastTime(showDate);
     await lastTime();
     await firstTime();
+    firstDataDay = (await db.selectedDao.findFirstDayInDb())!.dateTime;
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
     doneInit = true;
@@ -309,7 +311,6 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> dayLastTimeBars(DateTime time) async{
     selectAll();
-    firstTime();
     
     for(var element in selectedAll){
       if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
@@ -323,7 +324,7 @@ class HomeProvider extends ChangeNotifier {
       lastSelTimeBar = time;
       return;
     }
-    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(dataFirstTime))) {
+    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(firstDataDay))) {
       return;
     }
     // controllo per giorni passati in cui non sono stati inseriti dati
@@ -380,19 +381,17 @@ class HomeProvider extends ChangeNotifier {
   final Color selDayBarColor = Color.fromARGB(255, 216, 30, 236);
 
   
-  BarObj makeDay(DateTime day) {
-    firstTime();
-    lastTime();
+  BarObj makeDay(DateTime day, DateTime lastTime) {
 
-    if(day.isAfter(dataLastTime) && day.day == dataLastTime.day){
+    if(day.isAfter(lastTime) && day.day == lastTime.day){
       dayLastTimeBars(day);
       return BarObj(dateTime: lastSelTimeBar, weekDay: lastSelTimeBar.weekday, calories: lastDataBar.last.calories);
     }
-    else if(day.isAfter(dataLastTime)){
+    else if(day.isAfter(lastTime)){
       dayLastTimeBars(day);
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
     }
-    else if(day.isBefore(dataFirstTime)){
+    else if(day.isBefore(firstDataDay)){
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
     }
     else{
@@ -402,28 +401,29 @@ class HomeProvider extends ChangeNotifier {
     
   }
 
-  makeItems(){
+  Future makeItems() async{
+    var lastDay = await db.selectedDao.findLastDayInDb();
     items.clear();
     DateTime date = statDate;
-    BarObj today = makeDay(date);
+    BarObj today = makeDay(date, lastDay!.dateTime);
     int day = today.weekDay;
     int sun = 7;
     DateTime startDay = date.subtract(Duration(days: (day)));
     
     for(int i=1;i<day;i++){
-      items.add(createItems(makeDay(startDay.add(Duration(days: i)))));
+      items.add(createItems(makeDay(startDay.add(Duration(days: i)), lastDay.dateTime)));
       
       // code for the normalization of the values of the bars
-      BarObj obj = makeDay(startDay.add(Duration(days: i)));
+      BarObj obj = makeDay(startDay.add(Duration(days: i)), lastDay.dateTime);
       if(obj.calories > val_max){
         val_max = obj.calories;
       }
     }
     for(int j=0;j<=(sun-day);j++){
-      items.add(createItems(makeDay(date.add(Duration(days: j)))));
+      items.add(createItems(makeDay(date.add(Duration(days: j)), lastDay.dateTime)));
 
       // code for the normalization of the values of the bars
-      BarObj obj = makeDay(date.add(Duration(days: j)));
+      BarObj obj = makeDay(date.add(Duration(days: j)), lastDay.dateTime);
       if(obj.calories > val_max){
         val_max = obj.calories;
       }
