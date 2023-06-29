@@ -278,7 +278,6 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> dayLastTime(DateTime time) async{
     selectAll();
-    var firstDay = await db.caloriesDao.findFirstDayInDb();
     
     for(var element in selectedAll){
       if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
@@ -292,11 +291,11 @@ class HomeProvider extends ChangeNotifier {
       lastSelTime = time;
       return;
     }
-    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(firstDay!.dateTime))) {
+    else if(temp.isEmpty && time.isBefore(todayDate)) {
       return;
     }
     // controllo per giorni passati in cui non sono stati inseriti dati
-    else if(temp.isEmpty) {
+    else if(temp.isEmpty && time.isBefore(firstDataDay)) {
       lastData.clear();
       lastData.add(Selected(null, 0, 0, 0, time));
       lastSelTime = lastData.last.dateTime;
@@ -324,11 +323,11 @@ class HomeProvider extends ChangeNotifier {
       lastSelTimeBar = time;
       return;
     }
-    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(firstDataDay))) {
+    else if(temp.isEmpty && time.isAfter(todayDate)) {
       return;
     }
     // controllo per giorni passati in cui non sono stati inseriti dati
-    else if(temp.isEmpty) {
+    else if(temp.isEmpty && time.isBefore(firstDataDay)) {
       lastDataBar.clear();
       lastDataBar.add(Selected(null, 0, 0, 0, time));
       lastSelTimeBar = lastDataBar.last.dateTime;
@@ -431,7 +430,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   BarChartGroupData createItems(BarObj element){
-    if(element.weekDay == showDate.weekday){
+    if(element.weekDay == statDate.weekday){
       return switchSelDay(element);
     }
     else{

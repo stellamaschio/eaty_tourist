@@ -251,10 +251,10 @@ class _HomeState extends State<Home> {
                                 onPressed: () {
                                   _buttonStateClose(provider);
                                 },
-                                child: Icon(MdiIcons.close, size: 35,)
+                                child: const Icon(MdiIcons.check, size: 35,)
                               ),
                               SizedBox(height: 5,),
-                              Text('CLOSE',
+                              Text('SAVE',
                                 style: GoogleFonts.montserrat(
                                   color: Color(0xFF607D8B),
                                   fontSize: 13,
