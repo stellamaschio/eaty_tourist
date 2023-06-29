@@ -130,7 +130,7 @@ class HomeProvider extends ChangeNotifier {
     var firstDay = await db.caloriesDao.findFirstDayInDb();
     var lastDay = await db.caloriesDao.findLastDayInDb();
 
-    if(showDate.isAfter(lastDay!.dateTime) && showDate.day==todayDate.day){
+    if(showDate.day==todayDate.day){
       this.showDate = showDate;
 
       // prendo solo perchè ho già filtrato nella query
@@ -141,7 +141,7 @@ class HomeProvider extends ChangeNotifier {
       notifyListeners();
     }
 
-    if (showDate.isAfter(lastDay.dateTime) ||
+    if (showDate.isAfter(lastDay!.dateTime) ||
         showDate.isBefore(firstDay!.dateTime)) return;
         
     
@@ -284,6 +284,12 @@ class HomeProvider extends ChangeNotifier {
     else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(dataFirstTime))) {
       return;
     }
+    // controllo per giorni passati in cui non sono stati inseriti dati
+    else if(temp.isEmpty) {
+      lastData.clear();
+      lastData.add(Selected(null, 0, 0, 0, time));
+      lastSelTime = lastData.last.dateTime;
+    }
     else{
       lastSelTime = temp.last.dateTime;
       lastData.clear();
@@ -309,6 +315,16 @@ class HomeProvider extends ChangeNotifier {
   Future<void> deleteSelected() async{
     selectAll();
     await db.selectedDao.deleteSelected(selectedAll.last);
+    notifyListeners();
+  }
+
+  Future<void> deleteSelectedDay(DateTime day) async{
+    getSelectedByTime(
+      DateUtils.dateOnly(day), 
+      DateTime(day.year, day.month, day.day, 23, 59), 
+      day,
+    );
+    await db.selectedDao.deleteSelected(selectedByTime.last);
     notifyListeners();
   }
 

@@ -158,7 +158,7 @@ class Statistics extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                       onPressed: () {
-                        
+                        //provider.deleteSelectedDay(provider.statDate);
                       }),
                   // next week button
                   IconButton(
