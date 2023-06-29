@@ -6,8 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-DateTime today = DateTime.now().subtract(const Duration(days: 1));
-
 bool changeWeek = false;
 
 class Statistics extends StatelessWidget {
