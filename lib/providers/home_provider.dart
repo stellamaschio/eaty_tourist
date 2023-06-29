@@ -291,7 +291,7 @@ class HomeProvider extends ChangeNotifier {
       lastSelTime = time;
       return;
     }
-    else if(temp.isEmpty && time.isBefore(todayDate)) {
+    else if(temp.isEmpty && time.isAfter(todayDate)) {
       return;
     }
     // controllo per giorni passati in cui non sono stati inseriti dati
