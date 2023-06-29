@@ -23,9 +23,11 @@ class HomeProvider extends ChangeNotifier {
   late List<Selected> selectedAll = [];
   late List<Selected> temp = [];
   late List<Selected> lastData = [];
+  late List<Selected> lastDataBar = [];
 
 
   late DateTime lastSelTime = dataLastTime;
+  late DateTime lastSelTimeBar = dataLastTime;
   late DateTime dataLastTime;
   late DateTime dataFirstTime;
 
@@ -245,6 +247,7 @@ class HomeProvider extends ChangeNotifier {
                 date.isBefore(dataLastTime) && date.isAfter(dataFirstTime)){
                   
         showDate = date;
+        statDate = date;
         selectedByTime = await db.selectedDao.findSelectedbyTime(startTime,endTime);
 
         if(selectedByTime.isEmpty){
@@ -302,6 +305,39 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> dayLastTimeBars(DateTime time) async{
+    selectAll();
+    firstTime();
+    
+    for(var element in selectedAll){
+      if((element.dateTime.month == time.month) && (element.dateTime.day == (time.day))){
+        temp.add(element);
+      }
+    }
+
+    if(temp.isEmpty && time.day == todayDate.day){
+      lastDataBar.clear();
+      lastDataBar.add(Selected(null, 0, 0, 0, time));
+      lastSelTimeBar = time;
+      return;
+    }
+    else if(temp.isEmpty && (time.isAfter(todayDate) || time.isBefore(dataFirstTime))) {
+      return;
+    }
+    // controllo per giorni passati in cui non sono stati inseriti dati
+    else if(temp.isEmpty) {
+      lastDataBar.clear();
+      lastDataBar.add(Selected(null, 0, 0, 0, time));
+      lastSelTimeBar = lastDataBar.last.dateTime;
+    }
+    else{
+      lastDataBar.clear();
+      lastDataBar.add(temp.last);
+      lastSelTimeBar = lastDataBar.last.dateTime;
+      temp = [];
+    }
+  }
+
   void setShowDate(DateTime date){
     showDate = date;
     notifyListeners();
@@ -347,26 +383,26 @@ class HomeProvider extends ChangeNotifier {
     lastTime();
 
     if(day.isAfter(dataLastTime) && day.day == dataLastTime.day){
-      dayLastTime(day);
-      return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
+      dayLastTimeBars(day);
+      return BarObj(dateTime: lastSelTimeBar, weekDay: lastSelTimeBar.weekday, calories: lastDataBar.last.calories);
     }
     else if(day.isAfter(dataLastTime)){
-      dayLastTime(day);
+      dayLastTimeBars(day);
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
     }
     else if(day.isBefore(dataFirstTime)){
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
     }
     else{
-      dayLastTime(day);
-      return BarObj(dateTime: lastSelTime, weekDay: lastSelTime.weekday, calories: lastData.last.calories);
+      dayLastTimeBars(day);
+      return BarObj(dateTime: lastSelTimeBar, weekDay: lastSelTimeBar.weekday, calories: lastDataBar.last.calories);
     }
     
   }
 
-  List<BarChartGroupData> makeItems(){
+  makeItems(){
     items.clear();
-    DateTime date = showDate;
+    DateTime date = statDate;
     BarObj today = makeDay(date);
     int day = today.weekDay;
     int sun = 7;
@@ -390,7 +426,6 @@ class HomeProvider extends ChangeNotifier {
         val_max = obj.calories;
       }
     }
-    return items;
   }
 
   BarChartGroupData createItems(BarObj element){

@@ -108,15 +108,15 @@ class Statistics extends StatelessWidget {
                       ),
                       onPressed: () {
                         DateTime selDay = provider.showDate;
-                        DateTime newDay = selDay.add(const Duration(days: 1));
                           provider.dayLastTime(selDay.add(const Duration(days: 1)));
                           // data from time 00:01 of the next day
+                          DateTime newDay = selDay.add(provider.lastSelTime.difference(selDay));
                           provider.getSelectedByTime(
-                            DateUtils.dateOnly(selDay.add(provider.lastSelTime.difference(selDay)),),
+                            DateUtils.dateOnly(newDay),
                             provider.lastSelTime,
-                            selDay.add(provider.lastSelTime.difference(selDay)),
+                            newDay,
                           );
-                          provider.setStatDate(selDay.add(provider.lastSelTime.difference(selDay)));
+                          provider.setStatDate(newDay);
                           provider.makeItems();
                         //weekCheck(selDay, selDay.add(provider.lastSelTime.difference(selDay))),
                       },
