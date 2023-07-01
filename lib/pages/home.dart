@@ -54,7 +54,6 @@ class _HomeState extends State<Home> {
     setState(() {
       start = !start;
     });
-    provider.refresh();
     time = DateTime.now().subtract(const Duration(days: 1));
     provider.setShowDate(time);
     // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
@@ -65,12 +64,12 @@ class _HomeState extends State<Home> {
     endTime = time.add(Duration(minutes: minuteAdd));
   }
 
-  void _buttonStateDemo(HomeProvider provider){
+  void _buttonStateDemo(HomeProvider provider, BuildContext context){
     if(start){
       setState(() {
         demo = !demo;
       });
-      provider.selectCalories(startMinute, minuteAdd, startTime, endTime);
+      provider.selectCalories(startMinute, minuteAdd, startTime, endTime, context);
       startMinute = startMinute + minuteAdd;
       startTime = startTime.add(Duration(minutes: minuteAdd));
       endTime = endTime.add(Duration(minutes: minuteAdd));
@@ -108,15 +107,15 @@ class _HomeState extends State<Home> {
             alignment: Alignment.center,
             child: Padding(
               // foodbar padding
-              padding: EdgeInsets.fromLTRB(97, 100, 0, 0),
+              padding: const EdgeInsets.fromLTRB(97, 100, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomPaint(
                     painter: Foodbar(
-                      backColor: Color(0xA969F0AF),
-                      frontColor: Color(0xFF607D8B),
+                      backColor: const Color(0xA969F0AF),
+                      frontColor: const Color(0xFF607D8B),
                       lastColor: Colors.white,
                       strokeWidth: 13,
                       upBar: upBar,
@@ -133,16 +132,16 @@ class _HomeState extends State<Home> {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: Color(0xA969F0AF),
+                            color: const Color(0xA969F0AF),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Row(
                             children: [
-                              SizedBox(width: 10,),
+                              const SizedBox(width: 10,),
                               //info column
                               Column(
                                 children: [
-                                  SizedBox(height: 10,),
+                                  const SizedBox(height: 10,),
                                   Text(
                                     'Burned calories:',
                                     style: GoogleFonts.montserrat(
@@ -159,17 +158,17 @@ class _HomeState extends State<Home> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(height: 25,),
+                                  const SizedBox(height: 25,),
                                   Text(
                                     'You unlocked',
                                     style: GoogleFonts.montserrat(
-                                      color: Color(0xFF607D8B),
+                                      color: const Color(0xFF607D8B),
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
-                                  SizedBox(height: 3,),
+                                  const SizedBox(height: 3,),
                                   // unlocked food name
                                   Text(_foodUnlockedName(_foodUnlockedIndex(provider.selCal, foodList),foodList),
                                     style: GoogleFonts.montserrat(
@@ -183,13 +182,13 @@ class _HomeState extends State<Home> {
                                     padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        shadowColor: Color(0xFF607D8B),
+                                        shadowColor: const Color(0xFF607D8B),
                                         elevation: 6,
                                         backgroundColor: Colors.cyan.shade200,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(15),
                                         ),
-                                        padding: EdgeInsets.fromLTRB(25, 7, 25, 7),
+                                        padding: const EdgeInsets.fromLTRB(25, 7, 25, 7),
                                       ),
                                       onPressed: () {
                                         Navigator.of(context).push(MaterialPageRoute(
@@ -204,10 +203,10 @@ class _HomeState extends State<Home> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 10,),
+                                  const SizedBox(height: 10,),
                                 ],
                               ),
-                              SizedBox(width: 10,),
+                              const SizedBox(width: 10,),
                             ],
                           ),
                         ),
@@ -219,18 +218,18 @@ class _HomeState extends State<Home> {
                               ElevatedButton(
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.grey.shade500,
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(5),
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(5),
                                 ),
                                 onPressed: () {
-                                  _buttonStateDemo(provider);
+                                  _buttonStateDemo(provider, context);
                                 },
-                                child: Icon(MdiIcons.play, size: 35,)
+                                child: const Icon(MdiIcons.play, size: 35,)
                               ),
-                              SizedBox(height: 5,),
+                              const SizedBox(height: 5,),
                               Text('DEMO',
                                 style: GoogleFonts.montserrat(
-                                  color: Color(0xFF607D8B),
+                                  color: const Color(0xFF607D8B),
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -246,18 +245,18 @@ class _HomeState extends State<Home> {
                               ElevatedButton(
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.grey.shade500,
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(5),
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(5),
                                 ),
                                 onPressed: () {
                                   _buttonStateClose(provider);
                                 },
                                 child: const Icon(MdiIcons.check, size: 35,)
                               ),
-                              SizedBox(height: 5,),
+                              const SizedBox(height: 5,),
                               Text('SAVE',
                                 style: GoogleFonts.montserrat(
-                                  color: Color(0xFF607D8B),
+                                  color: const Color(0xFF607D8B),
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -273,23 +272,23 @@ class _HomeState extends State<Home> {
                               ElevatedButton(
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.amberAccent.shade400,
-                                  shape: CircleBorder(),
-                                  padding: EdgeInsets.all(15),
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(15),
                                 ),
                                 onPressed: () {
                                   _buttonState(provider);
                                 },
                                 child: (start)
-                                  ? (Icon(MdiIcons.stop, size: 35,))
-                                  : Icon(MdiIcons.runFast, size: 35,),
+                                  ? (const Icon(MdiIcons.stop, size: 35,))
+                                  : const Icon(MdiIcons.runFast, size: 35,),
                               ),
-                              SizedBox(height: 10,),
+                              const SizedBox(height: 10,),
                               Text(
                                 (start)
                                 ? '   STOP\nACTIVITY'
                                 : '   START\nACTIVITY',
                                 style: GoogleFonts.montserrat(
-                                  color: Color(0xFF607D8B),
+                                  color: const Color(0xFF607D8B),
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -344,34 +343,34 @@ class _HomeState extends State<Home> {
   
   Color _colorUnlocked(int index, List<Foods> list, double value){
     if(index<0){
-      return Color(0xFF607D8B);
+      return const Color(0xFF607D8B);
     }
     else if(value == foodList[index].calories){
       return Colors.yellowAccent;
     }
     else{
-      return Color(0xFF607D8B); 
+      return const Color(0xFF607D8B); 
     }
   }
 
   Widget _selectPage(int index){
     switch (index) {
       case 0:
-        return Apple();
+        return const Apple();
       case 1:
-        return Toast();
+        return const Toast();
       case 2:
-        return Icecreams();
+        return const Icecreams();
       case 3:
-        return Pasta();
+        return const Pasta();
       case 4:
-        return Cake();
+        return const Cake();
       case 5:
-        return Steak();
+        return const Steak();
       case 6:
-        return Pizza();
+        return const Pizza();
       default:
-        return Pizza();
+        return const Pizza();
     }
   }
 }
