@@ -19,7 +19,8 @@ class _Profile extends State<Profile> {
 
   final _formKey = GlobalKey<FormState>();
 
-  Gender? _gender = Gender.male;
+  Gender? _gender;
+  late int gen = -1;
 
   bool save = false;
   bool cancel = false;
@@ -43,9 +44,18 @@ class _Profile extends State<Profile> {
     var prefs = Provider.of<Preferences>(context, listen: false);
     if(prefs.name==null && prefs.surname==null){
       loadedPrefs = false;
+      _gender = Gender.male;
+      gen = 0;
     }
     else{
       loadedPrefs = true;
+      if(gen==0){
+        _gender = Gender.male;
+      }
+      else{
+        _gender = Gender.female;
+      }
+      
     }
       
   }
@@ -234,7 +244,12 @@ class _Profile extends State<Profile> {
                     var prefs = Provider.of<Preferences>(context, listen: false);
                     prefs.name = nameController.text;
                     prefs.surname = surnameController.text;
-                    prefs.gender = _gender;
+                    if(_gender == Gender.male){
+                      gen = 0;
+                    }
+                    else{
+                      gen = 1;
+                    }
                     loadedPrefs = true;
                   }
                 },
@@ -267,7 +282,8 @@ class _Profile extends State<Profile> {
                     var prefs = Provider.of<Preferences>(context, listen: false);
                     prefs.name = null;
                     prefs.surname = null;
-                    prefs.gender = Gender.male;
+                    gen = 0;
+                    _gender = Gender.male;
                     loadedPrefs = false;
                   }
                 },
