@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+//class for the object of the bars in statistics page
 
 class BarObj {
 

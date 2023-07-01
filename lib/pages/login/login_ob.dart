@@ -6,12 +6,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
+// this class is used for logging to the app
 
 class Login extends StatefulWidget {
   static const route = '/login/';
   static const routeDisplayName = 'LoginPage';
 
-  Login({Key? key}) : super(key: key);
+  const Login({Key? key}) : super(key: key);
 
   @override
   State<Login> createState() => _LoginState();
@@ -232,17 +233,17 @@ class _LoginState extends State<Login> {
                                           .showSnackBar(SnackBar(
                                             backgroundColor: Colors.red,
                                             behavior: SnackBarBehavior.floating,
-                                            margin: EdgeInsets.all(8),
+                                            margin: const EdgeInsets.all(8),
                                             content: Row(
                                               children: [
-                                                Icon(MdiIcons.alertOctagonOutline,
+                                                const Icon(MdiIcons.alertOctagonOutline,
                                                   color: Colors.white,
                                                 ),
-                                              SizedBox(width: 10,),
-                                              Text('Wrong Credentials'),
+                                              const SizedBox(width: 10,),
+                                              const Text('Wrong Credentials'),
                                               ],
                                             ),
-                                            duration: Duration(seconds: 2),
+                                            duration: const Duration(seconds: 2),
                                           )
                                         )
                                       }
@@ -254,17 +255,17 @@ class _LoginState extends State<Login> {
                                       .showSnackBar(SnackBar(
                                         backgroundColor: Colors.blueAccent,
                                         behavior: SnackBarBehavior.floating,
-                                        margin: EdgeInsets.all(8),
+                                        margin: const EdgeInsets.all(8),
                                         content: Row(
                                           children: [
-                                            Icon(MdiIcons.informationOutline,
+                                            const Icon(MdiIcons.informationOutline,
                                               color: Colors.white,
                                             ),
-                                            SizedBox(width: 10,),
-                                            Text('You are also logging to Impact'),
+                                            const SizedBox(width: 10,),
+                                            const Text('You are also logging to Impact'),
                                           ],
                                         ),
-                                        duration: Duration(seconds: 4),
+                                        duration: const Duration(seconds: 4),
                                       )
                                     );
                                     Future.delayed(
@@ -272,7 +273,7 @@ class _LoginState extends State<Login> {
                                         _buttonState(),
                                     
                                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                                builder: (context) => HomePage()))
+                                                builder: (context) => const HomePage()))
                                       }
                                     );
                                   }
@@ -296,7 +297,7 @@ class _LoginState extends State<Login> {
                                 )
                               ),
                               child: (isLoading)
-                                ? CircularProgressIndicator(color: Colors.white,)
+                                ? const CircularProgressIndicator(color: Colors.white,)
                                 : Text('LOGIN',
                                     style: GoogleFonts.montserrat(
                                       fontWeight: FontWeight.bold,
@@ -304,7 +305,7 @@ class _LoginState extends State<Login> {
                                   ),
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),

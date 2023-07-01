@@ -1,9 +1,7 @@
 import 'package:eaty_tourist/models/foods.dart';
 import 'package:eaty_tourist/models/listFoods.dart';
-import 'package:eaty_tourist/models/restaurants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 List<Foods> foodList = ListFoods.foodList;
 
@@ -22,7 +20,7 @@ class Apple extends StatelessWidget {
             'Food and Restaurants',
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
-              color: Color(0xFF607D8B),
+              color: const Color(0xFF607D8B),
               fontWeight: FontWeight.bold,
               fontSize: 22,
             ),

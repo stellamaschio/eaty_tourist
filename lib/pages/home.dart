@@ -54,6 +54,7 @@ class _HomeState extends State<Home> {
     setState(() {
       start = !start;
     });
+    provider.refresh();
     time = DateTime.now().subtract(const Duration(days: 1));
     provider.setShowDate(time);
     // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri

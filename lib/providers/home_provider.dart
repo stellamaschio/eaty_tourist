@@ -119,14 +119,12 @@ class HomeProvider extends ChangeNotifier {
     
     notifyListeners();
   }
-
-  /*
+  
   // method to trigger a new data fetching
   Future<void> refresh() async {
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
   }
-  */
 
   // method to select only the data of the chosen day
   Future<void> getDataOfDay(DateTime showDate) async {
@@ -134,10 +132,8 @@ class HomeProvider extends ChangeNotifier {
     var firstDay = await db.caloriesDao.findFirstDayInDb();
     var lastDay = await db.caloriesDao.findLastDayInDb();
 
-    if (showDate.isAfter(lastDay!.dateTime) ||
-        showDate.isBefore(firstDay!.dateTime)) return;
-
-    this.showDate = showDate;
+    if(showDate.day==todayDate.day){
+      this.showDate = showDate;
 
     // prendo solo perchè ho già filtrato nella query
     calories = await db.caloriesDao.findCaloriesbyTime(
@@ -145,7 +141,10 @@ class HomeProvider extends ChangeNotifier {
         DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
 
     notifyListeners();
-    
+    }
+    else if (showDate.isAfter(lastDay!.dateTime) || showDate.isBefore(firstDay!.dateTime)) {
+      return;
+    }
   }
 
   void setSelected(double val){

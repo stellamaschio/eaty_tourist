@@ -25,6 +25,7 @@ class Preferences {
     }
     return value;
   }
+  
   // helper method to call the correct setType method of SharedPreferences
   void _saveToDisk<T>(String key, T content) {
     if (content is String) {

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
+// class for defining the type food for the foodbar
 class Foods {
 
   //Costruttore
@@ -23,47 +24,50 @@ class Foods {
   final String description;
   final List<Restaurants> restaurants;
   
-  //Metodo per stampare le icone dei cibi
+  //method for printing the food icon
   Icon? printFoodIcon() {
     print(icon);
   }
 
-  Widget printInfoFood(){
+  // widget for printing the info of the selected food: description and restaurant
+  Widget printInfoFood() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
-                '$name',
-                style: GoogleFonts.montserrat(
-                  color: Color(0xFF607D8B),
-                  fontSize: 35,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text('$description',
-                style: GoogleFonts.montserrat(
-                  color: Color(0xFF607D8B),
-                  fontSize: 18,
-                  fontWeight: null,
-                  decoration: null,
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              printRestaurant(restaurants[0]),
-              SizedBox(
-                height: 15,
-              ),
-              printRestaurant(restaurants[1]),
-            ]);
+      Text(
+        name,
+        style: GoogleFonts.montserrat(
+          color: const Color(0xFF607D8B),
+          fontSize: 35,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+      const SizedBox(
+        height: 15,
+      ),
+      Text(
+        description,
+        style: GoogleFonts.montserrat(
+          color: const Color(0xFF607D8B),
+          fontSize: 18,
+          fontWeight: null,
+          decoration: null,
+        ),
+      ),
+      const SizedBox(
+        height: 15,
+      ),
+      printRestaurant(restaurants[0]),
+      const SizedBox(
+        height: 15,
+      ),
+      printRestaurant(restaurants[1]),
+    ]);
   }
 
+  // widget for printing the info of the selected restaurant
   Widget printRestaurant(Restaurants rest) {
     return Container(
-      padding: EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       decoration: const BoxDecoration(
         color: Color(0xA969F0AF),
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -78,9 +82,9 @@ class Foods {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${rest.name}',
+            rest.name,
             style: GoogleFonts.montserrat(
-                color: Color(0xFF607D8B),
+                color: const Color(0xFF607D8B),
                 fontSize: 20,
                 fontWeight: FontWeight.bold),
           ),
@@ -88,31 +92,31 @@ class Foods {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.ideographic,
             children: [
-              Icon(
+              const Icon(
                 MdiIcons.mapMarker,
                 color: Color(0xFF929497),
                 size: 15,
               ),
               Text(
-                '${rest.location}',
+                rest.location,
                 style: GoogleFonts.montserrat(
                   fontSize: 15,
-                  color: Color(0xFF929497),
+                  color: const Color(0xFF929497),
                   decoration: TextDecoration.underline,
                 ),
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           Wrap(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
               Text(
-                '${rest.description}',
+                rest.description,
                 style: GoogleFonts.montserrat(
                   color: Colors.grey.shade600,
                   fontSize: 18,

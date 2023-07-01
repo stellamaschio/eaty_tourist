@@ -1,8 +1,10 @@
 import 'package:eaty_tourist/models/foods.dart';
 import 'package:eaty_tourist/models/restaurants.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+// this class contains a list of Foods objects 
+// every Foods object has a description and some restaurants where you can buy it
+// it also has its calories and icons
 
 class ListFoods {
 

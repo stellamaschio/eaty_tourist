@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
-  // inizializzazione database
+  // database inizialization 
   WidgetsFlutterBinding.ensureInitialized();
   final db = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   runApp(Provider<AppDatabase>.value(value: db, child: const MyApp()));
@@ -15,16 +15,20 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  // This widget is the application root 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        //provider for Preferences
         Provider(
-          create: (context) => Preferences()..init(), //Preferences classe creata da noi
-          // This creates the preferences when the provider is creater. With lazy = true (default), the preferences would be initialized when first accessed, but we need them for the other services
+          create: (context) => Preferences()..init(), 
+          // This creates the preferences when the provider is creater. 
+          //With lazy = true (default), the preferences would be initialized when first accessed, 
+          //but we need them for the other services
           lazy: false,
         ),
+        //provider for ImpactService
         Provider(
           create: (context) => ImpactService(
             // We pass the newly created preferences to the service

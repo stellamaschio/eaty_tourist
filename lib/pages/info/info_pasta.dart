@@ -20,7 +20,7 @@ class Pasta extends StatelessWidget {
         title: Text('Food and Restaurants',
           textAlign: TextAlign.center,
           style: GoogleFonts.montserrat(
-            color: Color(0xFF607D8B),
+            color: const Color(0xFF607D8B),
             fontWeight: FontWeight.bold,
             fontSize: 22,
           ),
