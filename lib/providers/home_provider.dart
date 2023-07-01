@@ -83,11 +83,8 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<DateTime?> _getLastFetch() async {
-    // sistemare
     var dataCal = await db.caloriesDao.findAllCalories();
-    //var dataSteps = await db.stepsDao.findAllSteps();
-    //var dataDist = await db.distanceDao.findAllDistance();
-    if (dataCal.isEmpty /*|| dataSteps.isEmpty || dataDist.isEmpty*/) {
+    if (dataCal.isEmpty) {
       return null;
     }
     return dataCal.last.dateTime;
@@ -99,6 +96,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _fetchAndCalculate() async {
     lastFetch = await _getLastFetch() ??
         DateTime.now().subtract(const Duration(days: 2));
+    
     // do nothing if already fetched
     if (lastFetch.day == DateTime.now().subtract(const Duration(days: 1)).day) {
       return;
@@ -136,20 +134,17 @@ class HomeProvider extends ChangeNotifier {
     var firstDay = await db.caloriesDao.findFirstDayInDb();
     var lastDay = await db.caloriesDao.findLastDayInDb();
 
-    if(showDate.day==todayDate.day){
-      this.showDate = showDate;
-
-      // prendo solo perchè ho già filtrato nella query
-      calories = await db.caloriesDao.findCaloriesbyTime(
-          DateUtils.dateOnly(showDate),
-          DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
-
-      notifyListeners();
-    }
-
     if (showDate.isAfter(lastDay!.dateTime) ||
         showDate.isBefore(firstDay!.dateTime)) return;
-        
+
+    this.showDate = showDate;
+
+    // prendo solo perchè ho già filtrato nella query
+    calories = await db.caloriesDao.findCaloriesbyTime(
+        DateUtils.dateOnly(showDate),
+        DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
+
+    notifyListeners();
     
   }
 
@@ -323,11 +318,12 @@ class HomeProvider extends ChangeNotifier {
       lastSelTimeBar = time;
       return;
     }
-    else if(temp.isEmpty && time.isAfter(todayDate)) {
-      return;
+    else if(temp.isEmpty && (time.isBefore(firstDataDay) || time.isAfter(todayDate))) {
+      lastDataBar.clear();
+      lastDataBar.add(Selected(null, 0, 0, 0, time));
+      lastSelTimeBar = lastDataBar.last.dateTime;
     }
-    // controllo per giorni passati in cui non sono stati inseriti dati
-    else if(temp.isEmpty && time.isBefore(firstDataDay)) {
+    else if(temp.isEmpty && (time.isAfter(firstDataDay) || time.isBefore(todayDate))) {
       lastDataBar.clear();
       lastDataBar.add(Selected(null, 0, 0, 0, time));
       lastSelTimeBar = lastDataBar.last.dateTime;

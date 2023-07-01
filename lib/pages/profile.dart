@@ -1,6 +1,8 @@
+import 'package:eaty_tourist/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 enum Gender { male, female }
 
@@ -12,13 +14,42 @@ class Profile extends StatefulWidget {
 }
 
 class _Profile extends State<Profile> {
-  TextEditingController ageController = TextEditingController();
-  TextEditingController heightController = TextEditingController();
-  TextEditingController weightController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController surnameController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   Gender? _gender = Gender.male;
+
+  bool save = false;
+  bool cancel = false;
+  bool loadedPrefs = false;
+
+  void _saveState(){
+    setState(() {
+      save = !save;
+    });
+  }
+  void _cancelState(){
+    setState(() {
+      cancel = !cancel;
+    });
+  }
+
+   @override
+  void initState() {
+    super.initState();
+    
+    var prefs = Provider.of<Preferences>(context, listen: false);
+    if(prefs.name==null && prefs.surname==null){
+      loadedPrefs = false;
+    }
+    else{
+      loadedPrefs = true;
+    }
+      
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +62,7 @@ class _Profile extends State<Profile> {
         title: Text('Profile',
           textAlign: TextAlign.center,
           style: GoogleFonts.montserrat(
-            color: Color(0xFF607D8B),
+            color: const Color(0xFF607D8B),
             fontWeight: FontWeight.bold,
             fontSize: 22,
           ),
@@ -43,14 +74,14 @@ class _Profile extends State<Profile> {
           key: _formKey,
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
-              Icon(MdiIcons.accountCircle,
+              const Icon(MdiIcons.accountCircle,
                 color: Color(0xFF607D8B),
                 size: 110,
               ),
-              SizedBox(height: 20,),
+              const SizedBox(height: 20,),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10, 
@@ -64,7 +95,7 @@ class _Profile extends State<Profile> {
                         color: Colors.grey.shade800,
                       ),
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Radio<Gender>(
                         value: Gender.male,
                         groupValue: _gender,
@@ -81,7 +112,7 @@ class _Profile extends State<Profile> {
                         color: Colors.grey.shade800,
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Radio<Gender>(
                         value: Gender.female,
                         groupValue: _gender,
@@ -101,11 +132,11 @@ class _Profile extends State<Profile> {
                   ],
                 ),
               ),
-              SizedBox(height: 40,),
+              const SizedBox(height: 40,),
               Row(
                 children: [
-                  SizedBox(width: 10),
-                  Text('Age',
+                  const SizedBox(width: 10),
+                  Text('Name',
                     style: GoogleFonts.montserrat(
                       fontSize: 18, 
                       fontWeight: FontWeight.w600,
@@ -118,22 +149,29 @@ class _Profile extends State<Profile> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                 ),
-                child: TextFormField(
-                  controller: ageController,
-                  decoration: InputDecoration(
+                child: (loadedPrefs)
+                  ? Text('${Provider.of<Preferences>(context, listen: false).name}',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                    ),
+                  )
+                  : TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: const BorderSide(
+                      borderSide: BorderSide(
                         width: 3,
                         color: Color(0xFF607D8B),
                       ),
                     ),
                     border: UnderlineInputBorder(),
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.person,
                       color: Color(0xFF607D8B),
                     ),
-                    hintText: 'Age',
-                    hintStyle: const TextStyle(color: Color(0xFF607D8B)),
+                    hintText: 'Name',
+                    hintStyle: TextStyle(color: Color(0xFF607D8B)),
                   ),
                   style: GoogleFonts.montserrat(
                     fontWeight: FontWeight.w500,
@@ -141,11 +179,11 @@ class _Profile extends State<Profile> {
                   ),
                 ),
               ),
-              SizedBox(height: 25,),
+              const SizedBox(height: 25,),
               Row(
                 children: [
-                  SizedBox(width: 10),
-                  Text('Weight',
+                  const SizedBox(width: 10),
+                  Text('Surname',
                     style: GoogleFonts.montserrat(
                       fontSize: 18, 
                       fontWeight: FontWeight.w600,
@@ -158,62 +196,29 @@ class _Profile extends State<Profile> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10, 
                 ),
-                child: TextFormField(
-                  controller: weightController,
-                  decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: const BorderSide(
-                        width: 3,
-                        color: Color(0xFF607D8B),
-                      ),
-                    ),
-                    border: UnderlineInputBorder(),
-                      prefixIcon: const Icon(
-                        MdiIcons.weightKilogram,
-                        color: Color(0xFF607D8B),
-                    ),
-                    hintText: 'Weight',
-                    hintStyle: const TextStyle(color: Color(0xFF607D8B)),
-                  ),
-                  style: GoogleFonts.montserrat(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              SizedBox(height: 25,),
-              Row(
-                children: [
-                  SizedBox(width: 10),
-                  Text('Height',
+                child: (loadedPrefs)
+                  ? Text('${Provider.of<Preferences>(context, listen: false).surname}',
                     style: GoogleFonts.montserrat(
-                      fontSize: 18, 
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade800,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
                     ),
-                  ),
-                ]
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10, 
-                ),
-                child: TextFormField(
-                  controller: heightController,
-                  decoration: InputDecoration(
+                  )
+                  : TextFormField(
+                  controller: surnameController,
+                  decoration: const InputDecoration(
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: const BorderSide(
+                      borderSide: BorderSide(
                         width: 3,
                         color: Color(0xFF607D8B),
                       ),
                     ),
                     border: UnderlineInputBorder(),
-                      prefixIcon: const Icon(
-                        MdiIcons.humanMaleHeight,
-                        color: Color(0xFF607D8B),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Color(0xFF607D8B),
                     ),
-                    hintText: 'Height',
-                    hintStyle: const TextStyle(color: Color(0xFF607D8B)),
+                    hintText: 'Surname',
+                    hintStyle: TextStyle(color: Color(0xFF607D8B)),
                   ),
                   style: GoogleFonts.montserrat(
                     fontWeight: FontWeight.w500,
@@ -221,6 +226,72 @@ class _Profile extends State<Profile> {
                   ),
                 ),
               ),
+              const SizedBox(height: 70,),
+              ElevatedButton(
+                onPressed: () {
+                  _saveState();
+                  if (_formKey.currentState!.validate()) {
+                    var prefs = Provider.of<Preferences>(context, listen: false);
+                    prefs.name = nameController.text;
+                    prefs.surname = surnameController.text;
+                    prefs.gender = _gender;
+                    loadedPrefs = true;
+                  }
+                },
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15))),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.symmetric(
+                        horizontal: 38,
+                        vertical: 13,
+                      ),
+                    ),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFF607D8B))),
+                child: Text('SAVE',
+                  style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20,),
+              (loadedPrefs)
+              ? ElevatedButton(
+                onPressed: () {
+                  _cancelState();
+                  if (loadedPrefs) {
+                    var prefs = Provider.of<Preferences>(context, listen: false);
+                    prefs.name = null;
+                    prefs.surname = null;
+                    prefs.gender = Gender.male;
+                    loadedPrefs = false;
+                  }
+                },
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15))),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.symmetric(
+                        horizontal: 38,
+                        vertical: 13,
+                      ),
+                    ),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFF607D8B))),
+                child: Text('Clear',
+                  style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              )
+              : const SizedBox(height: 10,),
             ],
           ),
         ),

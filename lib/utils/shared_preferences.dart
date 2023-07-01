@@ -1,3 +1,4 @@
+import 'package:eaty_tourist/pages/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Preferences {
@@ -63,4 +64,13 @@ class Preferences {
 
   String? get impactUsername => _getFromDisk('impactUsername');
   set impactUsername(String? newImpactUsername) => _saveToDisk("impactUsername", newImpactUsername);
+
+  String? get name => _getFromDisk('name');
+  set name(String? newname) => _saveToDisk("name", newname);
+
+  String? get surname => _getFromDisk('surname');
+  set surname(String? newsurname) => _saveToDisk("surname", newsurname);
+
+  Gender? get gender => _getFromDisk('gender');
+  set gender(Gender? newgender) => _saveToDisk("gender", newgender);
 }

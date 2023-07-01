@@ -52,7 +52,7 @@ class _LoginState extends State<Login> {
       backgroundColor: Colors.greenAccent,
       body: Column(
         children: [
-          SizedBox(height: 160),
+          const SizedBox(height: 160),
           Text('eaty tourist',
               style: GoogleFonts.montserrat(
                 color: const Color(0xFF607D8B),
@@ -90,7 +90,7 @@ class _LoginState extends State<Login> {
                     const SizedBox(height: 40,),
                     Row(
                       children: [
-                        SizedBox(width: 15),
+                        const SizedBox(width: 15),
                         Text('Username',
                           style: GoogleFonts.montserrat(
                             fontSize: 17, 
@@ -144,7 +144,7 @@ class _LoginState extends State<Login> {
                     ),
                     Row(
                       children: [
-                        SizedBox(width: 15),
+                        const SizedBox(width: 15),
                         Text('Password',
                           style: GoogleFonts.montserrat(
                             fontSize: 17, 
@@ -206,7 +206,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Align(
                       child: Column(
                         children: [
