@@ -69,7 +69,7 @@ class Foods {
     return Container(
       padding: const EdgeInsets.all(5),
       decoration: const BoxDecoration(
-        color: Color(0xA969F0AF),
+        color: Color.fromARGB(169, 143, 240, 193),
         borderRadius: BorderRadius.all(Radius.circular(10)),
         boxShadow: [
           BoxShadow(

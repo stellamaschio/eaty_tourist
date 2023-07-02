@@ -54,7 +54,6 @@ class _HomeState extends State<Home> {
     setState(() {
       start = !start;
     });
-    provider.refresh();
     time = DateTime.now().subtract(const Duration(days: 1));
     provider.setShowDate(time);
     // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
@@ -65,12 +64,12 @@ class _HomeState extends State<Home> {
     endTime = time.add(Duration(minutes: minuteAdd));
   }
 
-  void _buttonStateDemo(HomeProvider provider){
+  void _buttonStateDemo(HomeProvider provider, BuildContext context){
     if(start){
       setState(() {
         demo = !demo;
       });
-      provider.selectCalories(startMinute, minuteAdd, startTime, endTime);
+      provider.selectCalories(startMinute, minuteAdd, startTime, endTime, context);
       startMinute = startMinute + minuteAdd;
       startTime = startTime.add(Duration(minutes: minuteAdd));
       endTime = endTime.add(Duration(minutes: minuteAdd));
@@ -223,7 +222,7 @@ class _HomeState extends State<Home> {
                                   padding: EdgeInsets.all(5),
                                 ),
                                 onPressed: () {
-                                  _buttonStateDemo(provider);
+                                  _buttonStateDemo(provider, context);
                                 },
                                 child: Icon(MdiIcons.play, size: 35,)
                               ),

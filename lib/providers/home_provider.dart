@@ -5,6 +5,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:eaty_tourist/models/db.dart';
 import 'package:eaty_tourist/models/entities/entities.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 // this is the change notifier. it will manage all the logic of the home page: fetching the correct data from the database
 // and on startup fetching the data from the online services
@@ -157,13 +159,41 @@ class HomeProvider extends ChangeNotifier {
   }
 
   // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-  void selectCalories(int startMinute, int minuteAdd, DateTime startTime, DateTime endTime){
-    
-    for(int i=1; i<=minuteAdd; i++){
-      selCal = selCal + calories[startMinute+i].value;
+  void selectCalories(int startMinute, int minuteAdd, DateTime startTime, DateTime endTime, BuildContext context){
+    if (startMinute > (calories.length - 1)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.orange.shade400,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(8),
+          content: Row(
+            children: [
+              const Icon(
+                MdiIcons.databaseAlertOutline,
+                color: Colors.white,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text('Impact msg: there is no data today',
+                style: GoogleFonts.montserrat(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } 
+    else {
+      for (int i = 1; i <= minuteAdd; i++) {
+        selCal = selCal + calories[startMinute + i].value;
+      }
+      setTimeRange(startTime, endTime);
+      notifyListeners();
     }
-    setTimeRange(startTime, endTime);
-    notifyListeners();
   }
 
   Future<void> setTimeRange(DateTime startTime, DateTime endTime) async{

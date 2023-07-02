@@ -240,7 +240,6 @@ class GraphicState extends State<Graphic> {
 
     DateTime date = provider.statDate;
     
-    provider.dayLastTime(date);
     provider.getSelectedByTime(
       DateUtils.dateOnly(date), 
       provider.lastSelTime, 
