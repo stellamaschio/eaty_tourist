@@ -135,11 +135,12 @@ class Statistics extends StatelessWidget {
                 builder: (context, value, child) => Graphic()),  
             ),
 
-
             /////////
             ///----------------
-            /// da eliminare
+            /// Help for debugging
             /// --------------
+            /// 
+            /*
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: Row(
@@ -168,7 +169,7 @@ class Statistics extends StatelessWidget {
                   const SizedBox(height: 10,),
                 ],
               ),
-            ),
+            ),*/
           ],
         ),
       ),

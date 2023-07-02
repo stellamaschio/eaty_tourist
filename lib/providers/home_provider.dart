@@ -330,17 +330,20 @@ class HomeProvider extends ChangeNotifier {
       lastDataBar.add(Selected(null, 0, 0, 0, time));
       lastSelTimeBar = time;
       return;
-    } else if (temp.isEmpty &&
+    } 
+    else if (temp.isEmpty &&
         (time.isBefore(firstDataDay) || time.isAfter(todayDate))) {
       lastDataBar.clear();
       lastDataBar.add(Selected(null, 0, 0, 0, time));
       lastSelTimeBar = lastDataBar.last.dateTime;
-    } else if (temp.isEmpty &&
+    } 
+    else if (temp.isEmpty &&
         (time.isAfter(firstDataDay) || time.isBefore(todayDate))) {
       lastDataBar.clear();
       lastDataBar.add(Selected(null, 0, 0, 0, time));
       lastSelTimeBar = lastDataBar.last.dateTime;
-    } else {
+    } 
+    else {
       lastDataBar.clear();
       lastDataBar.add(temp.last);
       lastSelTimeBar = lastDataBar.last.dateTime;
@@ -393,12 +396,15 @@ class HomeProvider extends ChangeNotifier {
           dateTime: lastSelTimeBar,
           weekDay: lastSelTimeBar.weekday,
           calories: lastDataBar.last.calories);
-    } else if (day.isAfter(lastTime)) {
+    } 
+    else if (day.isAfter(lastTime)) {
       dayLastTimeBars(day);
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
-    } else if (day.isBefore(firstDataDay)) {
+    } 
+    else if (day.isBefore(firstDataDay)) {
       return BarObj(dateTime: day, weekDay: day.weekday, calories: 0);
-    } else {
+    } 
+    else {
       dayLastTimeBars(day);
       return BarObj(
           dateTime: lastSelTimeBar,
@@ -417,8 +423,7 @@ class HomeProvider extends ChangeNotifier {
     DateTime startDay = date.subtract(Duration(days: (day)));
 
     for (int i = 1; i < day; i++) {
-      items.add(createItems(
-          makeDay(startDay.add(Duration(days: i)), lastDay.dateTime)));
+      items.add(createItems(makeDay(startDay.add(Duration(days: i)), lastDay.dateTime)));
 
       // code for the normalization of the values of the bars
       BarObj obj = makeDay(startDay.add(Duration(days: i)), lastDay.dateTime);
@@ -427,8 +432,7 @@ class HomeProvider extends ChangeNotifier {
       }
     }
     for (int j = 0; j <= (sun - day); j++) {
-      items.add(
-          createItems(makeDay(date.add(Duration(days: j)), lastDay.dateTime)));
+      items.add(createItems(makeDay(date.add(Duration(days: j)), lastDay.dateTime)));
 
       // code for the normalization of the values of the bars
       BarObj obj = makeDay(date.add(Duration(days: j)), lastDay.dateTime);
@@ -441,7 +445,8 @@ class HomeProvider extends ChangeNotifier {
   BarChartGroupData createItems(BarObj element) {
     if (element.weekDay == statDate.weekday) {
       return switchSelDay(element);
-    } else {
+    } 
+    else {
       return switchOtherDays(element);
     }
   }
