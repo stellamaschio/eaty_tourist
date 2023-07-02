@@ -19,7 +19,7 @@ class Statistics extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(169, 143, 240, 193),
+                  color: const Color.fromARGB(169, 143, 240, 193),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -37,7 +37,7 @@ class Statistics extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(169, 143, 240, 193),
+                  color: const Color.fromARGB(169, 143, 240, 193),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -55,7 +55,7 @@ class Statistics extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(169, 143, 240, 193),
+                  color: const Color.fromARGB(169, 143, 240, 193),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(

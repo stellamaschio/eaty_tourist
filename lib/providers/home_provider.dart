@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:eaty_tourist/models/barObj.dart';
 import 'package:eaty_tourist/services/impact.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -20,18 +19,17 @@ class HomeProvider extends ChangeNotifier {
   double selCal = 0;
   int selectedSteps = 0;
   double selectedDistance = 0;
-  late List<Selected> selectedByTime = [];
-  late List<Selected> selectedUntilNow = [];
-  late List<Selected> selectedAll = [];
-  late List<Selected> temp = [];
-  late List<Selected> lastData = [];
-  late List<Selected> lastDataBar = [];
+  List<Selected> selectedByTime = [];
+  List<Selected> selectedUntilNow = [];
+  List<Selected> selectedAll = [];
+  List<Selected> temp = [];
+  List<Selected> lastData = [];
+  List<Selected> lastDataBar = [];
 
 
   late DateTime lastSelTime = dataLastTime;
   late DateTime lastSelTimeBar = dataLastTime;
   late DateTime dataLastTime;
-  late DateTime dataFirstTime;
   late DateTime firstDataDay;
 
 

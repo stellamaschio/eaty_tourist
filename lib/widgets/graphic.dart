@@ -24,7 +24,6 @@ class GraphicState extends State<Graphic> {
     fontStyle: FontStyle.normal,
   );
 
-  late List<BarChartGroupData> items = [];
   double rap_max = 0;
   
 
@@ -61,7 +60,7 @@ class GraphicState extends State<Graphic> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: Color.fromARGB(255, 228, 139, 238),
+                    color: const Color.fromARGB(255, 228, 139, 238),
                   ),
                   padding: const EdgeInsets.all(5),
                   child: Text("cal/day",
@@ -170,23 +169,8 @@ class GraphicState extends State<Graphic> {
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 10, //margin top
-      child: Text(''),
+      child: const Text(''),
     );
   }
-
-  /*
-  BarChartGroupData makeGroupData(int x, double y1) {
-    return BarChartGroupData(
-      barsSpace: 4,
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: y1,
-          color: ,
-          width: 7,
-        ),
-      ],
-    );
-  }*/
   
 }
