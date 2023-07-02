@@ -62,8 +62,14 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _init() async {
     await dayLastTime(showDate);
     await lastTime();
-    await firstTime();
-    firstDataDay = (await db.selectedDao.findFirstDayInDb())!.dateTime;
+
+    if((await db.selectedDao.findFirstDayInDb()) == null){
+      return;
+    }
+    else{
+      firstDataDay = (await db.selectedDao.findFirstDayInDb())!.dateTime;
+    }
+
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
     doneInit = true;
