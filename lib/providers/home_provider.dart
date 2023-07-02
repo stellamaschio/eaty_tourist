@@ -60,16 +60,10 @@ class HomeProvider extends ChangeNotifier {
 
   // constructor of provider which manages the fetching of all data from the servers and then notifies the ui to build
   Future<void> _init() async {
+    await _checkEmpty();
     await dayLastTime(showDate);
     await lastTime();
-
-    if((await db.selectedDao.findFirstDayInDb()) == null){
-      return;
-    }
-    else{
-      firstDataDay = (await db.selectedDao.findFirstDayInDb())!.dateTime;
-    }
-
+    firstDataDay = (await db.selectedDao.findFirstDayInDb())!.dateTime;
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
     doneInit = true;
@@ -77,22 +71,14 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> lastTime() async {
-    if((await db.selectedDao.findLastDayInDb()) == null){
-      return;
-    }
-    else{
-      dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
-      notifyListeners();
-    }
+    dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
+    notifyListeners();
   }
 
-  Future<void> firstTime() async {
-    if((await db.selectedDao.findFirstDayInDb()) == null){
-      return;
-    }
-    else{
-      dataFirstTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
-      notifyListeners();
+  Future<void> _checkEmpty() async {
+    selectAll();
+    if(selectedAll.isEmpty){
+      saveDay(showDate);
     }
   }
 
@@ -227,17 +213,14 @@ class HomeProvider extends ChangeNotifier {
 
     selectedCalories = selCal;
 
-    selectedUntilNow =
-        await db.selectedDao.findSelectedbyTime(startTime, endTime);
+    selectedUntilNow = await db.selectedDao.findSelectedbyTime(startTime, endTime);
     if (selectedUntilNow.isEmpty) {
       selTime = time;
       // selectedCalories, selectedSteps, selectedDistance remain the same updated
       // by the methods selectCalories() and setTimeRange()
 
-      await db.selectedDao.insertSelected(Selected(
-          null, selectedCalories, selectedSteps, selectedDistance, selTime));
-      selectedByTime =
-          await db.selectedDao.findSelectedbyTime(startTime, endTime);
+      await db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, selTime));
+      selectedByTime = await db.selectedDao.findSelectedbyTime(startTime, endTime);
 
       lastData.clear();
       lastData.add(selectedByTime.last);
@@ -246,17 +229,16 @@ class HomeProvider extends ChangeNotifier {
       lastTime();
 
       notifyListeners();
-    } else {
+    } 
+    else {
       selTime = time;
 
       selectedCalories = selectedCalories + selectedUntilNow.last.calories;
       selectedSteps = selectedSteps + selectedUntilNow.last.steps;
       selectedDistance = selectedDistance + selectedUntilNow.last.distance;
 
-      await db.selectedDao.insertSelected(Selected(
-          null, selectedCalories, selectedSteps, selectedDistance, selTime));
-      selectedByTime =
-          await db.selectedDao.findSelectedbyTime(startTime, endTime);
+      await db.selectedDao.insertSelected(Selected(null, selectedCalories, selectedSteps, selectedDistance, selTime));
+      selectedByTime =  await db.selectedDao.findSelectedbyTime(startTime, endTime);
 
       lastData.clear();
       lastData.add(selectedByTime.last);
@@ -268,8 +250,7 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getSelectedByTime(
-      DateTime startTime, DateTime endTime, DateTime date) async {
+  Future<void> getSelectedByTime(DateTime startTime, DateTime endTime, DateTime date) async {
     // check if the day we want to show has data
     var firstDay = await db.caloriesDao.findFirstDayInDb();
     var lastDay = await db.caloriesDao.findLastDayInDb();
