@@ -71,8 +71,13 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> lastTime() async {
-    dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
-    notifyListeners();
+    if((await db.selectedDao.findLastDayInDb()) == null){
+      return;
+    }
+    else{
+      dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
+      notifyListeners();
+    }
   }
 
   Future<void> firstTime() async {
@@ -118,14 +123,6 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /*
-  // method to trigger a new data fetching
-  Future<void> refresh() async {
-    await _fetchAndCalculate();
-    await getDataOfDay(showDate);
-  }
-  */
-
   // method to select only the data of the chosen day
   Future<void> getDataOfDay(DateTime showDate) async {
     // check if the day we want to show has data
@@ -141,7 +138,8 @@ class HomeProvider extends ChangeNotifier {
           DateTime(showDate.year, showDate.month, showDate.day, 23, 59));
 
       notifyListeners();
-    } else if (showDate.isAfter(lastDay!.dateTime) ||
+    } 
+    else if (showDate.isAfter(lastDay!.dateTime) ||
         showDate.isBefore(firstDay!.dateTime)) {
       return;
     }
