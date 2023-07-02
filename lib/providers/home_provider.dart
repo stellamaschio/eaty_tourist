@@ -62,6 +62,7 @@ class HomeProvider extends ChangeNotifier {
 
   // constructor of provider which manages the fetching of all data from the servers and then notifies the ui to build
   Future<void> _init() async {
+    await _checkEmpty();
     await dayLastTime(showDate);
     await lastTime();
     firstDataDay = (await db.selectedDao.findFirstDayInDb())!.dateTime;
@@ -74,6 +75,13 @@ class HomeProvider extends ChangeNotifier {
   Future<void> lastTime() async{
     dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
     notifyListeners();
+  }
+
+  Future<void> _checkEmpty() async {
+    selectAll();
+    if(selectedAll.isEmpty){
+      saveDay(showDate);
+    }
   }
 
   Future<DateTime?> _getLastFetch() async {
