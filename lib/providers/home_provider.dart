@@ -81,8 +81,13 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> firstTime() async {
-    dataFirstTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
-    notifyListeners();
+    if((await db.selectedDao.findFirstDayInDb()) == null){
+      return;
+    }
+    else{
+      dataFirstTime = (await db.selectedDao.findFirstDayInDb())!.dateTime;
+      notifyListeners();
+    }
   }
 
   Future<DateTime?> _getLastFetch() async {
