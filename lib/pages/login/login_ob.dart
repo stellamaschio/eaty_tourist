@@ -262,7 +262,12 @@ class _LoginState extends State<Login> {
                                               color: Colors.white,
                                             ),
                                             const SizedBox(width: 10,),
-                                            const Text('You are also logging to Impact'),
+                                            Text('You are also logging to Impact',
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
                                           ],
                                         ),
                                         duration: const Duration(seconds: 4),

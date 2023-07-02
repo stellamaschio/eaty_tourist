@@ -1,10 +1,6 @@
 import 'package:eaty_tourist/models/foods.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-// ignore: depend_on_referenced_packages
-
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-
 
 class Foodbar extends CustomPainter {
 
@@ -38,7 +34,6 @@ class Foodbar extends CustomPainter {
   //Override del metodo paint (invocato sopra) che setta i valori delle paint
   @override
   void paint(Canvas canvas, Size size) {
-    final w = size.width, h = size.height;
 
     uncompletedPaint
       ..strokeWidth = strokeWidth
@@ -148,10 +143,10 @@ class Foodbar extends CustomPainter {
   //Metodo per selzionare la giusta paint per i pallini degli obiettivi (foods)
   Color _selectColor(double value, int foodIndex) {
     if(value >= foodList[foodIndex].calories) {
-      return Color(0xFF607D8B);
+      return const Color(0xFF607D8B);
     }
     else {
-      return Color(0xA969F0AF);
+      return const Color(0xA969F0AF);
     }
   }
 
