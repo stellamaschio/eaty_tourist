@@ -78,7 +78,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _checkEmpty() async {
     selectAll();
     if(selectedAll.isEmpty){
-      saveDay(showDate);
+      await db.selectedDao.insertSelected(Selected(null, 0, 0, 0, showDate));
     }
   }
 
