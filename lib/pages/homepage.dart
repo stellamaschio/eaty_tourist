@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -40,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return Home();
       case 1: 
-        return Statistics();
+        return const Statistics();
       default: 
         return Home();
     }
@@ -60,7 +59,7 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xA969F0AF),
                 ),
                 child: Text('eaty tourist',
@@ -69,12 +68,12 @@ class _HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.bold,
                     fontSize: 43,
                     height: 3.5,
-                    color: Color(0xFF607D8B),
+                    color: const Color(0xFF607D8B),
                   ),
                 ),
               ),
               ListTile(
-                leading: Icon(MdiIcons.hamburger),
+                leading: const Icon(MdiIcons.hamburger),
                 title: Text('Food and Restaurants',
                   style: GoogleFonts.montserrat(
                     fontWeight: FontWeight.bold,
@@ -84,11 +83,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => FoodAndRestaurant()));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const FoodAndRestaurant()));
                 },
               ),
               ListTile(
-                leading: Icon(MdiIcons.logout),
+                leading: const Icon(MdiIcons.logout),
                 title: Text('Logout',
                   style: GoogleFonts.montserrat(
                     fontWeight: FontWeight.bold,
@@ -107,7 +106,7 @@ class _HomePageState extends State<HomePage> {
           title: Text('eaty tourist',
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
-              color: Color(0xFF607D8B),
+              color: const Color(0xFF607D8B),
               fontWeight: FontWeight.bold,
               fontSize: 28,
             ),
@@ -122,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       fullscreenDialog: true,
-                      builder: (context) => Profile()));
+                      builder: (context) => const Profile()));
                   }, 
                   icon: const Icon(
                     MdiIcons.accountCircle,
@@ -134,8 +133,8 @@ class _HomePageState extends State<HomePage> {
         ),
         body:selectPage(_selIdx),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color(0xFF607D8B),
-          selectedItemColor: Color(0xA969F0AF),
+          backgroundColor: const Color(0xFF607D8B),
+          selectedItemColor: const Color(0xA969F0AF),
           unselectedItemColor: Colors.white,
           selectedLabelStyle: GoogleFonts.montserrat(
             color: Colors.white,
@@ -152,12 +151,12 @@ class _HomePageState extends State<HomePage> {
             changePage(value);
           },
           items: [
-            BottomNavigationBarItem(
-              icon: Icon(MdiIcons.home),
+            const BottomNavigationBarItem(
+              icon: const Icon(MdiIcons.home),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(MdiIcons.chartBar),
+              icon: const Icon(MdiIcons.chartBar),
               label: 'Statistics',
             ),
           ],
@@ -174,6 +173,6 @@ class _HomePageState extends State<HomePage> {
     //Pop the drawer first 
     Navigator.pop(context);
     //Then pop the HomePage
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SplashOut()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SplashOut()));
   }
 }
