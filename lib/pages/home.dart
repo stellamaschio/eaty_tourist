@@ -229,7 +229,7 @@ class _HomeState extends State<Home> {
                               const SizedBox(height: 5,),
                               Text('DEMO',
                                 style: GoogleFonts.montserrat(
-                                  color: const Color(0xFF607D8B),
+                                  color: const  Color(0xFF607D8B),
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),

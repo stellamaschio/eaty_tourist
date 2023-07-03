@@ -5,8 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-bool changeWeek = false;
-
 class Statistics extends StatelessWidget {
   const Statistics({super.key});
 
@@ -176,7 +174,5 @@ class Statistics extends StatelessWidget {
     );
   }
 }
-
-
 
 

@@ -13,6 +13,8 @@ class Graphic extends StatefulWidget {
 }
 
 class GraphicState extends State<Graphic> {
+  
+  double graphic_height= 250;
 
   // Font
   var font = GoogleFonts.montserrat(
@@ -22,18 +24,16 @@ class GraphicState extends State<Graphic> {
     fontStyle: FontStyle.normal,
   );
 
-  late List<BarChartGroupData> items = [];
   double rap_max = 0;
-  double graphics_height = 250;
   
+
   @override
   void initState() {
     super.initState();
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
 
     DateTime date = provider.statDate;
-    
-    provider.dayLastTime(date);
+    provider.dayLastTimeBars(date);
     provider.getSelectedByTime(
       DateUtils.dateOnly(date), 
       provider.lastSelTime, 
@@ -73,7 +73,7 @@ class GraphicState extends State<Graphic> {
               height: 20,
             ),
             Container(
-              height: graphics_height,
+              height: graphic_height,
               child: BarChart(
                 BarChartData(
                   maxY: rap_max,

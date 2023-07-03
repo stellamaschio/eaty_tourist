@@ -19,17 +19,16 @@ class HomeProvider extends ChangeNotifier {
   double selCal = 0;
   int selectedSteps = 0;
   double selectedDistance = 0;
-  late List<Selected> selectedByTime = [];
-  late List<Selected> selectedUntilNow = [];
-  late List<Selected> selectedAll = [];
-  late List<Selected> temp = [];
-  late List<Selected> lastData = [];
-  late List<Selected> lastDataBar = [];
+  List<Selected> selectedByTime = [];
+  List<Selected> selectedUntilNow = [];
+  List<Selected> selectedAll = [];
+  List<Selected> temp = [];
+  List<Selected> lastData = [];
+  List<Selected> lastDataBar = [];
 
   late DateTime lastSelTime = dataLastTime;
   late DateTime lastSelTimeBar = dataLastTime;
   late DateTime dataLastTime;
-  late DateTime dataFirstTime;
   late DateTime firstDataDay;
 
   final AppDatabase db;
@@ -78,7 +77,7 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _checkEmpty() async {
     selectAll();
     if(selectedAll.isEmpty){
-      await db.selectedDao.insertSelected(Selected(null, 0, 0, 0, showDate));
+      saveDay(showDate);
     }
   }
 
@@ -152,8 +151,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-  void selectCalories(int startMinute, int minuteAdd, DateTime startTime, DateTime endTime, BuildContext context) {
-    
+  void selectCalories(int startMinute, int minuteAdd, DateTime startTime, DateTime endTime, BuildContext context){
     if (startMinute > (calories.length - 1)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -190,7 +188,8 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> setTimeRange(DateTime startTime, DateTime endTime) async {
+  Future<void> setTimeRange(DateTime startTime, DateTime endTime) async{
+    
     steps = await db.stepsDao.findStepsbyTime(startTime, endTime);
     distance = await db.distanceDao.findDistancebyTime(startTime, endTime);
 
@@ -388,6 +387,7 @@ class HomeProvider extends ChangeNotifier {
 
   final Color otherDaysBarColor = const Color.fromARGB(255, 228, 139, 238);
   final Color selDayBarColor = const Color.fromARGB(255, 216, 30, 236);
+
 
   BarObj makeDay(DateTime day, DateTime lastTime) {
     if (day.isAfter(lastTime) && day.day == lastTime.day) {

@@ -2,9 +2,7 @@ import 'package:eaty_tourist/models/db.dart';
 import 'package:eaty_tourist/models/foods.dart';
 import 'package:eaty_tourist/models/listFoods.dart';
 import 'package:eaty_tourist/pages/information/foodAndRestaurants.dart';
-import 'package:eaty_tourist/pages/login/login_ob.dart';
 import 'package:eaty_tourist/pages/profile.dart';
-import 'package:eaty_tourist/pages/splash.dart';
 import 'package:eaty_tourist/pages/splash_out.dart';
 import 'package:eaty_tourist/pages/statistics.dart';
 import 'package:eaty_tourist/pages/home.dart';
@@ -155,7 +153,7 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(MdiIcons.home),
               label: 'Home',
             ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: const Icon(MdiIcons.chartBar),
               label: 'Statistics',
             ),
