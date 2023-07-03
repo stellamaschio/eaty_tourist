@@ -14,12 +14,8 @@ import 'package:eaty_tourist/widgets/foodbar.dart';
 import 'package:eaty_tourist/models/foods.dart';
 import 'package:provider/provider.dart';
 
-//Valore per provare il progresso della barra (max 200)
-//const double calories = 360;
-//int cal = calories.toInt();
+// this class displays the food bar
 
-//Valori dipartenza e fine delle linee
-//NOTA: Widget all'interno di una sized box definita in home
 const double upBar = -40;
 const double downBar = 490;
 
@@ -49,49 +45,63 @@ class _HomeState extends State<Home> {
   late int startMinute;
   final int minuteAdd = 10;
 
-  //start is true because we are ready to start
+  @override
+  void initState() {
+    super.initState();
+    HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
+
+    // set the date of Statistics page to the date of today
+    provider.setStatDate(provider.todayDate);
+  }
+
+  // start activity button
   void _buttonState(HomeProvider provider){
     setState(() {
       start = !start;
     });
+    // set the time
     time = DateTime.now().subtract(const Duration(days: 1));
-    provider.setShowDate(time);
-    // utilizziamo come fosse oggi ma in realtà calories prende i dati di ieri
-    // qui interessano solo ora e minuto
-    
-    startMinute = _dateTime2Minute(time);
+    provider.setShowDate(time);    
+
+    // calculate the minutes
+    //used for check if there is enough data and for select the correct data
+    startMinute = _dateTime2Minute(time);   
     startTime = time;
     endTime = time.add(Duration(minutes: minuteAdd));
   }
 
+  // demo button
   void _buttonStateDemo(HomeProvider provider, BuildContext context){
+    // it works only if buttonState is true (activity started)
     if(start){
       setState(() {
         demo = !demo;
       });
+      // selecte the data 
       provider.selectCalories(startMinute, minuteAdd, startTime, endTime, context);
       startMinute = startMinute + minuteAdd;
       startTime = startTime.add(Duration(minutes: minuteAdd));
       endTime = endTime.add(Duration(minutes: minuteAdd));
       index++;
-      
     }
   }
 
-  // sistemare caso quando non barretta piena !!! 
+  // save button 
   void _buttonStateClose(HomeProvider provider){
+    // works only if there is selected data and the buttonState is false (activity stopped)
     if(!start && index!=0){
       setState(() {
         close = !close;
       });
-      //endTime = time.add(Duration(minutes: (minuteAdd*index)));
-      //provider.setTimeRange(time, endTime);
+      // save the data
       provider.saveDay(time);
       index = 0;
+      //save the date of the page for statistics
       provider.setStatDate(provider.showDate);
     }
   }
 
+  // calculate minutes from the beginning of the day
   int _dateTime2Minute(DateTime t){
     return t.hour*60 + t.minute;
   }
@@ -307,10 +317,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  bool checkStart(bool start){
-    return start;
-  }
-
+  // get the index of the unlocked food
   int _foodUnlockedIndex(double value, List<Foods> list){
     if(value<list.first.calories){
       // no unlocked food
@@ -321,7 +328,8 @@ class _HomeState extends State<Home> {
     int index = result.last.index-1;
     return index;
   }
-
+  
+  // get the icon of the unlocked food
   IconData _foodUnlokedIcon(int index, List<Foods> list){
     if(index<0){
       return MdiIcons.foodOff;
@@ -331,6 +339,7 @@ class _HomeState extends State<Home> {
     }
   }
 
+  // get the name of the unlocked food
   String _foodUnlockedName(int index, List<Foods> list){
     if(index<0){
       return 'nothing';
@@ -341,6 +350,7 @@ class _HomeState extends State<Home> {
     }
   }
   
+  // set the color for locked and unlocked foods
   Color _colorUnlocked(int index, List<Foods> list, double value){
     if(index<0){
       return const Color(0xFF607D8B);
@@ -353,6 +363,7 @@ class _HomeState extends State<Home> {
     }
   }
 
+  // select food page
   Widget _selectPage(int index){
     switch (index) {
       case 0:

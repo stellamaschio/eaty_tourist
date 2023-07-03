@@ -33,13 +33,16 @@ class GraphicState extends State<Graphic> {
     HomeProvider provider = Provider.of<HomeProvider>(context, listen: false);
 
     DateTime date = provider.statDate;
+    // update data
     provider.dayLastTimeBars(date);
+    // select data of the day
     provider.getSelectedByTime(
       DateUtils.dateOnly(date), 
       provider.lastSelTime, 
       date,
     );
 
+    // create the items for the graphic
     provider.makeItems();
     
     rap_max = provider.val_max;
@@ -51,7 +54,6 @@ class GraphicState extends State<Graphic> {
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (context, provider, child) => Padding(
-        // Qui viene impostato il valore di padding del grafico dal bordo schermo.
         padding: const EdgeInsets.all(0),
         child: Column(
           children: <Widget>[
@@ -122,6 +124,7 @@ class GraphicState extends State<Graphic> {
     );
   }
 
+  // method for the normalization of the values in the graphic (left axis)
   Widget leftTitles(double value, TitleMeta meta) {
     var style = font.copyWith(fontSize: 12);
     String text;
@@ -150,6 +153,7 @@ class GraphicState extends State<Graphic> {
     );
   }
 
+  //methods for drawing the days of the week
   Widget bottomTitles(double value, TitleMeta meta) {
     final titles = <String>['Mn', 'Te', 'Wd', 'Tu', 'Fr', 'St', 'Su'];
 

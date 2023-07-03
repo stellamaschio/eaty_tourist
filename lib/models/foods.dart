@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // class for defining the type food for the foodbar
 class Foods {
 
-  //Costruttore
+  //Constructor
   const Foods(
       {required this.name,
       required this.calories,
@@ -16,7 +16,7 @@ class Foods {
       required this.restaurants}
   );
 
-  //Variabili della classe
+  //Variables
   final String name;
   final double calories;
   final int index;

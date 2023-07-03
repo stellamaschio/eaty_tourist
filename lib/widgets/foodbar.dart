@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class Foodbar extends CustomPainter {
 
-  //Costruttore della classe
+  //Constructor of the class
   Foodbar(
       {required this.backColor,
       required this.frontColor,
@@ -18,20 +18,19 @@ class Foodbar extends CustomPainter {
       }
   );
 
-  //Variabili della classe
   final Color backColor, frontColor, lastColor;
   final double strokeWidth, value, scale, upBar, downBar;
   final List<Foods> foodList;
 
-  //Numero di cibi
+  //number of foods
   late int nfoods = foodList.length;
 
-  //Tipi di Paint da usare nei canvas
+  //types of paint
   final uncompletedPaint = Paint();
   final completedPaint = Paint();
   final indicatorPaint = Paint();
 
-  //Override del metodo paint (invocato sopra) che setta i valori delle paint
+
   @override
   void paint(Canvas canvas, Size size) {
 
@@ -51,8 +50,9 @@ class Foodbar extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    //Linee della barra non completata e completata
-    canvas.drawLine(Offset(0, upBar), Offset(0, downBar), uncompletedPaint); //Gli argomenti sono coordinate partenza, fine, e paint
+    //Lines of the bar completed and uncompleted
+    //Arguments are start, end, and paint
+    canvas.drawLine(Offset(0, upBar), Offset(0, downBar), uncompletedPaint); 
     if((value/scale)>700/scale){
       canvas.drawLine(Offset(0, downBar), Offset(0, downBar - 700/scale), completedPaint);
     }
@@ -60,13 +60,14 @@ class Foodbar extends CustomPainter {
       canvas.drawLine(Offset(0, downBar), Offset(0, downBar - value/scale), completedPaint);
     }
 
-    //Pallino all'inizio della barra
+    //Point at the start of the bar
     canvas.drawCircle(Offset(0, downBar), 4, _paintFirstDot(value));
-    //Ciclo for per disegnare i pallini della barra
+
+    //Cicle to draw the points of the bar
     for (int i = 0; i < nfoods; i++) {
       canvas.drawCircle(Offset(0, downBar - foodList[i].calories/scale), 4, _selectPaint(value, i));
 
-      //Testo di ogni pallino
+      //text of every points
       final icon = foodList[i].icon;
       const double fontsize = 37;
       final textCal = foodList[i].calories.toInt();
@@ -80,7 +81,7 @@ class Foodbar extends CustomPainter {
           color: _selectColor(value, i),
           fontSize: fontsize,
           fontFamily: icon.fontFamily,
-          package: icon.fontPackage, // This line is mandatory for external icon packs
+          package: icon.fontPackage, 
         ),
       );
       iconPainter.layout();
@@ -116,12 +117,12 @@ class Foodbar extends CustomPainter {
     
     }
 
-    //Indicatore del progresso attuale della barra
+    //indicator of the actual progress of the bar
     canvas.drawCircle(Offset(0, downBar - value/scale), 0.5, indicatorPaint);
 
   }
 
-  //Metodo per selzionare la giusta paint per i pallini degli obiettivi (foods)
+  // methods for selecting the paint for the points of the bar
   Paint _selectPaint(double value, int foodIndex) {
     if(value >= foodList[foodIndex].calories) {
       return completedPaint;
@@ -131,6 +132,7 @@ class Foodbar extends CustomPainter {
     }
   }
    
+  // paint the first point of the bar
   Paint _paintFirstDot(double value){
     if(value>0){
       return completedPaint;
@@ -140,7 +142,7 @@ class Foodbar extends CustomPainter {
     }
   }
 
-  //Metodo per selzionare la giusta paint per i pallini degli obiettivi (foods)
+  // method for selecting the color for the points (foods) of the bar
   Color _selectColor(double value, int foodIndex) {
     if(value >= foodList[foodIndex].calories) {
       return const Color(0xFF607D8B);

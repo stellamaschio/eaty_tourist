@@ -40,7 +40,7 @@ class _LoginState extends State<Login> {
     });
   }
 
-  // ottiene i token utilizzando le credenziali dell'utente che si sta loggando a impact
+  // get the tokens using the credentials of the user that is logging to the app and also to impact
   Future<bool> _loginImpact(String name, String password, BuildContext context) async {
     ImpactService service = Provider.of<ImpactService>(context, listen: false);
     bool logged = await service.getTokens(name, password);
@@ -224,6 +224,7 @@ class _LoginState extends State<Login> {
             
                                   bool? validation = await _loginImpact(userController.text, passwordController.text, context);
                                   
+                                  // if credentials are NOT correct
                                   if (!validation) {
                                     Future.delayed(
                                       const Duration(milliseconds: 1500), () => {
@@ -254,6 +255,7 @@ class _LoginState extends State<Login> {
                                       }
                                     );
                                   }
+                                  // if credentials are correct
                                   else{
                                     await Provider.of<ImpactService>(context, listen: false).getPatient();
                                     ScaffoldMessenger.of(context)
@@ -290,7 +292,6 @@ class _LoginState extends State<Login> {
                                 }
                               },
                               style: ButtonStyle(
-                                //maximumSize: const MaterialStatePropertyAll(Size(50, 20)),
                                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15))),
                                 elevation: MaterialStateProperty.all(0),
@@ -311,6 +312,7 @@ class _LoginState extends State<Login> {
                                 : Text('LOGIN',
                                     style: GoogleFonts.montserrat(
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 18
                                     ),
                                   ),
                             ),

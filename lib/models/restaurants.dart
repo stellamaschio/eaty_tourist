@@ -3,14 +3,14 @@
 
 class Restaurants {
 
-  //Costruttore
+  //Constructor
   const Restaurants(
       {required this.name,
       required this.location,
       required this.description}
   );
 
-  //Variabili della classe
+  //Variables
   final String name;
   final String location;
   final String description;

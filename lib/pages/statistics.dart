@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+// this class displays the statistics with the Graphic class
+
 class Statistics extends StatelessWidget {
   const Statistics({super.key});
 
@@ -79,10 +81,12 @@ class Statistics extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                       onPressed: () {
-                        DateTime selDay = provider.showDate;
+                        DateTime selDay = provider.statDate;
+                        // select the previous day
                         DateTime prevDay = selDay.subtract(const Duration(days: 1));
+                        // update to the data of the newDay
                         provider.getSelectedByTime(
-                          DateUtils.dateOnly(prevDay),
+                          DateUtils.dateOnly(prevDay),    // data from time 00:01 of the next day
                           DateTime(prevDay.year, prevDay.month, prevDay.day, 23,59),
                           prevDay,
                         );
@@ -104,12 +108,14 @@ class Statistics extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                       onPressed: () {
-                        DateTime selDay = provider.showDate;
+                        DateTime selDay = provider.statDate;
+                          // update lastData and lastSelTime to the data of the newDay
                           provider.dayLastTime(selDay.add(const Duration(days: 1)));
-                          // data from time 00:01 of the next day
+                          // newDay goes to the time of the last data inserted that day
                           DateTime newDay = selDay.add(provider.lastSelTime.difference(selDay));
+                          // update to the data of the newDay
                           provider.getSelectedByTime(
-                            DateUtils.dateOnly(newDay),
+                            DateUtils.dateOnly(newDay),   // data from time 00:01 of the next day
                             provider.lastSelTime,
                             newDay,
                           );

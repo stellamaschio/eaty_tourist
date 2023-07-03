@@ -41,6 +41,7 @@ class _Profile extends State<Profile> {
   void initState() {
     super.initState();
     
+    // set the preferences if there are saved
     var prefs = Provider.of<Preferences>(context, listen: false);
     if(prefs.name==null && prefs.surname==null){
       loadedPrefs = false;
@@ -237,7 +238,40 @@ class _Profile extends State<Profile> {
                 ),
               ),
               const SizedBox(height: 70,),
-              ElevatedButton(
+              (loadedPrefs)
+              ? ElevatedButton(
+                onPressed: () {
+                  _cancelState();
+                  if (loadedPrefs) {
+                    var prefs = Provider.of<Preferences>(context, listen: false);
+                    prefs.name = null;
+                    prefs.surname = null;
+                    gen = 0;
+                    _gender = Gender.male;
+                    loadedPrefs = false;
+                  }
+                },
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15))),
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.symmetric(
+                        horizontal: 38,
+                        vertical: 13,
+                      ),
+                    ),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFF607D8B))),
+                child: Text('Clear',
+                  style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              )
+              : ElevatedButton(
                 onPressed: () {
                   _saveState();
                   if (_formKey.currentState!.validate()) {
@@ -274,40 +308,7 @@ class _Profile extends State<Profile> {
                 ),
               ),
               const SizedBox(height: 20,),
-              (loadedPrefs)
-              ? ElevatedButton(
-                onPressed: () {
-                  _cancelState();
-                  if (loadedPrefs) {
-                    var prefs = Provider.of<Preferences>(context, listen: false);
-                    prefs.name = null;
-                    prefs.surname = null;
-                    gen = 0;
-                    _gender = Gender.male;
-                    loadedPrefs = false;
-                  }
-                },
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15))),
-                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      const EdgeInsets.symmetric(
-                        horizontal: 38,
-                        vertical: 13,
-                      ),
-                    ),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFF607D8B))),
-                child: Text('Clear',
-                  style: GoogleFonts.montserrat(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              )
-              : const SizedBox(height: 10,),
+              
             ],
           ),
         ),

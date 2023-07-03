@@ -2,7 +2,7 @@
 
 class BarObj {
 
-  //Costruttore
+  //Constructor
   const BarObj(
       {
         required this.dateTime,
@@ -11,7 +11,7 @@ class BarObj {
       }
   );
 
-  //Variabili della classe
+  //Variables
   final DateTime dateTime;
   final int weekDay;
   final double calories;

@@ -14,13 +14,14 @@ class Splash extends StatelessWidget{
   const Splash({super.key});
 
   void _toLoginPage(BuildContext context){
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Login()));
   }
 
   void _toHomePage(BuildContext context) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: ((context) => const HomePage())));
   } 
 
+  // check if there is an user authenticated
   void _checkAuth(BuildContext context) async {
     var prefs = Provider.of<Preferences>(context, listen: false);
     String? username = prefs.username;

@@ -5,27 +5,29 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:dio/dio.dart';
 import 'package:eaty_tourist/utils/shared_preferences.dart';
 
+// this class is used for getting the data from the impact server
+
 class ImpactService {
   
   ImpactService(this.prefs) {
-    updateBearer();   //(attributo di dio) permette di salvare il token
+    updateBearer();   //(dio's attribute) allows to save tokens
   }
   
   Preferences prefs;
 
   final Dio _dio = Dio(BaseOptions(baseUrl: ServerStrings.backendBaseUrl));
 
-  // ottenere token salvato
+  // get saved token from Preferences
   String? retrieveSavedToken(bool refresh) {
     if (refresh) {
-      return prefs.impactRefreshToken;    // sta solo accendendo alle variabili di un oggetto Preferences
+      return prefs.impactRefreshToken;    
     } else {
       return prefs.impactAccessToken;
     }
   }
 
-  // ottiene il token salvato e se non è null lo controlla
-  bool checkSavedToken({bool refresh = false}) {    //chiama di default il token di accesso
+  // get saved token and if it is not null --> check it
+  bool checkSavedToken({bool refresh = false}) {    // default access token
     String? token = retrieveSavedToken(refresh);
     //Check if there is a token
     if (token == null) {
@@ -38,7 +40,7 @@ class ImpactService {
     }
   }
 
-  // controlla se il token è valido, se si controlla l'iss claim e il ruolo dell'utente
+  // check if the token is valid, if yes check the iss claim and the user role
   // this method is static because we might want to check the token outside the class itself
   static bool checkToken(String token) {
     //Check if the token is expired
@@ -46,7 +48,7 @@ class ImpactService {
       return false;
     }
 
-    // decodifica del token
+    // decode the token
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
 
     //Check the iss claim
@@ -85,7 +87,7 @@ class ImpactService {
         )
       );
       
-      // se entrambi i check vengono superati aggiorna i token con quelli appena ottenuti dal server
+      // if both the checks are ok, update the tokens with the newest obtained from the server
       if (ImpactService.checkToken(response.data['access']) &&
           ImpactService.checkToken(response.data['refresh'])) {
         prefs.impactRefreshToken = response.data['refresh'];
@@ -102,6 +104,7 @@ class ImpactService {
     }
   }
 
+  // make the call to refresh the tokens
   Future<bool> refreshTokens() async {
     String? refToken = await retrieveSavedToken(true);
     try {
