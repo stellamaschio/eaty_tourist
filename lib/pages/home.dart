@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
   }
 
   // demo button
-  void _buttonStateDemo(HomeProvider provider, BuildContext context){
+  Future<void> _buttonStateDemo(HomeProvider provider, BuildContext context) async {
     // it works only if buttonState is true (activity started)
     if(start){
       setState(() {
@@ -87,14 +87,14 @@ class _HomeState extends State<Home> {
   }
 
   // save button 
-  void _buttonStateClose(HomeProvider provider){
+  Future<void> _buttonStateClose(HomeProvider provider) async {
     // works only if there is selected data and the buttonState is false (activity stopped)
     if(!start && index!=0){
       setState(() {
         close = !close;
       });
       // save the data
-      provider.saveDay(time);
+      await provider.saveDay(time);
       index = 0;
       //save the date of the page for statistics
       provider.setStatDate(provider.showDate);

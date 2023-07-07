@@ -26,9 +26,8 @@ class HomeProvider extends ChangeNotifier {
   List<Selected> lastData = [];   // variable for last data used for displaying data in statistics
   List<Selected> lastDataBar = [];    // variable for last data used for print the bars of the graphic
 
-  late DateTime lastSelTime = dataLastTime;
-  late DateTime lastSelTimeBar = dataLastTime;
-  late DateTime dataLastTime;
+  late DateTime lastSelTime;
+  late DateTime lastSelTimeBar;
   late DateTime firstDataDay;
 
   final AppDatabase db;
@@ -63,17 +62,9 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _init() async {
     await _checkEmpty();
     await dayLastTime(showDate);
-    await lastTime();
-    firstDataDay = (await db.selectedDao.findFirstDayInDb())!.dateTime;
     await _fetchAndCalculate();
     await getDataOfDay(showDate);
     doneInit = true;
-    notifyListeners();
-  }
-
-  // get the dataTime of the last data in db Selected
-  Future<void> lastTime() async {
-    dataLastTime = (await db.selectedDao.findLastDayInDb())!.dateTime;
     notifyListeners();
   }
 
@@ -82,8 +73,10 @@ class HomeProvider extends ChangeNotifier {
   Future<void> _checkEmpty() async {
     selectAll();
     if(selectedAll.isEmpty){
-      saveDay(showDate);
+      await saveDay(showDate);
     }
+    firstDataDay = (await db.selectedDao.findFirstDayInDb())!.dateTime;
+    return;
   }
 
   Future<DateTime?> _getLastFetch() async {
@@ -158,7 +151,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   // select the data we want to add to db Selected
-  void selectCalories(int startMinute, int minuteAdd, DateTime startTime, DateTime endTime, BuildContext context){
+  Future<void> selectCalories(int startMinute, int minuteAdd, DateTime startTime, DateTime endTime, BuildContext context) async{
     // if there isn't enough data today, we show a snack bar to inform the user
     if (startMinute > (calories.length - 1)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -191,7 +184,7 @@ class HomeProvider extends ChangeNotifier {
       for (int i = 1; i <= minuteAdd; i++) {
         selCal = selCal + calories[startMinute + i].value;
       }
-      selectStepsDistance(startTime, endTime);
+      await selectStepsDistance(startTime, endTime);
       notifyListeners();
     }
   }
@@ -240,7 +233,6 @@ class HomeProvider extends ChangeNotifier {
       lastData.add(selectedByTime.last);  // the new lastData element is the last inserted in the db Selected
       lastSelTime = selTime;  // lastSelTime is the time of the last element inserted in the db Selected
       setSelected(0);   // clear the variables
-      lastTime();   // update dataLastTime
 
       notifyListeners();
     } 
@@ -261,7 +253,6 @@ class HomeProvider extends ChangeNotifier {
       lastData.add(selectedByTime.last);  // the new lastData element is the last inserted in the db Selected
       lastSelTime = selTime;  // lastSelTime is the time of the last element inserted in the db Selected
       setSelected(0);   // clear the variables
-      lastTime();   // update dataLastTime
 
       notifyListeners();
     }
