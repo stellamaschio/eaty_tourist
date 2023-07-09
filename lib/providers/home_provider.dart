@@ -184,7 +184,7 @@ class HomeProvider extends ChangeNotifier {
       for (int i = 1; i <= minuteAdd; i++) {
         selCal = selCal + calories[startMinute + i].value;
       }
-      await selectStepsDistance(startTime, endTime);
+      selectStepsDistance(startTime, endTime);
       notifyListeners();
     }
   }
@@ -197,13 +197,13 @@ class HomeProvider extends ChangeNotifier {
 
     for (var element in steps) {
       selectedSteps = selectedSteps + element.value;
-      notifyListeners();
     }
 
     for (var element in distance) {
       selectedDistance = selectedDistance + element.value;
-      notifyListeners();
     }
+
+    notifyListeners();
   }
 
   // save calories, steps, and distance made during the day with the app in Selected db
